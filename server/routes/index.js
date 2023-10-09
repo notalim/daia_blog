@@ -1,6 +1,9 @@
 // routes/index.js
 import express from "express";
 
+import postsRouter from "./posts.js";
+import usersRouter from "./users.js";
+
 const router = express.Router();
 
 router.get("/", (req, res) => {
@@ -9,6 +12,8 @@ router.get("/", (req, res) => {
 
 const setupRoutes = (app) => {
     app.use("/", router);
+    app.use("/posts", postsRouter);
+    app.use("/users", usersRouter);
 
     // More routes can be added here
 };
