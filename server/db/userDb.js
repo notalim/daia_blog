@@ -5,35 +5,37 @@ import bcrypt from "bcrypt";
 import validation from "../utils/validation.js";
 import { ObjectId } from "mongodb";
 
-const saltRounds = 10; // Define the number of salt rounds
+const saltRounds = 10; 
 
-const createUser = async (username, password, avatarUrl = "") => {
+const createUser = async (phoneNumber, name, dexcomSessionId, password) => {
     try {
-        if (!validation.usernameValidation(username)) {
-            throw new Error("Invalid username");
-        }
 
-        if (!validation.passwordValidation(password)) {
-            throw new Error("Invalid password");
-        }
+        password = validation.passwordValidation(password);
 
-        // if (!validation.avatarUrlValidation(avatarUrl)) {
-        //     throw new Error("Invalid avatar URL");
-        // }
-
-        const hashedPassword = await bcrypt.hash(password, saltRounds); // Hash the password
+        const hashedPassword = await bcrypt.hash(password, saltRounds);
 
         const newUser = {
-            _id: new ObjectId(),
-            username,
+            phoneNumber,
+            name,
+            dexcomSessionId,
             password: hashedPassword,
-            avatarUrl,
+            userId: new ObjectId(),
+            contacts: [],
+            activeSession: false,
+            activeCrisis: false,
+            lastCrisis: null,
+            activeContacts: [],
+            activateCrisisText: "",
+            disableCrisisText: "",
+            emergencyInfo: null,
+            crisisTexts: [],
+            userRole: "user"
         };
 
         const userCollection = await users();
         const insertInfo = await userCollection.insertOne(newUser);
         if (insertInfo.insertedCount === 0)
-            throw new Error("Could not add user");
+            throw new Error("Could not add user!");
 
         return newUser;
     } catch (error) {
@@ -41,80 +43,31 @@ const createUser = async (username, password, avatarUrl = "") => {
     }
 };
 
-const getUserById = async (userId) => {
+const getUserByPhoneNumber = async (phoneNumber) => {
     try {
+        
         const userCollection = await users();
+        let foundUser = await userCollection.findOne({ phoneNumber });
 
-        const user = await userCollection.findOne({ _id: ObjectId(userId) });
+        if (!foundUser) {
+            throw new Error("User not found");
+        }
 
-        if (!user) throw new Error("User not found");
-
-        return user;
+        return foundUser;
     } catch (error) {
         throw new Error("Error fetching user: " + error.message);
     }
 };
 
-const getUserByUsername = async (username) => {
+const checkPassword = async (phoneNumber, password) => {
     try {
-        if (!validation.usernameValidation(username)) {
-            throw new Error("Invalid username");
-        }
 
-        const userCollection = await users();
-
-        const user = await userCollection.findOne({ username });
-
-        if (!user) throw new Error("User not found");
-
-        return user;
+        let foundUser = getUserByPhoneNumber(phoneNumber);
+        return bcrypt.compare(password, foundUser.password);
+            
     } catch (error) {
-        throw new Error("Error fetching user: " + error.message);
+        throw new Error("Error checking password: " + error.message);
     }
 }
 
-const updateUser = async (username, updatedInfo) => {
-    try {
-        if (!validation.usernameValidation(username)) {
-            throw new Error("Invalid username");
-        }
-
-        const userCollection = await users();
-
-        const updatedUser = await userCollection.findOneAndUpdate(
-            { username },
-            { $set: updatedInfo },
-            { returnOriginal: false }
-        );
-
-        if (!updatedUser.value) throw new Error("Could not update user");
-
-        return updatedUser;
-    } catch (error) {
-        throw new Error("Error updating user: " + error.message);
-    }
-};
-
-const deleteUser = async (userId, password) => {
-    try {
-        const userCollection = await users();
-
-        const user = await userCollection.findOne({ _id: ObjectId(userId) });
-
-        if (!user) throw new Error("User not found");
-
-        if (!(await bcrypt.compare(password, user.password))) {
-            throw new Error("Incorrect password");
-        }
-
-        const deleteInfo = await userCollection.deleteOne({ _id: ObjectId(userId) });
-        if (deleteInfo.deletedCount === 0)
-            throw new Error("Could not delete user");
-
-        return { userId, deleted: true };
-    } catch (error) {
-        throw new Error("Error deleting user: " + error.message);
-    }
-};
-
-export { createUser, getUserById, getUserByUsername, updateUser, deleteUser };
+export { createUser, getUserByPhoneNumber, checkPassword };

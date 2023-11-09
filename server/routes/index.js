@@ -15,7 +15,6 @@ const setupRoutes = (app) => {
     app.use("/posts", postsRouter);
     app.use("/users", usersRouter);
 
-    // More routes can be added here
 };
 
 export default setupRoutes;

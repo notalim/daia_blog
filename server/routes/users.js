@@ -2,10 +2,8 @@
 import express from "express";
 import {
     createUser,
-    getUserById,
-    getUserByUsername,
-    updateUser,
-    deleteUser,
+    getUserByPhoneNumber,
+    checkPassword,
 } from "../db/userDb.js";
 
 import validation from "../db/validation.js";
@@ -13,25 +11,16 @@ import bcrypt from "bcryptjs";
 
 const router = express.Router();
 
-// Handle login form submission
 router.post("/login", async (req, res) => {
-    const { username, password } = req.body;
-
-    // Validate inputs
-    if (!validation.usernameValidation(username) || !validation.passwordValidation(password)) {
-        return res.status(400).send('Invalid input');
-    }
+    const { phoneNumber, password } = req.body;
 
     try {
 
-        const user = await getUserByUsername(username);
+        const user = await getUserByPhoneNumber(phoneNumber);
+        await checkPassword(password, user.password);
+
         if (!user) {
             return res.status(401).send('User not found');
-        }
-
-        const match = await bcrypt.compare(password, user.password);
-        if (!match) {
-            return res.status(401).send('Incorrect password');
         }
 
         res.status(200).send('Login successful');
@@ -41,9 +30,25 @@ router.post("/login", async (req, res) => {
     }
 });
 
-// Handle logout
+router.post("/signup", async (req, res) => {
+    const { phoneNumber, name, dexcomSessionId, password } = req.body;
+
+    try {
+        const user = await getUserByPhoneNumber(phoneNumber);
+        if (user) {
+            return res.status(401).send('User already exists');
+        }
+
+        const newUser = await createUser(phoneNumber, name, dexcomSessionId, password);
+
+        res.status(200).send('Signup successful');
+    } catch (error) {
+        console.error(error);
+        res.status(500).send('Server error');
+    }
+});
+
 router.post("/logout", (req, res) => {
-    
     res.redirect("/");
 });
 
