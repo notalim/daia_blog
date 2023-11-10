@@ -10,13 +10,22 @@ const nameValidation = (name) => {
   return nameRegex.test(name);
 };
 
-const phoneValidation = (phone) => {
+const phoneValidation = (phoneNumber) => {
   const phoneRegex = /^(\+\d{1,2}\s?)?1?\-?\.?\s?\(?\d{3}\)?[\s.-]?\d{3}[\s.-]?\d{4}$/;
-  return phoneRegex.test(phone);
+  return phoneRegex.test(phoneNumber);
 };
 
-const allValidation = (phone, password, name) => {
-  return passwordValidation(password) && nameValidation(name) && phoneValidation(phone);
+const stringValidation = (string) => {
+  const stringRegex = /^[a-zA-Z0-9]+(([',. -][a-zA-Z ])?[a-zA-Z0-9]*)*$/;
+  return stringRegex.test(string);
+}
+
+const validatePhoneAndPassword = (phoneNumber, password) => {
+    return passwordValidation(password) && phoneValidation(phoneNumber);
+}
+
+const validatePhoneAndPasswordAndName = (phoneNumber, password, name) => {
+    return passwordValidation(password) && nameValidation(name) && phoneValidation(phoneNumber);
 };
 
-export default { allValidation, phoneValidation, passwordValidation, nameValidation };
+export default {validatePhoneAndPassword, validatePhoneAndPasswordAndName, passwordValidation };

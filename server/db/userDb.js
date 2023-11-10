@@ -8,9 +8,12 @@ import { ObjectId } from "mongodb";
 const saltRounds = 10; 
 
 const createUser = async (phoneNumber, name, dexcomSessionId, password) => {
+
     try {
 
-        password = validation.passwordValidation(password);
+        if (!validation.validatePhoneAndPasswordAndName(phoneNumber, password, name)) {
+            throw new Error("Invalid phone number or password or name");
+        }
 
         const hashedPassword = await bcrypt.hash(password, saltRounds);
 
@@ -44,8 +47,10 @@ const createUser = async (phoneNumber, name, dexcomSessionId, password) => {
 };
 
 const getUserByPhoneNumber = async (phoneNumber) => {
+
     try {
-        
+
+
         const userCollection = await users();
         let foundUser = await userCollection.findOne({ phoneNumber });
 
@@ -60,7 +65,12 @@ const getUserByPhoneNumber = async (phoneNumber) => {
 };
 
 const checkPassword = async (phoneNumber, password) => {
+
     try {
+
+        if (!validation.validatePhoneAndPassword(phoneNumber, password)) {
+            throw new Error("Invalid phone number or password");
+        }
 
         let foundUser = getUserByPhoneNumber(phoneNumber);
         return bcrypt.compare(password, foundUser.password);
@@ -74,7 +84,14 @@ const addEmergencyContact = async (phoneNumber, contactPhoneNumber, contactName,
 
     try {
 
-        // validate here
+        if (!validation.validatePhone(contactPhoneNumber)) {
+            throw new Error("Invalid emergency contact phone number");
+        }
+        
+        if (!validation.validateName(contactName)) {
+            throw new Error("Invalid emergency contact name");
+        }
+
         const contact = {
             contactPhoneNumber,
             contactName,
