@@ -19,4 +19,4 @@ const allValidation = (phone, password, name) => {
   return passwordValidation(password) && nameValidation(name) && phoneValidation(phone);
 };
 
-export default { allValidation };
+export default { allValidation, phoneValidation, passwordValidation, nameValidation };
