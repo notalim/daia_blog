@@ -21,14 +21,14 @@ const createUser = async (phoneNumber, name, dexcomSessionId, password) => {
             password: hashedPassword,
             userId: new ObjectId(),
             contacts: [],
+            glucagonLocation: "",
+            glucagonType: "",
             activeSession: false,
             activeCrisis: false,
             lastCrisis: null,
-            activeContacts: [],
-            activateCrisisText: "",
-            disableCrisisText: "",
+            crisisTextEnabled: true,
+            crisisText: `${name} has low blood sugar and needs help! Please call ${name} at ${phoneNumber} to help!`,
             emergencyInfo: null,
-            crisisTexts: [],
             userRole: "user"
         };
 
@@ -70,4 +70,38 @@ const checkPassword = async (phoneNumber, password) => {
     }
 }
 
-export { createUser, getUserByPhoneNumber, checkPassword };
+const addEmergencyContact = async (phoneNumber, contactPhoneNumber, contactName, contactRelationship) => {
+
+    try {
+
+        // validate here
+        const contact = {
+            contactPhoneNumber,
+            contactName,
+            contactRelationship,
+            active: true
+        };
+
+        const userCollection = await users();
+        const updateInfo = await userCollection.updateOne(
+            { phoneNumber },
+            { $push: { contacts: contact } }
+        );
+        if (updateInfo.modifiedCount === 0)
+            throw new Error("Could not add emergency contact!");
+
+        return true;
+    } catch (error) {
+        throw new Error("Error adding emergency contact: " + error.message);
+    }
+}
+
+// const modifyUser = async (phoneNumber, ) {
+//     // should be able to modify:
+//     // glucagonType, 
+//     // glucagonLocation, 
+//     // crisisTextEnabled
+//     // crisisText
+// }
+
+export { createUser, getUserByPhoneNumber, checkPassword, addEmergencyContact};
