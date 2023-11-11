@@ -1,0 +1,55 @@
+/* components/Navbar/Navbar.css */
+/* alim: GENERATED WITH CHATGPT - MIGHT NEED TWEAKING */
+
+.navbar {
+    background-color: #ffffff; /* Adjust if you have a specific hex color */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 2rem;
+}
+
+.navbar__logo {
+    font-size: 1.5rem;
+    color: #5c6bc0; /* Use the color from your brand */
+    font-weight: bold;
+    cursor: pointer;
+}
+
+.navbar__links {
+    display: flex;
+    align-items: center;
+    list-style: none;
+}
+
+.navbar__link {
+    margin: 0 1rem;
+    text-decoration: none;
+    color: #333; /* Use the color from your brand */
+    font-size: 1rem;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+.navbar__link:hover {
+    color: #5c6bc0; /* Use a highlight color from your brand */
+}
+
+.navbar__register {
+    border-radius: 14.506px;
+    font-family: Inter;
+    background: linear-gradient(96deg, #563890 -10.84%, #bba9dd 129.35%);
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+
+}
+
+.navbar__register:hover {
+    background-color: #3f51b5;
+
+}
