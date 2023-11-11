@@ -1,11 +1,11 @@
 // src/App.jsx
 import React from "react";
 import Header from "./components/Header";
-import Feed from "./components/Feed";
+import Feed from "./components/Hero";
 
 function App() {
-    const isLoggedIn = false; // This will be dynamic later
-    const posts = []; // This will come from your database later
+    const isLoggedIn = false;
+    const posts = []; 
 
     return (
         <div className="App">

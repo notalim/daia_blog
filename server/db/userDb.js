@@ -10,7 +10,6 @@ const saltRounds = 10;
 const createUser = async (phoneNumber, name, dexcomSessionId, password) => {
 
     try {
-
         if (!validation.validatePhoneAndPasswordAndName(phoneNumber, password, name)) {
             throw new Error("Invalid phone number or password or name");
         }
@@ -47,10 +46,7 @@ const createUser = async (phoneNumber, name, dexcomSessionId, password) => {
 };
 
 const getUserByPhoneNumber = async (phoneNumber) => {
-
     try {
-
-
         const userCollection = await users();
         let foundUser = await userCollection.findOne({ phoneNumber });
 
@@ -67,7 +63,6 @@ const getUserByPhoneNumber = async (phoneNumber) => {
 const checkPassword = async (phoneNumber, password) => {
 
     try {
-
         if (!validation.validatePhoneAndPassword(phoneNumber, password)) {
             throw new Error("Invalid phone number or password");
         }
@@ -83,7 +78,6 @@ const checkPassword = async (phoneNumber, password) => {
 const addEmergencyContact = async (phoneNumber, contactPhoneNumber, contactName, contactRelationship) => {
 
     try {
-
         if (!validation.validatePhone(contactPhoneNumber)) {
             throw new Error("Invalid emergency contact phone number");
         }

@@ -24,7 +24,6 @@ router.post("/login", async (req, res) => {
     }
 
     try {
-
         const user = await getUserByPhoneNumber(phoneNumber);
         await checkPassword(password, user.password);
 
