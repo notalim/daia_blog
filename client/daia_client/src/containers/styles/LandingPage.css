@@ -1,0 +1,105 @@
+body {
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh; /* Ensure the body takes at least the full viewport height */
+}
+
+.landing-page {
+    flex: 1; /* Allow the landing page to grow to fill the available space */
+    display: flex;
+    flex-direction: column;
+    background-color: #f5f5f5; /* Light background color */
+    color: #333; /* Dark text color */
+    padding: 2rem;
+    text-align: center;
+}
+
+.landing-page__header {
+    margin-bottom: 2rem;
+}
+
+.landing-page__header h1 {
+    color: #5c6bc0; /* Use the color from your brand */
+    font-size: 2.5rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+}
+
+.landing-page__header p {
+    font-size: 1rem;
+    color: #888; /* Subdued text color */
+}
+
+.landing-page__features {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-around;
+    margin-bottom: 2rem;
+}
+
+.feature {
+    background-color: #ffffff; /* White background for features */
+    border-radius: 8px;
+    padding: 1.5rem;
+    margin: 1rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    width: 300px; /* Adjust width as needed */
+}
+
+.feature img {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+}
+
+.feature h3 {
+    color: #5c6bc0; /* Use the color from your brand */
+    font-size: 1.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.feature p {
+    color: #555;
+    font-size: 1rem;
+}
+
+.landing-page__cta {
+    margin: 2rem 0;
+}
+
+.landing-page__cta h2 {
+    color: #5c6bc0;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+}
+
+.landing-page__cta p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 1.5rem;
+}
+
+.button {
+    border-radius: 14.506px;
+    font-family: 'Inter', sans-serif;
+    background: linear-gradient(96deg, #563890 -10.84%, #bba9dd 129.35%);
+    color: #ffffff;
+    border: none;
+    padding: 0.5rem 1rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+}
+
+.button:hover {
+    background-color: #3f51b5;
+}
+
+.landing-page__footer {
+    background-color: #333; /* Dark background color for the footer */
+    color: #fff; /* Light text color for the footer */
+    padding: 1rem;
+    text-align: center;
+}
