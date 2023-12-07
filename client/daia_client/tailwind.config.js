@@ -8,6 +8,7 @@ export default {
         extend: {
             colors: {
                 custom: {
+                    'subtle-purple': '#FAF5FF',
                     50: "#f3f3fc",
                     100: "#c1c1c1",
                     200: "#f2f2fc",
