@@ -60,6 +60,17 @@ const getUserByPhoneNumber = async (phoneNumber) => {
     }
 };
 
+const checkUserByPhoneNumber = async (phoneNumber) => {
+  try {
+    const userCollection = await users();
+    let foundUser = await userCollection.findOne({ phoneNumber });
+
+    return foundUser;
+  } catch (error) {
+    throw new Error("Error fetching user: " + error.message);
+  }
+};
+
 const checkPassword = async (phoneNumber, password) => {
 
     try {
@@ -78,12 +89,12 @@ const checkPassword = async (phoneNumber, password) => {
 const addEmergencyContact = async (phoneNumber, contactPhoneNumber, contactName, contactRelationship) => {
 
     try {
-        if (!validation.validatePhone(contactPhoneNumber)) {
-            throw new Error("Invalid emergency contact phone number");
+        if (!validation.phoneValidation(contactPhoneNumber)) {
+          throw new Error("Invalid emergency contact phone number");
         }
         
-        if (!validation.validateName(contactName)) {
-            throw new Error("Invalid emergency contact name");
+        if (!validation.nameValidation(contactName)) {
+          throw new Error("Invalid emergency contact name");
         }
 
         const contact = {
@@ -115,4 +126,4 @@ const addEmergencyContact = async (phoneNumber, contactPhoneNumber, contactName,
 //     // crisisText
 // }
 
-export { createUser, getUserByPhoneNumber, checkPassword, addEmergencyContact};
+export { createUser, getUserByPhoneNumber, checkUserByPhoneNumber, checkPassword, addEmergencyContact};

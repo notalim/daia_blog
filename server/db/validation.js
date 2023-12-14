@@ -28,4 +28,4 @@ const validatePhoneAndPasswordAndName = (phoneNumber, password, name) => {
     return passwordValidation(password) && nameValidation(name) && phoneValidation(phoneNumber);
 };
 
-export default {validatePhoneAndPassword, validatePhoneAndPasswordAndName, passwordValidation };
+export default {validatePhoneAndPassword, validatePhoneAndPasswordAndName, passwordValidation, nameValidation, phoneValidation, stringValidation };
