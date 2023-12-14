@@ -1,9 +1,10 @@
 import React, { useState } from "react";
-import "../containers/styles/RegisterPage.css"; 
+import "../containers/styles/RegisterPage.css";
 import Input from "../components/Input";
 import RegisterButton from "../components/RegisterButton";
 
 const initialFormFields = [{ name: "Phone Number", type: "tel" }];
+
 const additionalFormFields = [
     { name: "Verification Code", type: "tel" },
     { name: "Dexcom Username", type: "text" },
@@ -21,6 +22,9 @@ function RegisterPage() {
     };
 
     const handlePhoneNumberSubmit = () => {
+
+        if (!phoneNumber) return;
+        
         setPhoneNumberEntered(true);
         setFormFields(additionalFormFields);
     };
@@ -33,7 +37,7 @@ function RegisterPage() {
                         Sign Up for Live Glucose Tracking and Instant Alerts
                     </h2>
                     <p>
-                        If you already have an account, you can{" "}
+                        If you already have an account, you can
                         <a
                             href="/login"
                             className="text-purple-600 hover:text-purple-700"
@@ -53,7 +57,6 @@ function RegisterPage() {
                                     phoneNumberEntered &&
                                     field.name === "Phone Number"
                                 }
-                        
                                 onChange={
                                     field.name === "Phone Number"
                                         ? handlePhoneNumberChange
