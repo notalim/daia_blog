@@ -7,7 +7,9 @@ export default {
     theme: {
         extend: {
             colors: {
-                'subtle-purple': "#FAF5FF",
+                'primary': '',
+                'secondary': '',
+                "subtle-purple": "#FAF5FF",
                 50: "#f3f3fc",
                 100: "#c1c1c1",
                 200: "#f2f2fc",
@@ -20,7 +22,20 @@ export default {
                 900: "#edeffb",
             },
             fontFamily: {
-                sans: ["Futura", "sans-serif"],
+                sans: [
+                    "-apple-system",
+                    "BlinkMacSystemFont",
+                    '"Segoe UI"',
+                    "Roboto",
+                    '"Helvetica Neue"',
+                    "Arial",
+                    '"Noto Sans"',
+                    "sans-serif",
+                    '"Apple Color Emoji"',
+                    '"Segoe UI Emoji"',
+                    '"Segoe UI Symbol"',
+                    '"Noto Color Emoji"',
+                ],
             },
         },
     },

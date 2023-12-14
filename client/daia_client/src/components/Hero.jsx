@@ -19,7 +19,7 @@ function Hero() {
                     {/* Replace the # with the actual link to your how-to-use page */}
                     <a
                         href="/about"
-                        className="hover:animate-pulse text-primary font-semibold py-2 px-4 rounded bg-subtle-purple hover:"
+                        className="hover:animate-pulse text-primary font-semibold py-2 px-4 rounded bg-subtle-purple "
                     >
                         Learn More
                     </a>
