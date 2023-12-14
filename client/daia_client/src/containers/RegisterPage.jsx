@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../containers/styles/RegisterPage.css";
 import Input from "../components/Input";
 import RegisterButton from "../components/RegisterButton";
@@ -17,14 +17,21 @@ function RegisterPage() {
     const [phoneNumberEntered, setPhoneNumberEntered] = useState(false);
     const [formFields, setFormFields] = useState(initialFormFields);
 
+    useEffect(() => {
+        if (phoneNumberEntered) {
+            setFormFields(additionalFormFields);
+        } else {
+            setFormFields(initialFormFields);
+        }
+    }, [phoneNumberEntered]);
+
     const handlePhoneNumberChange = (event) => {
         setPhoneNumber(event.target.value);
     };
 
-    const handlePhoneNumberSubmit = () => {
+    const handlePhoneNumberSubmit = (event) => {
+        event.preventDefault();
 
-        if (!phoneNumber) return;
-        
         setPhoneNumberEntered(true);
         setFormFields(additionalFormFields);
     };
