@@ -1,7 +1,7 @@
 // routes/users.js
 import express from "express";
 import { sendVerificationCode, checkVerificationCode } from "../service/twilioService.js";
-import { createUser, getUserByPhoneNumber, checkPassword, checkUserByPhoneNumber, addEmergencyContact } from "../db/userDb.js";
+import { createUser, getUserByPhoneNumber, checkPassword, checkUserByPhoneNumber, addEmergencyContact, getDexcomSessionId } from "../db/userDb.js";
 
 import validation from "../db/validation.js";
 import bcrypt from "bcryptjs";
@@ -36,10 +36,10 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/signup", async (req, res) => {
-  const { phoneNumber, name, dexcomSessionId, password } = req.body;
+  const { phoneNumber } = req.body;
   try {
-    if (!validation.validatePhoneAndPasswordAndName(phoneNumber, password, name)) {
-      return res.status(401).send("Invalid phone number, name, or password");
+    if (!validation.phoneValidation(phoneNumber)) {
+      return res.status(401).send("Invalid phone number");
     }
 
     const user = await checkUserByPhoneNumber(phoneNumber);
@@ -57,16 +57,16 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/signup/complete", async (req, res) => {
-  const { phoneNumber, code, name, dexcomSessionId, password } = req.body;
+  const { phoneNumber, code, dexcomUser , dexcomPass , name, password } = req.body;
   try {
     // Check the verification code
     const verificationCheck = await checkVerificationCode(phoneNumber, code);
     if (verificationCheck.status !== "approved") {
       return res.status(400).send("Invalid or expired code.");
     }
-
+    let dexcomSessionId = await getDexcomSessionId(dexcomUser, dexcomPass);
     // Create the user
-    await createUser(phoneNumber, name, dexcomSessionId, password);
+    await createUser(phoneNumber, name, dexcomUser, dexcomPass, dexcomSessionId, password);
     res.status(200).send("Signup successful and phone number verified.");
   } catch (error) {
     console.error(error);
