@@ -32,13 +32,15 @@ function RegisterPage() {
         event.preventDefault();
         if (!formData["Phone Number"]) return;
 
+        let concatPhoneNumber = "+1" + formData["Phone Number"];
+
         try {
             const response = await fetch("http://localhost:3000/users/signup", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ phoneNumber: formData["Phone Number"] }),
+                body: JSON.stringify({ phoneNumber: concatPhoneNumber }),
             });
 
             const message = await response.text();
@@ -53,7 +55,6 @@ function RegisterPage() {
             setIsVerificationCodeSent(true);
             setCurrentFormFields(additionalFormFields);
         } catch (error) {
-     
             console.error("There was an error!", error);
         }
     };
@@ -79,7 +80,6 @@ function RegisterPage() {
                 const data = await response.json();
                 console.log(data);
             } catch (error) {
-
                 console.error("There was an error!", error);
             }
         }

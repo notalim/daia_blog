@@ -15,15 +15,18 @@ function LoginPage() {
         if (!phoneNumber) return;
 
         try {
+            let concatPhoneNumber = "+1" + phoneNumber;
             const response = await fetch("http://localhost:3000/users/login", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ phoneNumber }),
+                body: JSON.stringify({ phoneNumber: concatPhoneNumber}),
             });
 
             const message = await response.text();
+
+            console.log(message);
 
             if (!response.ok) {
                 throw new Error(
