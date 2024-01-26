@@ -4,7 +4,7 @@ import doctorImage from '../assets/images/doctor.png';
 function Hero() {
     return (
         // Replace the gradient colors with the actual colors from your design
-        <div className="bg-white text-black">
+        <div className="bg-background-purple text-black">
             <div className="container mx-auto px-6 py-16 flex flex-col md:flex-row items-center justify-between">
                 <div className="flex-1">
                     <div className="bg-pink-200 text-pink-700 px-3 py-1 inline-block rounded-full text-sm font-medium mb-4">

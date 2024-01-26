@@ -87,7 +87,7 @@ function RegisterPage() {
     };
 
     return (
-        <div className="min-h-screen flex items-center bg-gradient-to-r from-brand to-brand-end">
+        <div className="min-h-screen flex items-center bg-background-purple">
             <div className="w-full max-w-4xl mx-auto flex justify-between items-start">
                 <div className="space-y-6 p-8">
                     <h2 className="text-2xl font-bold text-gray-900">
@@ -99,6 +99,7 @@ function RegisterPage() {
                             href="/login"
                             className="text-purple-600 hover:text-purple-700"
                         >
+                            {" "}
                             Login here!
                         </a>
                     </p>
