@@ -1,6 +1,7 @@
 import express from "express";
 const app = express();
 import dotenv from "dotenv";
+import cors from "cors";
 import { startSessionIdRefreshTask } from "./utils/scheduler.js";
 dotenv.config();
 
@@ -8,6 +9,8 @@ import configRoutes from "./routes/index.js";
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+app.use(cors());
 
 app.use((err, req, res, next) => {
     console.error(err.stack);

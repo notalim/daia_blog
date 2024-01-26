@@ -3,37 +3,87 @@ import "../containers/styles/RegisterPage.css";
 import Input from "../components/Input";
 import RegisterButton from "../components/RegisterButton";
 
-const initialFormFields = [{ name: "Phone Number", type: "tel" }];
-
+const initialFormFields = ["Phone Number"];
 const additionalFormFields = [
-    { name: "Verification Code", type: "tel" },
-    { name: "Dexcom Username", type: "text" },
-    { name: "Dexcom Password", type: "password" },
-    { name: "Your Name", type: "text" },
+    "Verification Code",
+    "Dexcom Username",
+    "Dexcom Password",
+    "Your Name",
 ];
 
 function RegisterPage() {
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [phoneNumberEntered, setPhoneNumberEntered] = useState(false);
-    const [formFields, setFormFields] = useState(initialFormFields);
+    const [formData, setFormData] = useState({
+        "Phone Number": "",
+        "Verification Code": "",
+        "Dexcom Username": "",
+        "Dexcom Password": "",
+        "Your Name": "",
+    });
 
-    useEffect(() => {
-        if (phoneNumberEntered) {
-            setFormFields(additionalFormFields);
-        } else {
-            setFormFields(initialFormFields);
-        }
-    }, [phoneNumberEntered]);
+    const [currentFormFields, setCurrentFormFields] =
+        useState(initialFormFields);
+    const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
 
-    const handlePhoneNumberChange = (event) => {
-        setPhoneNumber(event.target.value);
+    const handleChange = (field) => (event) => {
+        setFormData({ ...formData, [field]: event.target.value });
     };
 
-    const handlePhoneNumberSubmit = (event) => {
+    const handlePhoneNumberSubmit = async (event) => {
         event.preventDefault();
+        if (!formData["Phone Number"]) return;
 
-        setPhoneNumberEntered(true);
-        setFormFields(additionalFormFields);
+        try {
+            const response = await fetch("http://localhost:3000/users/signup", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ phoneNumber: formData["Phone Number"] }),
+            });
+
+            const message = await response.text();
+
+            if (!response.ok) {
+                throw new Error(
+                    `HTTP error! status: ${response.status} - ${message}`
+                );
+            }
+
+            
+            console.log(message);
+            setIsVerificationCodeSent(true);
+            setCurrentFormFields(additionalFormFields);
+        } catch (error) {
+     
+            console.error("There was an error!", error);
+        }
+    };
+    const handleCompleteRegistration = async (event) => {
+        event.preventDefault();
+        if (isVerificationCodeSent) {
+            try {
+                const response = await fetch(
+                    "http://localhost:3000/users/signup/complete",
+                    {
+                        method: "POST",
+                        headers: {
+                            "Content-Type": "application/json",
+                        },
+                        body: JSON.stringify(formData),
+                    }
+                );
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log(data);
+            } catch (error) {
+
+                console.error("There was an error!", error);
+            }
+        }
     };
 
     return (
@@ -54,36 +104,45 @@ function RegisterPage() {
                     </p>
                 </div>
                 <div className="w-full max-w-xs">
-                    <form className="space-y-4 bg-white p-4 shadow rounded-lg">
-                        {formFields.map((field, index) => (
+                    <form
+                        onSubmit={
+                            isVerificationCodeSent
+                                ? handleCompleteRegistration
+                                : handlePhoneNumberSubmit
+                        }
+                        className="space-y-4 bg-white p-4 shadow rounded-lg"
+                    >
+                        {currentFormFields.map((fieldName, index) => (
                             <Input
                                 key={index}
-                                type={field.type}
-                                placeholder={field.name}
+                                type={
+                                    fieldName === "Phone Number" ||
+                                    fieldName === "Verification Code"
+                                        ? "tel"
+                                        : fieldName === "Dexcom Password"
+                                        ? "password"
+                                        : "text"
+                                }
+                                placeholder={fieldName}
+                                value={formData[fieldName]}
+                                onChange={handleChange(fieldName)}
                                 disabled={
-                                    phoneNumberEntered &&
-                                    field.name === "Phone Number"
-                                }
-                                onChange={
-                                    field.name === "Phone Number"
-                                        ? handlePhoneNumberChange
-                                        : undefined
-                                }
-                                value={
-                                    field.name === "Phone Number"
-                                        ? phoneNumber
-                                        : ""
+                                    currentFormFields.length > 1 &&
+                                    fieldName === "Phone Number"
                                 }
                             />
                         ))}
+
                         <RegisterButton
-                            onClick={handlePhoneNumberSubmit}
-                            disabled={phoneNumberEntered && !phoneNumber}
+                            type="submit"
+                            disabled={
+                                !formData["Phone Number"] &&
+                                !isVerificationCodeSent
+                            }
                         >
-                            {phoneNumberEntered ? "Register" : "Submit"}
+                            {isVerificationCodeSent ? "Register" : "Submit"}
                         </RegisterButton>
                     </form>
-                    {/* ... Social Icons ... */}
                 </div>
             </div>
         </div>
