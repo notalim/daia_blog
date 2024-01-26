@@ -49,7 +49,6 @@ function RegisterPage() {
                 );
             }
 
-            
             console.log(message);
             setIsVerificationCodeSent(true);
             setCurrentFormFields(additionalFormFields);

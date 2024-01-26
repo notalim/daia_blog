@@ -1,39 +1,41 @@
-import React, { useState, useEffect } from "react";
-import "../containers/styles/RegisterPage.css";
+import React, { useState } from "react";
 import Input from "../components/Input";
-import RegisterButton from "../components/RegisterButton";
+import RegisterButton from "../components/RegisterButton"; // Assuming this can be reused for the login button
 
-const initialFormFields = [{ name: "Phone Number", type: "tel" }];
-
-const additionalFormFields = [
-    { name: "Verification Code", type: "tel" },
-    { name: "Dexcom Username", type: "text" },
-    { name: "Dexcom Password", type: "password" },
-    { name: "Your Name", type: "text" },
-];
-
-function RegisterPage() {
+function LoginPage() {
     const [phoneNumber, setPhoneNumber] = useState("");
-    const [phoneNumberEntered, setPhoneNumberEntered] = useState(false);
-    const [formFields, setFormFields] = useState(initialFormFields);
+    const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
 
-    useEffect(() => {
-        if (phoneNumberEntered) {
-            setFormFields(additionalFormFields);
-        } else {
-            setFormFields(initialFormFields);
-        }
-    }, [phoneNumberEntered]);
-
-    const handlePhoneNumberChange = (event) => {
+    const handleChangePhoneNumber = (event) => {
         setPhoneNumber(event.target.value);
     };
 
-    const handlePhoneNumberSubmit = (event) => {
+    const handleSubmitPhoneNumber = async (event) => {
         event.preventDefault();
+        if (!phoneNumber) return;
 
-        setPhoneNumberEntered(true);
-        setFormFields(additionalFormFields);
+        try {
+            const response = await fetch("http://localhost:3000/users/login", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({ phoneNumber }),
+            });
+
+            const message = await response.text();
+
+            if (!response.ok) {
+                throw new Error(
+                    `HTTP error! status: ${response.status} - ${message}`
+                );
+            }
+
+            console.log(message);
+            setIsVerificationCodeSent(true);
+        } catch (error) {
+            console.error("There was an error!", error);
+        }
     };
 
     return (
@@ -41,47 +43,35 @@ function RegisterPage() {
             <div className="w-full max-w-4xl mx-auto flex justify-between items-start">
                 <div className="space-y-6 p-8">
                     <h2 className="text-2xl font-bold text-gray-900">
-                        Sign Up for Live Glucose Tracking and Instant Alerts
+                        Log In for Live Glucose Tracking and Instant Alerts
                     </h2>
                     <p>
-                        If you already have an account, you can
+                        If you don’t have an account, you can
                         <a
-                            href="/login"
+                            href="/register"
                             className="text-purple-600 hover:text-purple-700"
                         >
                             {" "}
-                            Login here!
+                            Sign up here!
                         </a>
                     </p>
                 </div>
                 <div className="w-full max-w-xs">
-                    <form className="space-y-4 bg-white p-4 shadow rounded-lg">
-                        {formFields.map((field, index) => (
-                            <Input
-                                key={index}
-                                type={field.type}
-                                placeholder={field.name}
-                                disabled={
-                                    phoneNumberEntered &&
-                                    field.name === "Phone Number"
-                                }
-                                onChange={
-                                    field.name === "Phone Number"
-                                        ? handlePhoneNumberChange
-                                        : undefined
-                                }
-                                value={
-                                    field.name === "Phone Number"
-                                        ? phoneNumber
-                                        : ""
-                                }
-                            />
-                        ))}
+                    <form
+                        onSubmit={handleSubmitPhoneNumber}
+                        className="space-y-4 bg-white p-4 shadow rounded-lg"
+                    >
+                        <Input
+                            type="tel"
+                            placeholder="Phone Number"
+                            value={phoneNumber}
+                            onChange={handleChangePhoneNumber}
+                        />
                         <RegisterButton
-                            onClick={handlePhoneNumberSubmit}
-                            disabled={phoneNumberEntered && !phoneNumber}
+                            type="submit"
+                            disabled={!phoneNumber || isVerificationCodeSent}
                         >
-                            {phoneNumberEntered ? "Register" : "Submit"}
+                            {isVerificationCodeSent ? "Verify" : "Log In"}
                         </RegisterButton>
                     </form>
                 </div>
@@ -90,4 +80,4 @@ function RegisterPage() {
     );
 }
 
-export default RegisterPage;
+export default LoginPage;
