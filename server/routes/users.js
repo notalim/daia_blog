@@ -9,30 +9,50 @@ import bcrypt from "bcryptjs";
 const router = express.Router();
 
 router.post("/login", async (req, res) => {
-  const { phoneNumber, password } = req.body;
+  const { phoneNumber } = req.body;
 
   try {
-    if (!validation.validatePhoneAndPassword(phoneNumber, password)) {
-      return res.status(401).send("Invalid phone number or password");
+
+    if (!validation.phoneValidation(phoneNumber)) {
+      return res.status(400).send("Invalid phone number format");
     }
-  } catch (error) {
-    console.error(error);
-    res.status(500).send("Server error");
-  }
 
-  try {
+
     const user = await getUserByPhoneNumber(phoneNumber);
-    await checkPassword(password, user.password);
-
     if (!user) {
-      return res.status(401).send("User not found");
+      return res.status(404).send("User not found");
     }
 
-    res.status(200).send("Login successful");
+    await sendVerificationCode(phoneNumber);
+
+    res.status(200).send("Verification code sent. Please verify your phone number.");
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error");
   }
+});
+
+router.post("/login/complete", async (req, res) => {
+  const { phoneNumber, code } = req.body;
+
+  try {
+    const verificationCheck = await checkVerificationCode(phoneNumber, code);
+    if (verificationCheck.status !== "approved") {
+      return res.status(400).send("Invalid or expired code.");
+    }
+
+    const user = await getUserByPhoneNumber(phoneNumber);
+    if (!user) {
+      return res.status(404).send("User not found");
+    }
+
+    res.status(200).send("Login successful and phone number verified.");
+  }
+  catch (error) {
+    console.error(error);
+    res.status(500).send("Server error");
+  }
+
 });
 
 router.post("/signup", async (req, res) => {
@@ -47,7 +67,6 @@ router.post("/signup", async (req, res) => {
       return res.status(401).send("User already exists");
     }
 
-    // Initiate phone verification
     await sendVerificationCode(phoneNumber);
     res.status(200).send("Verification code sent. Please verify your phone number.");
   } catch (error) {
@@ -59,13 +78,12 @@ router.post("/signup", async (req, res) => {
 router.post("/signup/complete", async (req, res) => {
   const { phoneNumber, code, dexcomUser , dexcomPass , name, password } = req.body;
   try {
-    // Check the verification code
     const verificationCheck = await checkVerificationCode(phoneNumber, code);
     if (verificationCheck.status !== "approved") {
       return res.status(400).send("Invalid or expired code.");
     }
     let dexcomSessionId = await getDexcomSessionId(dexcomUser, dexcomPass);
-    // Create the user
+
     await createUser(phoneNumber, name, dexcomUser, dexcomPass, dexcomSessionId, password);
     res.status(200).send("Signup successful and phone number verified.");
   } catch (error) {
@@ -96,7 +114,6 @@ router.post("/contacts", async (req, res) => {
       return res.status(401).send("User not found");
     }
 
-    // Initiate phone verification for the emergency contact
     await sendVerificationCode(contactPhoneNumber);
     res.status(200).send("Verification code sent to emergency contact. Please verify the phone number.");
   } catch (error) {

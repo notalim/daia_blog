@@ -32,13 +32,15 @@ function RegisterPage() {
         event.preventDefault();
         if (!formData["Phone Number"]) return;
 
+        let concatPhoneNumber = "+1" + formData["Phone Number"];
+
         try {
             const response = await fetch("http://localhost:3000/users/signup", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify({ phoneNumber: formData["Phone Number"] }),
+                body: JSON.stringify({ phoneNumber: concatPhoneNumber }),
             });
 
             const message = await response.text();
@@ -49,12 +51,10 @@ function RegisterPage() {
                 );
             }
 
-            
             console.log(message);
             setIsVerificationCodeSent(true);
             setCurrentFormFields(additionalFormFields);
         } catch (error) {
-     
             console.error("There was an error!", error);
         }
     };
@@ -80,14 +80,13 @@ function RegisterPage() {
                 const data = await response.json();
                 console.log(data);
             } catch (error) {
-
                 console.error("There was an error!", error);
             }
         }
     };
 
     return (
-        <div className="min-h-screen flex items-center bg-gradient-to-r from-brand to-brand-end">
+        <div className="min-h-screen flex items-center bg-background-purple">
             <div className="w-full max-w-4xl mx-auto flex justify-between items-start">
                 <div className="space-y-6 p-8">
                     <h2 className="text-2xl font-bold text-gray-900">
@@ -99,6 +98,7 @@ function RegisterPage() {
                             href="/login"
                             className="text-purple-600 hover:text-purple-700"
                         >
+                            {" "}
                             Login here!
                         </a>
                     </p>
