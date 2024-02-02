@@ -8,24 +8,24 @@ import { ObjectId } from "mongodb";
 dotenv.config();
 const saltRounds = 10;
 
-const algorithm = "aes-256-ctr";
-const secretKey = process.env.ENCRYPTION_SECRET_KEY;
-const iv = crypto.randomBytes(16); // Initialization vector
+// const algorithm = "aes-256-ctr";
+// const secretKey = process.env.ENCRYPTION_SECRET_KEY;
+// const iv = crypto.randomBytes(16); // Initialization vector
 
-const encrypt = (text) => {
-  const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
-  const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
-  return {
-    iv: iv.toString("hex"),
-    content: encrypted.toString("hex"),
-  };
-};
+// const encrypt = (text) => {
+//   const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
+//   const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+//   return {
+//     iv: iv.toString("hex"),
+//     content: encrypted.toString("hex"),
+//   };
+// };
 
-const decrypt = (hash) => {
-  const decipher = crypto.createDecipheriv(algorithm, secretKey, Buffer.from(hash.iv, "hex"));
-  const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash.content, "hex")), decipher.final()]);
-  return decrpyted.toString();
-};
+// const decrypt = (hash) => {
+//   const decipher = crypto.createDecipheriv(algorithm, secretKey, Buffer.from(hash.iv, "hex"));
+//   const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash.content, "hex")), decipher.final()]);
+//   return decrpyted.toString();
+// };
 
 const createUser = async (phoneNumber, name, dexcomUser, dexcomPass, dexcomSessionId, password) => {
   try {
@@ -34,7 +34,7 @@ const createUser = async (phoneNumber, name, dexcomUser, dexcomPass, dexcomSessi
     }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const hashedDexcomPass = await encrypt(dexcomPass);
+    const hashedDexcomPass = dexcomPass;
 
     const newUser = {
       phoneNumber,
@@ -134,7 +134,7 @@ const addEmergencyContact = async (phoneNumber, contactPhoneNumber, contactName,
 
 const getDexcomSessionId = async (accountName, password) => {
   const url = 'https://share2.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName';
-  password = decrypt(password);
+
   const body = {
     accountName: accountName,
     applicationId: 'd8665ade-9673-4e27-9ff6-92db4ce13d13',
@@ -158,7 +158,7 @@ const getDexcomSessionId = async (accountName, password) => {
     const data = await response.text(); // Use .json() if the API response is in JSON format
     console.log(data);
     const SessionId = data.replace(/^"|"$/g, "");
-  console.log(typeof SessionId);
+  // console.log(typeof SessionId);
     return SessionId; // The session ID should be directly in the response body
   } catch (error) {
     console.error('Error fetching Dexcom session ID:', error);
@@ -198,4 +198,4 @@ const updateUserSessionId = async (userId, dexcomSessionId) => {
   }
 }
 
-export { createUser, getUserByPhoneNumber, checkUserByPhoneNumber, checkPassword, addEmergencyContact, getDexcomSessionId, getAllUsers, updateUserSessionId, encrypt, decrypt };
+export { createUser, getUserByPhoneNumber, checkUserByPhoneNumber, checkPassword, addEmergencyContact, getDexcomSessionId, getAllUsers, updateUserSessionId };
