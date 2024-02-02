@@ -7,21 +7,15 @@ export default {
     theme: {
         extend: {
             colors: {
-                'primary': '',
-                'secondary': '',
+                primary: "",
+                secondary: "",
                 "subtle-purple": "#FAF5FF",
                 "background-purple": "#F3F3FD",
+                "full-purple": "#563890",
+                "hover-full-purple": "#352358",
                 "dim-purple": "#BBA9DD;",
-                50: "#f3f3fc",
-                100: "#c1c1c1",
-                200: "#f2f2fc",
-                300: "#000000",
-                400: "#f0f1fc",
-                500: "#f2f3fc",
-                600: "#ffffff",
-                700: "#f1f2fc",
-                800: "#eff0fc",
-                900: "#edeffb",
+                "input-background": "#EAF0F7",
+                "input-text": "#667085",
             },
             fontFamily: {
                 sans: [
