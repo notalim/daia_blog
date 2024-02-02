@@ -31,7 +31,7 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="bg-primary p-4 text-secondary py-4 px-6 flex justify-between items-center shadow-md">
+        <nav className="bg-background-purple p-4 text-secondary py-4 px-6 flex justify-between items-center shadow-md">
             <div className="flex items-center">
                 <Link to="/" className={`mx-4`}>
                     <img
@@ -52,10 +52,10 @@ const Navbar = () => {
             </div>
             <div className="flex items-center">
                 <Link
-                    to="/register"
+                    to="/login"
                     className="text-black font-medium text-base mr-4"
                 >
-                    Register
+                    Login
                 </Link>
             </div>
         </nav>
