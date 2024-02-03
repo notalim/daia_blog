@@ -1,8 +1,8 @@
 /** @type {import('tailwindcss').Config} */
 export default {
     content: [
-        "./src/**/*.{jsx,css}", // this will match all .jsx and .css files in your src directory
-        "./index.html", // include this if you have any Tailwind classes in your HTML
+        "./src/**/*.{jsx,css}", 
+        "./index.html", 
     ],
     theme: {
         extend: {
