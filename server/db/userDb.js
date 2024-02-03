@@ -22,16 +22,17 @@ const encrypt = (text) => {
 };
 
 const decrypt = (hash) => {
-  const decipher = crypto.createDecipheriv(algorithm, secretKey, Buffer.from(hash.iv, "hex"));
-  const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash.content, "hex")), decipher.final()]);
-  return decrpyted.toString();
+  // const decipher = crypto.createDecipheriv(algorithm, secretKey, Buffer.from(hash.iv, "hex"));
+  // const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash.content, "hex")), decipher.final()]);
+  // return decrpyted.toString();
+  return hash;
 };
 
-const createUser = async (phoneNumber, name, dexcomUser, dexcomPass, dexcomSessionId, password) => {
+const createUser = async (phoneNumber, name, dexcomUser, dexcomPass, dexcomSessionId, password, confirmPassword) => {
   try {
-    if (!validation.validatePhoneAndPasswordAndName(phoneNumber, password, name)) {
-      throw new Error("Invalid phone number or password or name");
-    }
+    // if (!validation.validatePhoneAndPasswordAndName(phoneNumber, password, confirmPassword, name)) {
+    //   throw new Error("Invalid phone number or password or name");
+    // }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const hashedDexcomPass = await encrypt(dexcomPass);
@@ -94,7 +95,7 @@ const checkUserByPhoneNumber = async (phoneNumber) => {
 
 const checkPassword = async (phoneNumber, password) => {
   try {
-    if (!validation.validatePhoneAndPassword(phoneNumber, password)) {
+    if (!validation.validatePhoneAndPassword(phoneNumber, password, confirmPassword)) {
       throw new Error("Invalid phone number or password");
     }
 
