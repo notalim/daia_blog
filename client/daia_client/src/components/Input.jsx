@@ -6,7 +6,7 @@ function Input({ placeholder, onChange, value, disabled }) {
             onChange={onChange}
             value={value}
             disabled={disabled}
-            className="shadow appearance-none border rounded-lg w-full py-3 px-4 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
+            className="bg-input-background appearance-none border rounded-lg w-full py-3 px-4 text-input-text border-input-text leading-tight focus:outline-none focus:border-primary transition duration-300 ease-in-out"
         />
     );
 }

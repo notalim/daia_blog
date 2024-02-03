@@ -8,6 +8,7 @@ import { ObjectId } from "mongodb";
 dotenv.config();
 const saltRounds = 10;
 
+
 // const algorithm = "aes-256-ctr";
 // const secretKey = process.env.ENCRYPTION_SECRET_KEY;
 // const iv = crypto.randomBytes(16); // Initialization vector
@@ -27,11 +28,11 @@ const saltRounds = 10;
 //   return decrpyted.toString();
 // };
 
-const createUser = async (phoneNumber, name, dexcomUser, dexcomPass, dexcomSessionId, password) => {
+const createUser = async (phoneNumber, name, dexcomUser, dexcomPass, dexcomSessionId, password, confirmPassword) => {
   try {
-    if (!validation.validatePhoneAndPasswordAndName(phoneNumber, password, name)) {
-      throw new Error("Invalid phone number or password or name");
-    }
+    // if (!validation.validatePhoneAndPasswordAndName(phoneNumber, password, confirmPassword, name)) {
+    //   throw new Error("Invalid phone number or password or name");
+    // }
 
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const hashedDexcomPass = dexcomPass;
@@ -94,7 +95,7 @@ const checkUserByPhoneNumber = async (phoneNumber) => {
 
 const checkPassword = async (phoneNumber, password) => {
   try {
-    if (!validation.validatePhoneAndPassword(phoneNumber, password)) {
+    if (!validation.validatePhoneAndPassword(phoneNumber, password, confirmPassword)) {
       throw new Error("Invalid phone number or password");
     }
 

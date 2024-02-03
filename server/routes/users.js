@@ -76,16 +76,21 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/signup/complete", async (req, res) => {
-  const { phoneNumber, code, dexcomUser , dexcomPass , name, password } = req.body;
+  //console.log(req.body)
+  const { phoneNumber, code, dexcomUser , dexcomPass , name, password, confirmPassword } = req.body;
   try {
+    // console.log(phoneNumber, code, dexcomUser, dexcomPass, name, password);
     const verificationCheck = await checkVerificationCode(phoneNumber, code);
+
+    // console.log(verificationCheck.status);
     if (verificationCheck.status !== "approved") {
       return res.status(400).send("Invalid or expired code.");
     }
+    
     let dexcomSessionId = await getDexcomSessionId(dexcomUser, dexcomPass);
 
-    await createUser(phoneNumber, name, dexcomUser, dexcomPass, dexcomSessionId, password);
-    res.status(200).send("Signup successful and phone number verified.");
+    await createUser(phoneNumber, name, dexcomUser, dexcomPass, dexcomSessionId, password, confirmPassword);
+    res.status(200).send({ message: "User created successfully", success: true, dexcomSessionId: dexcomSessionId});
   } catch (error) {
     console.error(error);
     res.status(500).send("Server error");

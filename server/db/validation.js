@@ -1,6 +1,6 @@
 // server/db/validation.js
 
-const passwordValidation = (password) => {
+const passwordValidation = (password, confirmPassword) => {
   const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
   return passwordRegex.test(password);
 };
@@ -20,12 +20,12 @@ const stringValidation = (string) => {
   return stringRegex.test(string);
 }
 
-const validatePhoneAndPassword = (phoneNumber, password) => {
-    return passwordValidation(password) && phoneValidation(phoneNumber);
+const validatePhoneAndPassword = (phoneNumber, password, confirmPassword) => {
+    return passwordValidation(password, confirmPassword) && phoneValidation(phoneNumber);
 }
 
-const validatePhoneAndPasswordAndName = (phoneNumber, password, name) => {
-    return passwordValidation(password) && nameValidation(name) && phoneValidation(phoneNumber);
+const validatePhoneAndPasswordAndName = (phoneNumber, password, confirmPassword, name) => {
+    return passwordValidation(password, confirmPassword) && nameValidation(name) && phoneValidation(phoneNumber);
 };
 
 export default {validatePhoneAndPassword, validatePhoneAndPasswordAndName, passwordValidation, nameValidation, phoneValidation, stringValidation };
