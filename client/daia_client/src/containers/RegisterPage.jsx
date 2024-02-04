@@ -5,6 +5,8 @@ import PhoneNumberInput from "../components/PhoneNumberInput";
 import GradientBackground from "../components/GradientBackground";
 import RegisterButton from "../components/RegisterButton";
 
+import API from "../services/apiClient";
+
 const initialFormFields = ["Phone Number"];
 const additionalFormFields = [
     "Verification Code",
@@ -22,7 +24,7 @@ function RegisterPage() {
         "Dexcom Username": "",
         "Dexcom Password": "",
         "Your Name": "",
-        "Password": "",
+        Password: "",
         "Confirm Password": "",
     });
 
@@ -35,49 +37,43 @@ function RegisterPage() {
         setFormData({ ...formData, [field]: event.target.value });
     };
 
-        useEffect(() => {
-            if (isVerificationCodeSent) {
-                setCurrentFormFields(additionalFormFields);
-            }
-        }, [isVerificationCodeSent]); 
+    useEffect(() => {
+        if (isVerificationCodeSent) {
+            setCurrentFormFields(additionalFormFields);
+        }
+    }, [isVerificationCodeSent]);
 
-        const getInputType = (fieldName) => {
-            switch (fieldName) {
-                case "Dexcom Password":
-                case "Password":
-                case "Confirm Password":
-                    return "password";
-                case "Verification Code":
-                    return "tel";
-                default:
-                    return "text";
-            }
-        };
+    const getInputType = (fieldName) => {
+        switch (fieldName) {
+            case "Dexcom Password":
+                return "password";
+            case "Password":
+                return "password";
+            case "Confirm Password":
+                return "password";
+            case "Verification Code":
+                return "tel";
+            default:
+                return "text";
+        }
+    };
 
     const handlePhoneNumberSubmit = async (event) => {
         event.preventDefault();
         if (!formData["Phone Number"]) return;
 
-        let concatPhoneNumber = "+1" + formData["Phone Number"];
+        let concatPhoneNumber =
+            "+1" + formData["Phone Number"].replace(/\D/g, "");
 
         try {
-            const response = await fetch("http://localhost:3000/users/signup", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ phoneNumber: concatPhoneNumber }),
+            const { data, error } = await API.registerUser({
+                phoneNumber: concatPhoneNumber,
             });
 
-            const message = await response.text();
-
-            if (!response.ok) {
-                throw new Error(
-                    `HTTP error! status: ${response.status} - ${message}`
-                );
+            if (error) {
+                throw new Error(`HTTP error! - ${error}`);
             }
 
-            console.log(message);
             setIsVerificationCodeSent(true);
             setCurrentFormFields(additionalFormFields);
         } catch (error) {
@@ -89,35 +85,22 @@ function RegisterPage() {
         event.preventDefault();
         if (isVerificationCodeSent) {
             try {
-                // console.log(formData);
-
                 let concatPhoneNumber =
                     "+1" + formData["Phone Number"].replace(/\D/g, "");
 
-                const response = await fetch(
-                    "http://localhost:3000/users/signup/complete",
-                    {
-                        method: "POST",
-                        headers: {
-                            "Content-Type": "application/json",
-                        },
-                        body: JSON.stringify({
-                            phoneNumber: concatPhoneNumber,
-                            code: formData["Verification Code"],
-                            dexcomUser: formData["Dexcom Username"],
-                            dexcomPass: formData["Dexcom Password"],
-                            name: formData["Your Name"],
-                            password: formData["Password"],
-                            confirmPassword: formData["Confirm Password"],
-                        }),
-                    }
-                );
+                const { data, error } = await API.completeRegistration({
+                    phoneNumber: concatPhoneNumber,
+                    code: formData["Verification Code"],
+                    dexcomUser: formData["Dexcom Username"],
+                    dexcomPass: formData["Dexcom Password"],
+                    name: formData["Your Name"],
+                    password: formData["Password"],
+                    confirmPassword: formData["Confirm Password"],
+                });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (error) {
+                    throw new Error(`HTTP error! status: ${error}`);
                 }
-                console.log(response);
-                const data = await response.json();
                 console.log(data);
             } catch (error) {
                 console.error("There was an error!", error);
@@ -177,7 +160,7 @@ function RegisterPage() {
                                     placeholder={fieldName}
                                     value={formData[fieldName]}
                                     onChange={handleChange(fieldName)}
-                                    className="mb-4" 
+                                    className="mb-4"
                                 />
                             ))}
                         <div className="mt-4">

@@ -10,13 +10,10 @@ const router = express.Router();
 
 router.post("/login", async (req, res) => {
   const { phoneNumber } = req.body;
-
   try {
-
     if (!validation.phoneValidation(phoneNumber)) {
       return res.status(400).send("Invalid phone number format");
     }
-
 
     const user = await getUserByPhoneNumber(phoneNumber);
     if (!user) {
@@ -144,11 +141,6 @@ router.post("/contacts/verify", async (req, res) => {
     console.error(error);
     res.status(500).send("Server error");
   }
-});
-
-
-router.post("/logout", (req, res) => {
-  res.redirect("/");
 });
 
 export default router;
