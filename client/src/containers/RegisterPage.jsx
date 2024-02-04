@@ -24,7 +24,7 @@ function RegisterPage() {
         "Dexcom Username": "",
         "Dexcom Password": "",
         "Your Name": "",
-        Password: "",
+        "Password": "",
         "Confirm Password": "",
     });
 
@@ -57,6 +57,24 @@ function RegisterPage() {
                 return "text";
         }
     };
+        useEffect(() => {
+            if (isVerificationCodeSent) {
+                setCurrentFormFields(additionalFormFields);
+            }
+        }, [isVerificationCodeSent]); 
+
+        const getInputType = (fieldName) => {
+            switch (fieldName) {
+                case "Dexcom Password":
+                case "Password":
+                case "Confirm Password":
+                    return "password";
+                case "Verification Code":
+                    return "tel";
+                default:
+                    return "text";
+            }
+        };
 
     const handlePhoneNumberSubmit = async (event) => {
         event.preventDefault();
@@ -73,6 +91,8 @@ function RegisterPage() {
             if (error) {
                 throw new Error(`HTTP error! - ${error}`);
             }
+
+        let concatPhoneNumber = "+1" + formData["Phone Number"];
 
             setIsVerificationCodeSent(true);
             setCurrentFormFields(additionalFormFields);
@@ -101,6 +121,13 @@ function RegisterPage() {
                 if (error) {
                     throw new Error(`HTTP error! status: ${error}`);
                 }
+                // console.log(formData);
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                console.log(response);
+                const data = await response.json();
                 console.log(data);
             } catch (error) {
                 console.error("There was an error!", error);
