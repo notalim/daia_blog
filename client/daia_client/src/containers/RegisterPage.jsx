@@ -11,6 +11,8 @@ const additionalFormFields = [
     "Dexcom Username",
     "Dexcom Password",
     "Your Name",
+    "Password",
+    "Confirm Password",
 ];
 
 function RegisterPage() {
@@ -20,15 +22,37 @@ function RegisterPage() {
         "Dexcom Username": "",
         "Dexcom Password": "",
         "Your Name": "",
+        "Password": "",
+        "Confirm Password": "",
     });
 
     const [currentFormFields, setCurrentFormFields] =
         useState(initialFormFields);
+
     const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
 
     const handleChange = (field) => (event) => {
         setFormData({ ...formData, [field]: event.target.value });
     };
+
+        useEffect(() => {
+            if (isVerificationCodeSent) {
+                setCurrentFormFields(additionalFormFields);
+            }
+        }, [isVerificationCodeSent]); 
+
+        const getInputType = (fieldName) => {
+            switch (fieldName) {
+                case "Dexcom Password":
+                case "Password":
+                case "Confirm Password":
+                    return "password";
+                case "Verification Code":
+                    return "tel";
+                default:
+                    return "text";
+            }
+        };
 
     const handlePhoneNumberSubmit = async (event) => {
         event.preventDefault();
@@ -60,10 +84,16 @@ function RegisterPage() {
             console.error("There was an error!", error);
         }
     };
+
     const handleCompleteRegistration = async (event) => {
         event.preventDefault();
         if (isVerificationCodeSent) {
             try {
+                // console.log(formData);
+
+                let concatPhoneNumber =
+                    "+1" + formData["Phone Number"].replace(/\D/g, "");
+
                 const response = await fetch(
                     "http://localhost:3000/users/signup/complete",
                     {
@@ -71,14 +101,22 @@ function RegisterPage() {
                         headers: {
                             "Content-Type": "application/json",
                         },
-                        body: JSON.stringify(formData),
+                        body: JSON.stringify({
+                            phoneNumber: concatPhoneNumber,
+                            code: formData["Verification Code"],
+                            dexcomUser: formData["Dexcom Username"],
+                            dexcomPass: formData["Dexcom Password"],
+                            name: formData["Your Name"],
+                            password: formData["Password"],
+                            confirmPassword: formData["Confirm Password"],
+                        }),
                     }
                 );
 
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
                 }
-
+                console.log(response);
                 const data = await response.json();
                 console.log(data);
             } catch (error) {
@@ -87,82 +125,80 @@ function RegisterPage() {
         }
     };
 
- return (
-    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-background-purple relative">
-    <GradientBackground />
-    <div className="z-10 w-full max-w-6xl mx-auto md:flex justify-center items-start">
-        {/* Left column */}
-        <div className="flex-1 mb-6 md:mb-0">
-            <h2 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
-                Sign Up for Live Glucose <br />
-                Tracking and Instant Alerts
-            </h2>
-            <p className="text-lg mb-8">
-                If you already have an account, you can
-                <a
-                    href="/login"
-                    className="text-purple-600 hover:text-purple-700"
-                >
-                    {" "}
-                    Login here!
-                </a>
-            </p>
-        </div>
-        {/* Right column */}
-        <div className="flex-1 bg-opacity-50 p-4 rounded-lg mb-6 md:mb-0 md:ml-4">
-            <form
-                onSubmit={
-                    isVerificationCodeSent
-                        ? handleCompleteRegistration
-                        : handlePhoneNumberSubmit
-                }
-                className="flex flex-col items-center"
-            >
-                <div className="flex flex-col items-center mb-4 w-full">
-                    <PhoneNumberInput
-                        placeholder="Phone Number"
-                        onChange={handleChange("Phone Number")}
-                        value={formData["Phone Number"]}
-                        disabled={currentFormFields.length > 1}
-                    />
+    return (
+        <div className="min-h-screen flex items-center justify-center bg-background-purple relative">
+            <GradientBackground />
+            <div className="z-10 w-full max-w-6xl mx-auto flex justify-between items-start">
+                <div className="flex-1">
+                    <h2 className="text-4xl font-bold text-gray-900 mb-6 leading-tight">
+                        Sign Up for Live Glucose <br />
+                        Tracking and Instant Alerts
+                    </h2>
+                    <p className="text-lg mb-8">
+                        If you already have an account, you can
+                        <a
+                            href="/login"
+                            className="text-purple-600 hover:text-purple-700"
+                        >
+                            {" "}
+                            Login here!
+                        </a>
+                    </p>
                 </div>
-                {currentFormFields
-                    .filter((fieldName) => fieldName !== "Phone Number")
-                    .map((fieldName, index) => (
-                        <Input
-                            key={index}
-                            type={
-                                fieldName === "Verification Code"
-                                    ? "tel"
-                                    : fieldName === "Dexcom Password"
-                                    ? "password"
-                                    : "text"
-                            }
-                            placeholder={fieldName}
-                            value={formData[fieldName]}
-                            onChange={handleChange(fieldName)}
-                            className="mb-4 w-full" // Adjust width
-                        />
-                    ))}
-                <div className="mt-4 w-full md:w-auto">
-                    <RegisterButton
-                        type="submit"
-                        disabled={
-                            !formData["Phone Number"] &&
-                            !isVerificationCodeSent
+                <div className="flex-1 bg-white bg-opacity-50 p-4 shadow rounded-lg">
+                    <div className="mb-8">
+                        <h2 className="text-xl font-semibold">Welcome!</h2>
+                    </div>
+                    <form
+                        onSubmit={
+                            isVerificationCodeSent
+                                ? handleCompleteRegistration
+                                : handlePhoneNumberSubmit
                         }
-                        className="w-full md:w-auto"
+                        className="flex flex-col items-end"
                     >
-                        {isVerificationCodeSent
-                            ? "Complete Registration"
-                            : "Send Code"}
-                    </RegisterButton>
+                        <div className="flex flex-col items-end mb-4">
+                            <label className="text-gray-500 mr-2 mb-2">
+                                +1
+                            </label>
+                            <PhoneNumberInput
+                                placeholder="Phone Number"
+                                onChange={handleChange("Phone Number")}
+                                value={formData["Phone Number"]}
+                                disabled={currentFormFields.length > 1}
+                            />
+                        </div>
+                        {currentFormFields
+                            .filter((fieldName) => fieldName !== "Phone Number")
+                            .map((fieldName, index) => (
+                                <Input
+                                    key={index}
+                                    type={getInputType(fieldName)}
+                                    placeholder={fieldName}
+                                    value={formData[fieldName]}
+                                    onChange={handleChange(fieldName)}
+                                    className="mb-4" 
+                                />
+                            ))}
+                        <div className="mt-4">
+                            <RegisterButton
+                                type="submit"
+                                disabled={
+                                    !formData["Phone Number"] &&
+                                    !isVerificationCodeSent
+                                }
+                                className="w-full"
+                            >
+                                {isVerificationCodeSent
+                                    ? "Complete Registration"
+                                    : "Send Code"}
+                            </RegisterButton>
+                        </div>
+                    </form>
                 </div>
-            </form>
+            </div>
         </div>
-    </div>
-</div>
- );
+    );
 }
 
 export default RegisterPage;

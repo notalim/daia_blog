@@ -8,6 +8,7 @@ dotenv.config();
 import configRoutes from "./routes/index.js";
 
 app.use(express.json());
+
 app.use(express.urlencoded({ extended: true }));
 
 app.use(cors());
