@@ -7,13 +7,14 @@ import RegisterButton from "../components/RegisterButton";
 
 import API from "../services/apiClient";
 import validation from "../services/validation";
+import { errorTypes } from "../services/errorTypes";
 
 const initialFormFields = ["Phone Number"];
 const additionalFormFields = [
     "Verification Code",
+    "Your Name",
     "Dexcom Username",
     "Dexcom Password",
-    "Your Name",
     "Password",
     "Confirm Password",
 ];
@@ -25,19 +26,17 @@ const validateRegistrationForm = (formData) => {
             "+1" + formData["Phone Number"].replace(/\D/g, "")
         )
     ) {
-        errors.phone = "Invalid phone number format";
+        errors.phone = errorTypes.INVALID_PHONE_NUMBER;
     }
     if (!validation.codeValidation(formData["Verification Code"])) {
-        errors.code = "Invalid verification code";
+        errors.code = errorTypes.INVALID_VERIFICATION_CODE;
     }
     if (!validation.nameValidation(formData["Your Name"])) {
-        errors.name = "Invalid name";
+        errors.name = errorTypes.INVALID_NAME;
     }
-    if (!validation.usernameValidation(formData["Dexcom Username"])) {
-        errors.username = "Invalid username";
-    }
+
     if (!validation.passwordValidation(formData["Password"])) {
-        errors.password = "Invalid password format";
+        errors.password = errorTypes.INVALID_PASSWORD;
     }
     if (
         !validation.confirmPasswordValidation(
@@ -45,7 +44,7 @@ const validateRegistrationForm = (formData) => {
             formData["Confirm Password"]
         )
     ) {
-        errors.confirmPassword = "Passwords do not match";
+        errors.confirmPassword = errorTypes.PASSWORDS_DO_NOT_MATCH;
     }
     return errors;
 };
@@ -96,7 +95,7 @@ function RegisterPage() {
         setError("");
 
         if (!formData["Phone Number"]) {
-            setError("Please enter your phone number.");
+            setError(errorTypes.PHONE_NUMBER_REQUIRED);
             return;
         }
 
@@ -105,7 +104,7 @@ function RegisterPage() {
                 "+1" + formData["Phone Number"].replace(/\D/g, "")
             )
         ) {
-            setError("Invalid phone number format.");
+            setError(errorTypes.INVALID_PHONE_NUMBER);
             return;
         }
 
@@ -145,9 +144,9 @@ function RegisterPage() {
                 const { data, error } = await API.completeRegistration(
                     concatPhoneNumber,
                     formData["Verification Code"],
+                    formData["Your Name"],
                     formData["Dexcom Username"],
                     formData["Dexcom Password"],
-                    formData["Your Name"],
                     formData["Password"],
                     formData["Confirm Password"]
                 );

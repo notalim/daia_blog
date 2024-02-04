@@ -27,13 +27,13 @@ class ApiClient {
             const res = await axios({ url, method, data, headers });
             return { data: res.data, error: null };
         } catch (error) {
-             console.error("APIclient.makeRequest.error:");
-             console.error({ errorResponse: error.response });
-             const serverError = error?.response?.data?.message;
-             return {
-                 data: null,
-                 error: serverError || "An unexpected error occurred",
-             };
+            console.error("APIclient.makeRequest.error:");
+            console.error({ errorResponse: error.response });
+            const serverError = error?.response?.data?.message;
+            return {
+                data: null,
+                error: serverError || "An unexpected error occurred",
+            };
         }
     }
 
@@ -76,9 +76,10 @@ class ApiClient {
             data: {
                 phoneNumber,
                 code,
+                name,
                 dexcomUser,
                 dexcomPass,
-                name,
+
                 password,
                 confirmPassword,
             },

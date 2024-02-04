@@ -1,5 +1,11 @@
+// ! Make sure to add it both to the server and client validation.js files and update it.
+
 const passwordValidation = (password) => {
-    const passwordRegex = /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{8,}$/;
+    // 8 symbols, at least one number, letter, one special character and one caps letter
+
+    const passwordRegex =
+        /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$/;
+    // console.log("password:" + password, passwordRegex.test(password));
     return passwordRegex.test(password);
 };
 
@@ -8,17 +14,16 @@ const nameValidation = (name) => {
     return nameRegex.test(name);
 };
 
-const usernameValidation = (username) => {
-    // should be 6 symbols long or more, only letters and numbers and _
-    const usernameRegex = /^[a-zA-Z0-9_]{6,}$/;
-    return usernameRegex.test(username);
-};
-
-
 const phoneValidation = (phoneNumber) => {
     const phoneRegex = /^\+1\d{10}$/;
     return phoneRegex.test(phoneNumber);
 };
+
+// const usernameValidation = (username) => {
+//     // should be 6 symbols long or more, only letters and numbers and _
+//     const usernameRegex = /^[a-zA-Z0-9_]{6,}$/;
+//     return usernameRegex.test(username);
+// };
 
 const stringValidation = (string) => {
     const stringRegex = /^[a-zA-Z0-9]+(([',. -][a-zA-Z ])?[a-zA-Z0-9]*)*$/;
@@ -37,7 +42,7 @@ const confirmPasswordValidation = (password, confirmPassword) => {
 export default {
     passwordValidation,
     nameValidation,
-    usernameValidation,
+    // usernameValidation,
     phoneValidation,
     stringValidation,
     codeValidation,

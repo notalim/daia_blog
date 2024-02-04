@@ -84,7 +84,7 @@ router.post("/login/complete", async (req, res) => {
 
 router.post("/signup", async (req, res) => {
     const { phoneNumber } = req.body;
-    console.log(req.body);
+    // console.log(req.body);
     if (!validation.phoneValidation(phoneNumber)) {
         return res.status(400).json({
             message: "Invalid phone number format",
@@ -117,9 +117,9 @@ router.post("/signup/complete", async (req, res) => {
     const {
         phoneNumber,
         code,
+        name,
         dexcomUser,
         dexcomPass,
-        name,
         password,
         confirmPassword,
     } = req.body;
@@ -165,26 +165,32 @@ router.post("/signup/complete", async (req, res) => {
                 error: errorTypes.INVALID_CODE,
             });
         }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
 
-        try {
-            let dexcomSessionId = await getDexcomSessionId(
-                dexcomUser,
-                dexcomPass
-            );
-            if (!dexcomSessionId) {
-                return res.status(401).json({
-                    message: "Invalid Dexcom credentials",
-                    error: errorTypes.INVALID_DEXCOM_CREDENTIALS,
-                });
-            }
-        } catch (error) {
-            console.error(error);
-            res.status(500).json({
-                message: "Server error",
-                error: errorTypes.SERVER_ERROR,
+    let dexcomSessionId;
+
+    try {
+        dexcomSessionId = await getDexcomSessionId(dexcomUser, dexcomPass);
+        if (!dexcomSessionId) {
+            return res.status(401).json({
+                message: "Invalid Dexcom credentials",
+                error: errorTypes.INVALID_DEXCOM_CREDENTIALS,
             });
         }
-
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
+    try {
         await createUser(
             phoneNumber,
             name,
