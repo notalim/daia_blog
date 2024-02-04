@@ -1,6 +1,8 @@
 // apiClient.js
 import axios from "axios";
 
+import { errorTypes } from "./errorTypes";
+
 class ApiClient {
     constructor(remoteHostUrl) {
         this.remoteHostUrl = remoteHostUrl;
@@ -25,10 +27,13 @@ class ApiClient {
             const res = await axios({ url, method, data, headers });
             return { data: res.data, error: null };
         } catch (error) {
-            console.error("APIclient.makeRequest.error:");
-            console.error({ errorResponse: error.response });
-            const message = error?.response?.data?.error?.message;
-            return { data: null, error: message || String(error) };
+             console.error("APIclient.makeRequest.error:");
+             console.error({ errorResponse: error.response });
+             const serverError = error?.response?.data?.message;
+             return {
+                 data: null,
+                 error: serverError || "An unexpected error occurred",
+             };
         }
     }
 
