@@ -6,7 +6,6 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
 
-   
     const loginUser = async (phoneNumber) => {
         try {
             const { data, error } = await API.login({ phoneNumber });
@@ -39,9 +38,9 @@ export const AuthProvider = ({ children }) => {
     };
 
     const logoutUser = () => {
-        setUser(null); 
-        localStorage.removeItem("user"); 
-        API.logout(); 
+        setUser(null);
+        localStorage.removeItem("user");
+        API.logout();
     };
 
     useEffect(() => {

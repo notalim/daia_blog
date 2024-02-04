@@ -2,7 +2,7 @@
 import React from "react";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
-import { AuthProvider } from "./contexts/AuthContext"; 
+import { AuthProvider } from "./contexts/AuthContext";
 import LandingPage from "./containers/LandingPage";
 import RegisterPage from "./containers/RegisterPage";
 import LoginPage from "./containers/LoginPage";
@@ -24,6 +24,5 @@ function App() {
         </AuthProvider>
     );
 }
-
 
 export default App;
