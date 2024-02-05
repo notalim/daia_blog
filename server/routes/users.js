@@ -71,7 +71,11 @@ router.post("/login/complete", async (req, res) => {
             });
         }
         res.status(200).json({
-            message: "Login successful and phone number verified.",
+            data: {
+                user: user,
+                dexcomSessionId: user.dexcomSessionId,
+            },
+            message: "User logged in successfully",
         });
     } catch (error) {
         console.error(error);

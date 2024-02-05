@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import "../containers/styles/RegisterPage.css";
+import { useNavigate } from "react-router-dom";
+
 import Input from "../components/Input";
 import PhoneNumberInput from "../components/PhoneNumberInput";
 import GradientBackground from "../components/GradientBackground";
@@ -8,6 +9,8 @@ import RegisterButton from "../components/RegisterButton";
 import API from "../services/apiClient";
 import validation from "../services/validation";
 import { errorTypes } from "../services/errorTypes";
+
+import useAuth from "../contexts/useAuth";
 
 const initialFormFields = ["Phone Number"];
 const additionalFormFields = [
@@ -76,6 +79,8 @@ function RegisterPage() {
             setCurrentFormFields(additionalFormFields);
         }
     }, [isVerificationCodeSent]);
+
+    const navigate = useNavigate();
 
     const getInputType = (fieldName) => {
         switch (fieldName) {
@@ -154,6 +159,10 @@ function RegisterPage() {
                 if (error) {
                     setError(error);
                     return;
+                }
+
+                if (data && !error) {
+                    navigate("/dashboard");
                 }
             } catch (error) {
                 setError(

@@ -1,31 +1,33 @@
 import React, { createContext, useState, useEffect } from "react";
 import API from "../services/apiClient";
+import { errorTypes } from "../services/errorTypes";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+    console.log(localStorage.getItem("user"));
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
 
     const loginUser = async (phoneNumber) => {
         try {
-            const { data, error } = await API.login({ phoneNumber });
-            if (!error) {
-                setUser(data.user); // set the user in context
-                localStorage.setItem("user", JSON.stringify(data.user)); // Persist the user for session management
-            } else {
+            console.log("Requesting a code to login user: ", phoneNumber);
+            const { data, error } = await API.login( phoneNumber );
+
+            if (error) {
                 throw new Error(error);
             }
+         
         } catch (error) {
-            console.error("Login failed: ", error);
+            console.error("Requesting a code failed: ", error);
         }
     };
 
     const completeLogin = async (phoneNumber, code) => {
         try {
-            const { data, error } = await API.completeLogin({
+            const { data, error } = await API.completeLogin(
                 phoneNumber,
                 code,
-            });
+            );
             if (!error) {
                 setUser(data.user);
                 localStorage.setItem("user", JSON.stringify(data.user));

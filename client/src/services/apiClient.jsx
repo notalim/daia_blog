@@ -79,7 +79,6 @@ class ApiClient {
                 name,
                 dexcomUser,
                 dexcomPass,
-
                 password,
                 confirmPassword,
             },

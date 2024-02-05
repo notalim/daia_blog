@@ -1,43 +1,101 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+
 import Input from "../components/Input";
-import RegisterButton from "../components/RegisterButton"; // Assuming this can be reused for the login button
+import RegisterButton from "../components/RegisterButton"; // Rename this as needed
+import PhoneNumberInput from "../components/PhoneNumberInput";
+
+import API from "../services/apiClient";
+import validation from "../services/validation";
+import { errorTypes } from "../services/errorTypes";
+
+import useAuth from "../contexts/useAuth";
 
 function LoginPage() {
     const [phoneNumber, setPhoneNumber] = useState("");
+    const [verificationCode, setVerificationCode] = useState("");
     const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
+    const [error, setError] = useState("");
+    const navigate = useNavigate();
+
+    const { loginUser, completeLogin } = useAuth();
 
     const handleChangePhoneNumber = (event) => {
         setPhoneNumber(event.target.value);
     };
 
+    const handleChangeVerificationCode = (event) => {
+        setVerificationCode(event.target.value);
+    };
+
     const handleSubmitPhoneNumber = async (event) => {
         event.preventDefault();
-        if (!phoneNumber) return;
+        setError("");
+
+        if (!phoneNumber) {
+            setError(errorTypes.PHONE_NUMBER_REQUIRED);
+            return;
+        }
+
+        if (
+            !validation.phoneValidation("+1" + phoneNumber.replace(/\D/g, ""))
+        ) {
+            setError(errorTypes.INVALID_PHONE_NUMBER);
+            return;
+        }
 
         try {
-            let concatPhoneNumber = "+1" + phoneNumber;
-            const response = await fetch("http://localhost:3000/users/login", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify({ phoneNumber: concatPhoneNumber}),
-            });
+            // now handled in the context
+            // const { data, error } = await API.login(
+            //     "+1" + phoneNumber.replace(/\D/g, "")
+            // );
 
-            const message = await response.text();
+            await loginUser( "+1" + phoneNumber.replace(/\D/g, ""));
 
-            console.log(message);
-
-            if (!response.ok) {
-                throw new Error(
-                    `HTTP error! status: ${response.status} - ${message}`
-                );
+            if (error) {
+                setError(error);
+                return;
             }
 
-            console.log(message);
             setIsVerificationCodeSent(true);
         } catch (error) {
-            console.error("There was an error!", error);
+            setError(error.message || "Failed to log in. Please try again.");
+        }
+    };
+
+    const handleVerifyCode = async (event) => {
+        event.preventDefault();
+        setError("");
+
+        if (!validation.codeValidation(verificationCode)) {
+            setError(errorTypes.INVALID_VERIFICATION_CODE);
+            return;
+        }
+
+        try {
+            // const { data, error } = await API.completeLogin(
+            //     "+1" + phoneNumber.replace(/\D/g, ""),
+            //     verificationCode
+            // );
+
+            await completeLogin(
+                "+1" + phoneNumber.replace(/\D/g, ""),
+                verificationCode
+            );
+
+            if (error) {
+                setError(error);
+                return;
+            }
+
+            if (!error) {
+                navigate("/dashboard");
+            }
+
+        } catch (error) {
+            setError(
+                error.message || "Failed to verify code. Please try again."
+            );
         }
     };
 
@@ -60,19 +118,47 @@ function LoginPage() {
                     </p>
                 </div>
                 <div className="w-full max-w-xs">
+                    {isVerificationCodeSent && (
+                        <div className="text-dim-purple text-center mb-4">
+                            Verification code has been sent
+                        </div>
+                    )}
+                    {error && (
+                        <div className="text-red-500 text-center mb-4">
+                            {error}
+                        </div>
+                    )}
                     <form
-                        onSubmit={handleSubmitPhoneNumber}
+                        onSubmit={
+                            isVerificationCodeSent
+                                ? handleVerifyCode
+                                : handleSubmitPhoneNumber
+                        }
                         className="space-y-4 bg-white p-4 shadow rounded-lg"
                     >
-                        <Input
-                            type="tel"
-                            placeholder="Phone Number"
-                            value={phoneNumber}
-                            onChange={handleChangePhoneNumber}
-                        />
+                        <div className="flex flex-col items-end mb-4">
+                            <PhoneNumberInput
+                                placeholder="Phone Number"
+                                value={phoneNumber}
+                                onChange={handleChangePhoneNumber}
+                            />
+                        </div>
+
+                        {isVerificationCodeSent && (
+                            <Input
+                                type="tel"
+                                placeholder="Verification Code"
+                                value={verificationCode}
+                                onChange={handleChangeVerificationCode}
+                            />
+                        )}
                         <RegisterButton
                             type="submit"
-                            disabled={!phoneNumber || isVerificationCodeSent}
+                            disabled={
+                                isVerificationCodeSent
+                                    ? !verificationCode
+                                    : !phoneNumber
+                            }
                         >
                             {isVerificationCodeSent ? "Verify" : "Log In"}
                         </RegisterButton>

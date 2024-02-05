@@ -8,7 +8,7 @@ export const errorTypes = {
     PHONE_NUMBER_REQUIRED: "Phone number is missing",
     USER_NOT_FOUND: "User not found",
     CODE_NOT_APPROVED: "Code wasn't approved",
-    USER_ALREADY_EXISTS: "User already exists",
+    USER_ALREADY_EXISTS: "User already exists. Try to login?",
     SERVER_ERROR: "Unknown server error",
     INVALID_DEXCOM_CREDENTIALS: "Invalid Dexcom credentials",
     INVALID_CONTACT_NUMBER: "Invalid emergency contact phone number",
