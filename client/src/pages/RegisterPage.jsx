@@ -67,8 +67,8 @@ function RegisterPage() {
 
     const [currentFormFields, setCurrentFormFields] =
         useState(initialFormFields);
-
     const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
+    const {registerUser, completeRegistration} = useAuth();
 
     const handleChange = (field) => (event) => {
         setFormData({ ...formData, [field]: event.target.value });
@@ -117,7 +117,7 @@ function RegisterPage() {
             let concatPhoneNumber =
                 "+1" + formData["Phone Number"].replace(/\D/g, "");
 
-            const { data, error } = await API.registerUser(concatPhoneNumber);
+            await registerUser(concatPhoneNumber);
 
             if (error) {
                 setError(error);
@@ -146,7 +146,7 @@ function RegisterPage() {
                 let concatPhoneNumber =
                     "+1" + formData["Phone Number"].replace(/\D/g, "");
 
-                const { data, error } = await API.completeRegistration(
+                await completeRegistration(
                     concatPhoneNumber,
                     formData["Verification Code"],
                     formData["Your Name"],
@@ -161,7 +161,7 @@ function RegisterPage() {
                     return;
                 }
 
-                if (data && !error) {
+                if (!error) {
                     navigate("/dashboard");
                 }
             } catch (error) {

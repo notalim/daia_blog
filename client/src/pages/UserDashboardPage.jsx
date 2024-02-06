@@ -2,9 +2,15 @@ import React, { useContext } from "react";
 import { useAuth } from "../contexts/useAuth";
 
 const UserProfilePage = () => {
-    const { user } = useAuth();
+    const { user, logoutUser } = useAuth();
 
-    console.log("User: ", user)
+    const handleLogout = () => {
+        navigate("/login");
+        logoutUser();
+
+    };
+
+    console.log("User: ", user);
 
     return (
         <div className="container mx-auto p-4">
@@ -36,8 +42,24 @@ const UserProfilePage = () => {
                                 {user.phoneNumber}
                             </dd>
                         </div>
-                        {/* Add more user details here */}
+                        <div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
+                            <dt className="text-sm font-medium text-gray-500">
+                                Dexcom username
+                            </dt>
+                            <dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
+                                {user.dexcomUser}
+                            </dd>
+                        </div>
                     </dl>
+                </div>
+                <div className="px-4 py-4 bg-gray-50 text-right">
+                    <button
+                        type="button"
+                        onClick={handleLogout}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    >
+                        Log out
+                    </button>
                 </div>
             </div>
         </div>

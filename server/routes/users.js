@@ -71,10 +71,8 @@ router.post("/login/complete", async (req, res) => {
             });
         }
         res.status(200).json({
-            data: {
-                user: user,
-                dexcomSessionId: user.dexcomSessionId,
-            },
+            user: user,
+            dexcomSessionId: user.dexcomSessionId,
             message: "User logged in successfully",
         });
     } catch (error) {
@@ -177,25 +175,16 @@ router.post("/signup/complete", async (req, res) => {
         });
     }
 
-    let dexcomSessionId;
-
-    try {
-        dexcomSessionId = await getDexcomSessionId(dexcomUser, dexcomPass);
+        const dexcomSessionId = await getDexcomSessionId(dexcomUser, dexcomPass) || null;
         if (!dexcomSessionId) {
             return res.status(401).json({
                 message: "Invalid Dexcom credentials",
                 error: errorTypes.INVALID_DEXCOM_CREDENTIALS,
             });
         }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "Server error",
-            error: errorTypes.SERVER_ERROR,
-        });
-    }
+    
     try {
-        await createUser(
+        const user = await createUser(
             phoneNumber,
             name,
             dexcomUser,
@@ -206,7 +195,8 @@ router.post("/signup/complete", async (req, res) => {
         );
 
         res.status(201).json({
-            message: "User created successfully",
+            user: user,
+            message: "User created and logged in successfully",
             success: true,
             dexcomSessionId: dexcomSessionId,
         });

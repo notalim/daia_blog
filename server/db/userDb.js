@@ -51,7 +51,6 @@ const createUser = async (
             dexcomUser,
             dexcomPass: hashedDexcomPass,
             password: hashedPassword,
-            userId: new ObjectId(),
             contacts: [],
             glucagonLocation: "",
             glucagonType: "",
