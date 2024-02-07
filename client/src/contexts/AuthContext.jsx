@@ -2,11 +2,15 @@ import React, { createContext, useState, useEffect } from "react";
 import API from "../services/apiClient";
 import { errorTypes } from "../services/errorTypes";
 
+import { useNavigate } from "react-router-dom";
+
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
     // console.log(localStorage.getItem("user"));
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+
+    const navigate = useNavigate();
 
     const loginUser = async (phoneNumber) => {
         try {
@@ -51,7 +55,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const completeRegistration = async (phoneNumber, code, name, dexcomUser, dexcomPass, password, confirmPassword) => {
+
+    const completeRegistration = async (phoneNumber, code, name, dexcomUser, dexcomPass) => {
+
         try {
             const { data, error } = await API.completeRegistration(
                 phoneNumber,
@@ -59,8 +65,6 @@ export const AuthProvider = ({ children }) => {
                 name,
                 dexcomUser,
                 dexcomPass,
-                password,
-                confirmPassword
             );
             if (!error) {
                 setUser(data.user);
@@ -77,6 +81,7 @@ export const AuthProvider = ({ children }) => {
         setUser(null);
         localStorage.removeItem("user");
         API.logout();
+        navigate("/");
     };
 
     useEffect(() => {

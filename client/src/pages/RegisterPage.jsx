@@ -18,8 +18,6 @@ const additionalFormFields = [
     "Your Name",
     "Dexcom Username",
     "Dexcom Password",
-    "Password",
-    "Confirm Password",
 ];
 
 const validateRegistrationForm = (formData) => {
@@ -38,17 +36,6 @@ const validateRegistrationForm = (formData) => {
         errors.name = errorTypes.INVALID_NAME;
     }
 
-    if (!validation.passwordValidation(formData["Password"])) {
-        errors.password = errorTypes.INVALID_PASSWORD;
-    }
-    if (
-        !validation.confirmPasswordValidation(
-            formData["Password"],
-            formData["Confirm Password"]
-        )
-    ) {
-        errors.confirmPassword = errorTypes.PASSWORDS_DO_NOT_MATCH;
-    }
     return errors;
 };
 
@@ -61,8 +48,6 @@ function RegisterPage() {
         "Dexcom Username": "",
         "Dexcom Password": "",
         "Your Name": "",
-        Password: "",
-        "Confirm Password": "",
     });
 
     const [currentFormFields, setCurrentFormFields] =
@@ -85,9 +70,6 @@ function RegisterPage() {
     const getInputType = (fieldName) => {
         switch (fieldName) {
             case "Dexcom Password":
-            case "Password":
-            case "Confirm Password":
-                return "password";
             case "Verification Code":
                 return "tel";
             default:
@@ -152,8 +134,6 @@ function RegisterPage() {
                     formData["Your Name"],
                     formData["Dexcom Username"],
                     formData["Dexcom Password"],
-                    formData["Password"],
-                    formData["Confirm Password"]
                 );
 
                 if (error) {

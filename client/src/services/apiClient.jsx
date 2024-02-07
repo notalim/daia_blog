@@ -67,8 +67,6 @@ class ApiClient {
         name,
         dexcomUser,
         dexcomPass,
-        password,
-        confirmPassword
     ) {
         return await this.request({
             endpoint: "users/signup/complete",
@@ -79,8 +77,6 @@ class ApiClient {
                 name,
                 dexcomUser,
                 dexcomPass,
-                password,
-                confirmPassword,
             },
         });
     }
