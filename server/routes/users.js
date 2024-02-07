@@ -10,10 +10,9 @@ import {
     checkPassword,
     checkUserByPhoneNumber,
     addEmergencyContact,
-   
 } from "../db/userDb.js";
 
-import { getDexcomSessionId } from "./dexcomHelper.js";
+import { getDexcomSessionId, getBloodSugarData } from "./dexcomHelper.js";
 
 import validation from "../services/validation.js";
 
@@ -124,8 +123,6 @@ router.post("/signup/complete", async (req, res) => {
         name,
         dexcomUser,
         dexcomPass,
-        password,
-        confirmPassword,
     } = req.body;
 
     if (!validation.phoneValidation(phoneNumber)) {
@@ -144,18 +141,6 @@ router.post("/signup/complete", async (req, res) => {
         return res
             .status(400)
             .json({ message: "Invalid name", error: "INVALID_NAME" });
-    }
-    if (!validation.passwordValidation(password)) {
-        return res.status(400).json({
-            message: "Invalid password format",
-            error: "INVALID_PASSWORD",
-        });
-    }
-    if (!validation.confirmPasswordValidation(password, confirmPassword)) {
-        return res.status(400).json({
-            message: "Passwords do not match",
-            error: "PASSWORDS_DO_NOT_MATCH",
-        });
     }
 
     try {
@@ -177,14 +162,23 @@ router.post("/signup/complete", async (req, res) => {
         });
     }
 
-        const dexcomSessionId = await getDexcomSessionId(dexcomUser, dexcomPass) || null;
-        if (!dexcomSessionId) {
-            return res.status(401).json({
-                message: "Invalid Dexcom credentials",
-                error: errorTypes.INVALID_DEXCOM_CREDENTIALS,
-            });
-        }
-    
+    const dexcomSessionId =
+        (await getDexcomSessionId(dexcomUser, dexcomPass)) || null;
+    if (dexcomSessionId === "00000000-0000-0000-0000-000000000000") {
+        return res.status(401).json({
+            message: "Invalid Dexcom credentials",
+            error: errorTypes.INVALID_DEXCOM_CREDENTIALS,
+        });
+    }
+
+    const bloodSugarData = (await getBloodSugarData(dexcomSessionId)) || null;
+    if (bloodSugarData === "Invalid session") {
+        return res.status(401).json({
+            message: "Problem with Dexcom session",
+            error: errorTypes.DEXCOM_SESSION_PROBLEM,
+        });
+    }
+
     try {
         const user = await createUser(
             phoneNumber,
@@ -192,8 +186,7 @@ router.post("/signup/complete", async (req, res) => {
             dexcomUser,
             dexcomPass,
             dexcomSessionId,
-            password,
-            confirmPassword
+            bloodSugarData
         );
 
         res.status(201).json({

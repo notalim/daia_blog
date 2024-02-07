@@ -33,15 +33,11 @@ const createUser = async (
     dexcomUser,
     dexcomPass,
     dexcomSessionId,
-    password,
-    confirmPassword
+    bloodSugarData
 ) => {
     try {
-        // if (!validation.validatePhoneAndPasswordAndName(phoneNumber, password, confirmPassword, name)) {
-        //   throw new Error("Invalid phone number or password or name");
-        // }
+        // ! Validate args here
 
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
         const hashedDexcomPass = dexcomPass;
 
         const newUser = {
@@ -50,7 +46,10 @@ const createUser = async (
             dexcomSessionId,
             dexcomUser,
             dexcomPass: hashedDexcomPass,
-            password: hashedPassword,
+
+            // Dexcom Blood Sugar Data
+            bloodSugarData: bloodSugarData,
+            // Our data
             contacts: [],
             glucagonLocation: "",
             glucagonType: "",

@@ -55,7 +55,7 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const completeRegistration = async (phoneNumber, code, name, dexcomUser, dexcomPass, password, confirmPassword) => {
+    const completeRegistration = async (phoneNumber, code, name, dexcomUser, dexcomPass) => {
         try {
             const { data, error } = await API.completeRegistration(
                 phoneNumber,
@@ -63,8 +63,6 @@ export const AuthProvider = ({ children }) => {
                 name,
                 dexcomUser,
                 dexcomPass,
-                password,
-                confirmPassword
             );
             if (!error) {
                 setUser(data.user);
