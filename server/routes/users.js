@@ -10,8 +10,10 @@ import {
     checkPassword,
     checkUserByPhoneNumber,
     addEmergencyContact,
-    getDexcomSessionId,
+   
 } from "../db/userDb.js";
+
+import { getDexcomSessionId } from "./dexcomHelper.js";
 
 import validation from "../services/validation.js";
 

@@ -199,7 +199,6 @@ export {
     checkUserByPhoneNumber,
     checkPassword,
     addEmergencyContact,
-    getDexcomSessionId,
     getAllUsers,
     updateUserSessionId,
 };
