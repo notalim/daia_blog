@@ -55,7 +55,9 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+
     const completeRegistration = async (phoneNumber, code, name, dexcomUser, dexcomPass) => {
+
         try {
             const { data, error } = await API.completeRegistration(
                 phoneNumber,
