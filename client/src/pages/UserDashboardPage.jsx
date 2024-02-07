@@ -5,9 +5,9 @@ const UserProfilePage = () => {
     const { user, logoutUser } = useAuth();
 
     const handleLogout = () => {
-        navigate("/login");
+        
         logoutUser();
-
+        
     };
 
     console.log("User: ", user);
