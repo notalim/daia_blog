@@ -64,9 +64,9 @@ class ApiClient {
     async completeRegistration(
         phoneNumber,
         code,
+        name,
         dexcomUser,
         dexcomPass,
-        name,
         password,
         confirmPassword
     ) {

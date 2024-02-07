@@ -155,40 +155,7 @@ const addEmergencyContact = async (
     }
 };
 
-const getDexcomSessionId = async (accountName, password) => {
-    const url =
-        "https://share2.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName";
 
-    const body = {
-        accountName: accountName,
-        applicationId: "d8665ade-9673-4e27-9ff6-92db4ce13d13",
-        password: password,
-    };
-
-    try {
-        const response = await fetch(url, {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-                Accept: "application/json",
-            },
-            body: JSON.stringify(body),
-        });
-
-        if (!response.ok) {
-            throw new Error("Network response was not ok.");
-        }
-
-        const data = await response.text(); // Use .json() if the API response is in JSON format
-        console.log(data);
-        const SessionId = data.replace(/^"|"$/g, "");
-        // console.log(typeof SessionId);
-        return SessionId; // The session ID should be directly in the response body
-    } catch (error) {
-        console.error("Error fetching Dexcom session ID:", error);
-        throw error;
-    }
-};
 
 // const modifyUser = async (phoneNumber, ) {
 //     // should be able to modify:

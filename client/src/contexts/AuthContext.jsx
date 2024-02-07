@@ -55,14 +55,14 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const completeRegistration = async (phoneNumber, code, password) => {
+    const completeRegistration = async (phoneNumber, code, name, dexcomUser, dexcomPass, password, confirmPassword) => {
         try {
             const { data, error } = await API.completeRegistration(
                 phoneNumber,
                 code,
                 name,
-                dexcomUsername,
-                dexcomPassword,
+                dexcomUser,
+                dexcomPass,
                 password,
                 confirmPassword
             );
