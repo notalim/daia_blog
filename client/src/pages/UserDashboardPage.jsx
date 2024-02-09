@@ -1,5 +1,6 @@
 import React, { useContext } from "react";
 import { useAuth } from "../contexts/useAuth";
+import BloodSugarScatterPlot from "../components/BloodSugarScatterPlot";
 
 const UserProfilePage = () => {
     const { user, logoutUser } = useAuth();
@@ -10,10 +11,14 @@ const UserProfilePage = () => {
         
     };
 
+    const bloodSugarData = user.bloodSugarData;
+
     console.log("User: ", user);
 
     return (
         <div className="container mx-auto p-4">
+            {/* ! Add thresholdValue prop from context/db to BloodSugarScatterPlot below */}
+            <BloodSugarScatterPlot bloodSugarData={bloodSugarData} thresholdValue={200} />
             <h1 className="text-2xl font-bold mb-4">Hello, {user.name}!</h1>
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div className="px-4 py-5 sm:px-6">
