@@ -1,31 +1,38 @@
 import React, { createContext, useState, useEffect } from "react";
 import API from "../services/apiClient";
+import { errorTypes } from "../services/errorTypes";
+
+import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
+    // console.log(localStorage.getItem("user"));
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
+
+    const navigate = useNavigate();
 
     const loginUser = async (phoneNumber) => {
         try {
-            const { data, error } = await API.login({ phoneNumber });
-            if (!error) {
-                setUser(data.user); // set the user in context
-                localStorage.setItem("user", JSON.stringify(data.user)); // Persist the user for session management
-            } else {
+            console.log("Requesting a code to login user: ", phoneNumber);
+            const { data, error } = await API.login( phoneNumber );
+
+            if (error) {
                 throw new Error(error);
             }
+         
         } catch (error) {
-            console.error("Login failed: ", error);
+            console.error("Requesting a code failed: ", error);
         }
     };
 
     const completeLogin = async (phoneNumber, code) => {
         try {
-            const { data, error } = await API.completeLogin({
+            const { data, error } = await API.completeLogin(
                 phoneNumber,
                 code,
-            });
+            );
+            console.log(data);
             if (!error) {
                 setUser(data.user);
                 localStorage.setItem("user", JSON.stringify(data.user));
@@ -37,10 +44,44 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const registerUser = async (phoneNumber) => {
+        try {
+            const { data, error } = await API.registerUser(phoneNumber);
+            if (error) {
+                throw new Error(error);
+            }
+        } catch (error) {
+            console.error("Requesting a code failed: ", error);
+        }
+    };
+
+
+    const completeRegistration = async (phoneNumber, code, name, dexcomUser, dexcomPass) => {
+
+        try {
+            const { data, error } = await API.completeRegistration(
+                phoneNumber,
+                code,
+                name,
+                dexcomUser,
+                dexcomPass,
+            );
+            if (!error) {
+                setUser(data.user);
+                localStorage.setItem("user", JSON.stringify(data.user));
+            } else {
+                throw new Error(error);
+            }
+        } catch (error) {
+            console.error("Registration completion failed: ", error);
+        }
+    }
+
     const logoutUser = () => {
         setUser(null);
         localStorage.removeItem("user");
         API.logout();
+        navigate("/");
     };
 
     useEffect(() => {
@@ -52,7 +93,14 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider
-            value={{ user, loginUser, completeLogin, logoutUser }}
+            value={{
+                user,
+                loginUser,
+                completeLogin,
+                registerUser,
+                completeRegistration,
+                logoutUser,
+            }}
         >
             {children}
         </AuthContext.Provider>
