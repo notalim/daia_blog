@@ -1,6 +1,6 @@
 import axios from "axios";
 
-import { errorTypes } from "../services/errorTypes.js";
+import { errorTypes } from "./errorTypes.js";
 
 // This function is a helper called in the signup/complete route
 // It will also run every 24 hours to refresh the session ID for every!! user
@@ -15,7 +15,7 @@ export const getDexcomSessionId = async (dexcomUser, dexcomPass) => {
         password: dexcomPass,
         applicationId: "d8665ade-9673-4e27-9ff6-92db4ce13d13",
     };
-    
+
     // console.log("Requesting Dexcom session ID", body);
 
     try {
@@ -38,14 +38,17 @@ export const getDexcomSessionId = async (dexcomUser, dexcomPass) => {
     }
 };
 
-export const refreshDexcomSessionId= async (user) => {
+export const refreshDexcomSessionId = async (user) => {
     // needs to be done for every user
-}
+};
 
-export const getBloodSugarData = async (sessionId, minutes = 60, maxCount = 12) => {
+export const getBloodSugarData = async (
+    sessionId,
+    minutes = 60,
+    maxCount = 12
+) => {
     // console.log("Getting blood sugar data");
-    const url =
-        `https://share2.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId=${sessionId}&minutes=${minutes}&maxCount=${maxCount}`;
+    const url = `https://share2.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId=${sessionId}&minutes=${minutes}&maxCount=${maxCount}`;
 
     try {
         const response = await axios.get(url, {
@@ -63,4 +66,4 @@ export const getBloodSugarData = async (sessionId, minutes = 60, maxCount = 12) 
             error: errorTypes.DEXCOM_SESSION_PROBLEM,
         };
     }
-}
+};
