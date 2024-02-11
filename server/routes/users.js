@@ -12,7 +12,10 @@ import {
     addEmergencyContact,
 } from "../db/userDb.js";
 
-import { getDexcomSessionId, getBloodSugarData } from "./dexcomHelper.js";
+import {
+    getDexcomSessionId,
+    getBloodSugarData,
+} from "../services/dexcomHelper.js";
 
 import validation from "../services/validation.js";
 
@@ -117,13 +120,7 @@ router.post("/signup", async (req, res) => {
 });
 
 router.post("/signup/complete", async (req, res) => {
-    const {
-        phoneNumber,
-        code,
-        name,
-        dexcomUser,
-        dexcomPass,
-    } = req.body;
+    const { phoneNumber, code, name, dexcomUser, dexcomPass } = req.body;
 
     if (!validation.phoneValidation(phoneNumber)) {
         return res.status(400).json({

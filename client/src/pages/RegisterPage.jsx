@@ -97,7 +97,7 @@ function RegisterPage() {
 
         try {
             let concatPhoneNumber =
-                "+1" + formData["Phone Number"].replace(/\D/g, "")
+                "+1" + formData["Phone Number"].replace(/\D/g, "");
 
             await registerUser(concatPhoneNumber);
 
