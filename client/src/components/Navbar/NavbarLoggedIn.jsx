@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
-import daiaLogo from '../assets/icons/daia-logo.svg'
+import daiaLogo from "../../assets/icons/daia-logo.svg";
 
 const LinkItems = [
     { name: "Home", pathname: "/" },
@@ -8,7 +8,7 @@ const LinkItems = [
     { name: "How to use", pathname: "/faq" },
 ];
 
-const Navbar = () => {
+const NavbarLoggedIn = () => {
     const [activeTab, setActiveTab] = useState("Home");
     const location = useLocation();
 
@@ -52,14 +52,20 @@ const Navbar = () => {
             </div>
             <div className="flex items-center">
                 <Link
-                    to="/login"
+                    to="/dashboard"
                     className="text-black font-medium text-base mr-4"
                 >
-                    Login
+                    Dashboard
+                </Link>
+                <Link
+                    to="/settings"
+                    className="text-black font-medium text-base mr-4"
+                >
+                    Settings
                 </Link>
             </div>
         </nav>
     );
 };
 
-export default Navbar;
+export default NavbarLoggedIn;

@@ -1,37 +1,59 @@
 import React, { useState, useEffect } from "react";
-import "../containers/styles/RegisterPage.css";
+import { useNavigate } from "react-router-dom";
+
 import Input from "../components/Input";
 import PhoneNumberInput from "../components/PhoneNumberInput";
 import GradientBackground from "../components/GradientBackground";
 import RegisterButton from "../components/RegisterButton";
 
 import API from "../services/apiClient";
+import validation from "../services/validation";
+import { errorTypes } from "../services/errorTypes";
+
+import useAuth from "../contexts/useAuth";
 
 const initialFormFields = ["Phone Number"];
 const additionalFormFields = [
     "Verification Code",
+    "Your Name",
     "Dexcom Username",
     "Dexcom Password",
-    "Your Name",
-    "Password",
-    "Confirm Password",
 ];
 
+const validateRegistrationForm = (formData) => {
+    const errors = {};
+    if (
+        !validation.phoneValidation(
+            "+1" + formData["Phone Number"].replace(/\D/g, "")
+        )
+    ) {
+        errors.phone = errorTypes.INVALID_PHONE_NUMBER;
+    }
+    if (!validation.codeValidation(formData["Verification Code"])) {
+        errors.code = errorTypes.INVALID_VERIFICATION_CODE;
+    }
+    if (!validation.nameValidation(formData["Your Name"])) {
+        errors.name = errorTypes.INVALID_NAME;
+    }
+
+    return errors;
+};
+
 function RegisterPage() {
+    const [error, setError] = useState("");
+
     const [formData, setFormData] = useState({
         "Phone Number": "",
         "Verification Code": "",
         "Dexcom Username": "",
         "Dexcom Password": "",
         "Your Name": "",
-        Password: "",
-        "Confirm Password": "",
     });
 
     const [currentFormFields, setCurrentFormFields] =
         useState(initialFormFields);
-
     const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
+    const {registerUser, completeRegistration} = useAuth();
 
     const handleChange = (field) => (event) => {
         setFormData({ ...formData, [field]: event.target.value });
@@ -43,12 +65,11 @@ function RegisterPage() {
         }
     }, [isVerificationCodeSent]);
 
+    const navigate = useNavigate();
+
     const getInputType = (fieldName) => {
         switch (fieldName) {
             case "Dexcom Password":
-            case "Password":
-            case "Confirm Password":
-                return "password";
             case "Verification Code":
                 return "tel";
             default:
@@ -58,57 +79,76 @@ function RegisterPage() {
 
     const handlePhoneNumberSubmit = async (event) => {
         event.preventDefault();
-        if (!formData["Phone Number"]) return;
+        setError("");
 
-        let concatPhoneNumber =
-            "+1" + formData["Phone Number"].replace(/\D/g, "");
+        if (!formData["Phone Number"]) {
+            setError(errorTypes.PHONE_NUMBER_REQUIRED);
+            return;
+        }
+
+        if (
+            !validation.phoneValidation(
+                "+1" + formData["Phone Number"].replace(/\D/g, "")
+            )
+        ) {
+            setError(errorTypes.INVALID_PHONE_NUMBER);
+            return;
+        }
 
         try {
-            const { data, error } = await API.registerUser({
-                phoneNumber: concatPhoneNumber,
-            });
+            let concatPhoneNumber =
+                "+1" + formData["Phone Number"].replace(/\D/g, "");
+
+            await registerUser(concatPhoneNumber);
 
             if (error) {
-                throw new Error(`HTTP error! - ${error}`);
+                setError(error);
+                return;
             }
-
-            let concatPhoneNumber = "+1" + formData["Phone Number"];
 
             setIsVerificationCodeSent(true);
             setCurrentFormFields(additionalFormFields);
         } catch (error) {
-            console.error("There was an error!", error);
+            setError(error.message || "Failed to register. Please try again.");
         }
     };
 
     const handleCompleteRegistration = async (event) => {
         event.preventDefault();
+        setError("");
+
+        const errors = validateRegistrationForm(formData);
+        if (Object.keys(errors).length > 0) {
+            setError(Object.values(errors)[0]);
+            return;
+        }
+
         if (isVerificationCodeSent) {
             try {
                 let concatPhoneNumber =
                     "+1" + formData["Phone Number"].replace(/\D/g, "");
 
-                const { data, error } = await API.completeRegistration({
-                    phoneNumber: concatPhoneNumber,
-                    code: formData["Verification Code"],
-                    dexcomUser: formData["Dexcom Username"],
-                    dexcomPass: formData["Dexcom Password"],
-                    name: formData["Your Name"],
-                    password: formData["Password"],
-                    confirmPassword: formData["Confirm Password"],
-                });
+                await completeRegistration(
+                    concatPhoneNumber,
+                    formData["Verification Code"],
+                    formData["Your Name"],
+                    formData["Dexcom Username"],
+                    formData["Dexcom Password"],
+                );
 
                 if (error) {
-                    throw new Error(`HTTP error! status: ${error}`);
+                    setError(error);
+                    return;
                 }
-                // console.log(formData);
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (!error) {
+                    navigate("/dashboard");
                 }
-                console.log(response);
             } catch (error) {
-                console.error("There was an error!", error);
+                setError(
+                    error.message ||
+                        "Failed to complete registration. Please try again."
+                );
             }
         }
     };
@@ -145,10 +185,17 @@ function RegisterPage() {
                         }
                         className="flex flex-col items-end"
                     >
+                        {isVerificationCodeSent && (
+                            <div className="text-dim-purple text-center mb-4">
+                                Verification code has been sent
+                            </div>
+                        )}
+                        {error && (
+                            <div className="text-red-500 text-center">
+                                {error}
+                            </div>
+                        )}
                         <div className="flex flex-col items-end mb-4">
-                            <label className="text-gray-500 mr-2 mb-2">
-                                +1
-                            </label>
                             <PhoneNumberInput
                                 placeholder="Phone Number"
                                 onChange={handleChange("Phone Number")}

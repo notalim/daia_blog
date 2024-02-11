@@ -1,5 +1,5 @@
 import { getAllUsers } from "../db/userDb.js";
-import { getDexcomSessionId } from "../db/userDb.js";
+import { getDexcomSessionId } from "../routes/dexcomHelper.js";
 import { updateUserSessionId } from "../db/userDb.js";
 
 async function refreshDexcomSessionId(user) {
