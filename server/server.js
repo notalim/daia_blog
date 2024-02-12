@@ -4,7 +4,7 @@ import configRoutes from "./routes/index.js";
 import dotenv from "dotenv";
 import cors from "cors";
 
-import { startBloodSugarUpdateTask } from "./utils/scheduler.js";
+import { startBloodSugarUpdateTask, startDexcomSessionUpdateTask } from "./utils/scheduler.js";
 import { handleCrash, handleRejection } from "./services/crashHandler.js";
 
 // ! This will add the environment variables to the process.env object
@@ -27,4 +27,7 @@ app.listen(3000, async () => {
 
     // * This will start the task to update the blood sugar levels for all users
     startBloodSugarUpdateTask();
+
+    // * This will start the task to update the Dexcom session ID for all users
+    startDexcomSessionUpdateTask();
 });

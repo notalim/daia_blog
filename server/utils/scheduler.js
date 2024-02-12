@@ -1,11 +1,10 @@
 // utils/scheduler.js
 import cron from "node-cron";
-import { getAllUsers, updateBloodSugarData } from "../db/userDb.js";
+import { getAllUsers, updateBloodSugarData, updateUserSessionId } from "../db/userDb.js";
 
-import { getBloodSugarData } from "../services/dexcomHelper.js";
+import { getBloodSugarData, refreshDexcomSessionId } from "../services/dexcomHelper.js";
 
-async function updateBloodSugarLevelsForAllUsers() {
-
+const updateBloodSugarLevelsForAllUsers = async () => {
     const users = await getAllUsers();
     
     for (const user of users) {
@@ -18,7 +17,7 @@ async function updateBloodSugarLevelsForAllUsers() {
             await updateBloodSugarData(user._id, bloodSugarData);
         } catch (error) {
             console.error(
-                `Error fetching blood sugar data for user ${user._id}: ${error}`
+                `Error fetching blood sugar data for user ${user._id}, ${user.dexcomUser}: ${error}`
             );
         }
     }
@@ -32,3 +31,26 @@ export function startBloodSugarUpdateTask() {
         timezone: "America/New_York", // Or your respective timezone
     });
 }
+
+const updateDexcomSessionIdForAllUsers = async () => {
+    const users = await getAllUsers();
+    for (const user of users) {
+        try {
+            const newSessionId = await refreshDexcomSessionId(user);
+            await updateUserSessionId(user._id, newSessionId);
+        } catch (error) {
+            console.error(
+                `Error refreshing Dexcom session ID for user ${user._id}, ${user.dexcomUser}: ${error}`
+            );
+        }
+    }
+}
+
+export function startDexcomSessionUpdateTask() {
+    // This will run the function every 24 hours
+    cron.schedule("0 0 * * *", updateDexcomSessionIdForAllUsers, {
+        scheduled: true,
+        timezone: "America/New_York", // Or your respective timezone
+    });
+}
+
