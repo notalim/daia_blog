@@ -99,8 +99,8 @@ router.post("/signup", async (req, res) => {
     }
 
     try {
-        const userExists = await checkUserByPhoneNumber(phoneNumber);
-        if (userExists) {
+        const user = await getUserByPhoneNumber(phoneNumber);
+        if (user) {
             return res.status(409).json({
                 message: "User already exists",
                 error: errorTypes.USER_ALREADY_EXISTS,

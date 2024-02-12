@@ -77,26 +77,13 @@ const getUserByPhoneNumber = async (phoneNumber) => {
     try {
         const userCollection = await users();
         let foundUser = await userCollection.findOne({ phoneNumber });
-
-        if (!foundUser) {
-            throw new Error("User not found");
-        }
-
+        
         return foundUser;
     } catch (error) {
         throw new Error("Error trying to get an existing user: " + error.message);
     }
 };
 
-const checkUserByPhoneNumber = async (phoneNumber) => {
-    try {
-        return await getUserByPhoneNumber(phoneNumber);
-    } catch (error) {
-        throw new Error(
-            "Error trying to find an existing user:  " + error.message
-        );
-    }
-};
 
 const checkPassword = async (phoneNumber, password) => {
     try {
