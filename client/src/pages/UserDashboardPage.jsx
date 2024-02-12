@@ -1,24 +1,48 @@
-import React, { useContext } from "react";
+import React, {useState, useEffect} from "react";
 import { useAuth } from "../contexts/useAuth";
 import BloodSugarScatterPlot from "../components/BloodSugarScatterPlot";
 
+import moment from "moment";
+
 const UserProfilePage = () => {
-    const { user, logoutUser } = useAuth();
+    const { user, logoutUser, updateUser } = useAuth();
+    const [dataIsOld, setDataIsOld] = useState(false);
+
+    useEffect(() => {
+        const latestDataTime =
+            user.bloodSugarData[user.bloodSugarData.length - 1]?.WT;
+        const thirtyMinutesAgo = moment().subtract(30, "minutes");
+
+        if (
+            latestDataTime &&
+            moment(latestDataTime).isBefore(thirtyMinutesAgo)
+        ) {
+            setDataIsOld(true);
+        }
+    }, [user.bloodSugarData]);
+
+    const handleRefreshData = async () => {
+        await updateUser(user.phoneNumber);
+        setDataIsOld(false);
+    };
 
     const handleLogout = () => {
-        
         logoutUser();
-        
     };
 
     const bloodSugarData = user.bloodSugarData;
 
-    console.log("User: ", user);
+    // console.log("User: ", user);
 
     return (
         <div className="container mx-auto p-4">
-            {/* ! Add thresholdValue prop from context/db to BloodSugarScatterPlot below */}
-            <BloodSugarScatterPlot bloodSugarData={bloodSugarData} thresholdValue={200} />
+            
+            <BloodSugarScatterPlot
+                bloodSugarData={bloodSugarData}
+                thresholdValue={200}
+                onRefresh={handleRefreshData}
+                dataIsOld={dataIsOld}
+            />
             <h1 className="text-2xl font-bold mb-4">Hello, {user.name}!</h1>
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div className="px-4 py-5 sm:px-6">

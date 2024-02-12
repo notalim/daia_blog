@@ -86,6 +86,14 @@ class ApiClient {
         // No need to make an API request since logout is handled by removing the token
     }
 
+    async updateUser(phoneNumber) {
+        return await this.request({
+            endpoint: "users/update",
+            method: "POST",
+            data: { phoneNumber },
+        });
+    }
+
     async addContact(
         phoneNumber,
         contactPhoneNumber,

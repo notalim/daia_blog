@@ -3,24 +3,31 @@ import { Chart } from "chart.js/auto";
 import moment from "moment-timezone";
 import "chartjs-adapter-moment";
 
-const BloodSugarScatterPlot = ({ bloodSugarData, thresholdValue }) => {
+const BloodSugarScatterPlot = ({
+    bloodSugarData,
+    thresholdValue,
+    onRefresh,
+    dataIsOld,
+}) => {
     const chartRef = useRef();
     const chartInstance = useRef(null);
 
     useEffect(() => {
-        if (!bloodSugarData || bloodSugarData.length === 0) return; 
+        if (!bloodSugarData || bloodSugarData.length === 0) return;
         const ctx = chartRef.current.getContext("2d");
 
         // ! Fix to get the data from backend instead of context
 
         console.log(bloodSugarData);
 
-        const convertedData = bloodSugarData.slice(-12).map(({ WT, Value }) => ({
-            x: moment(
-                parseInt(WT.replace("Date(", "").replace(")", ""), 10)
-            ).format("YYYY-MM-DDTHH:mm:ss"),
-            y: Value,
-        }));
+        const convertedData = bloodSugarData
+            .slice(-12)
+            .map(({ WT, Value }) => ({
+                x: moment(
+                    parseInt(WT.replace("Date(", "").replace(")", ""), 10)
+                ).format("YYYY-MM-DDTHH:mm:ss"),
+                y: Value,
+            }));
 
         const data = {
             datasets: [
@@ -82,7 +89,7 @@ const BloodSugarScatterPlot = ({ bloodSugarData, thresholdValue }) => {
             if (chartInstance.current) {
                 chartInstance.current.destroy();
             }
-        };  
+        };
 
         chartInstance.current = new Chart(ctx, {
             type: "scatter",
@@ -100,6 +107,23 @@ const BloodSugarScatterPlot = ({ bloodSugarData, thresholdValue }) => {
 
     return (
         <div className="w-full lg:w-3/5 mx-auto">
+            {dataIsOld && (
+                <div
+                    className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4"
+                    role="alert"
+                >
+                    <p>
+                        The data is older than 30 minutes, would you like to
+                        update?
+                    </p>
+                    <button
+                        onClick={onRefresh}
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
+                    >
+                        Refresh Data
+                    </button>
+                </div>
+            )}
             <canvas ref={chartRef} />
         </div>
     );

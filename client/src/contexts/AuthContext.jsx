@@ -1,8 +1,9 @@
 import React, { createContext, useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+
 import API from "../services/apiClient";
 import { errorTypes } from "../services/errorTypes";
 
-import { useNavigate } from "react-router-dom";
 
 export const AuthContext = createContext();
 
@@ -91,6 +92,22 @@ export const AuthProvider = ({ children }) => {
         navigate("/");
     };
 
+    const updateUser = async (phoneNumber) => {
+        try {
+            const { data, error } = await API.updateUser(phoneNumber);
+            if (error) {
+                throw new Error(error);
+            }
+            setUser(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            return { data, error };
+        } catch (error) {
+            console.error("Updating user failed: ", error);
+            return { data, error };
+        }
+    }
+
+
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -106,6 +123,7 @@ export const AuthProvider = ({ children }) => {
                 completeLogin,
                 registerUser,
                 completeRegistration,
+                updateUser,
                 logoutUser,
             }}
         >
