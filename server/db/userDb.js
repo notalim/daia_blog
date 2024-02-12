@@ -77,7 +77,7 @@ const getUserByPhoneNumber = async (phoneNumber) => {
     try {
         const userCollection = await users();
         let foundUser = await userCollection.findOne({ phoneNumber });
-        
+
         return foundUser;
     } catch (error) {
         throw new Error("Error trying to get an existing user: " + error.message);
@@ -197,7 +197,6 @@ const updateBloodSugarData = async (userId, addedBloodSugarData) => {
 export {
     createUser,
     getUserByPhoneNumber,
-    checkUserByPhoneNumber,
     checkPassword,
     addEmergencyContact,
     getAllUsers,

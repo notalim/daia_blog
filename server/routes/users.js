@@ -7,8 +7,6 @@ import {
 import {
     createUser,
     getUserByPhoneNumber,
-    checkPassword,
-    checkUserByPhoneNumber,
     addEmergencyContact,
 } from "../db/userDb.js";
 
