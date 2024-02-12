@@ -24,7 +24,6 @@ process.on("unhandledRejection", handleRejection);
 configRoutes(app);
 app.listen(3000, async () => {
     console.log("We now have a server! 🙏 ");
-    console.log("Your routes will be running on http://localhost:3000");
 
     // * This will start the task to update the blood sugar levels for all users
     startBloodSugarUpdateTask();

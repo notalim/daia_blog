@@ -84,18 +84,17 @@ const getUserByPhoneNumber = async (phoneNumber) => {
 
         return foundUser;
     } catch (error) {
-        throw new Error("Error fetching user: " + error.message);
+        throw new Error("Error trying to get an existing user: " + error.message);
     }
 };
 
 const checkUserByPhoneNumber = async (phoneNumber) => {
     try {
-        const userCollection = await users();
-        let foundUser = await userCollection.findOne({ phoneNumber });
-
-        return foundUser;
+        return await getUserByPhoneNumber(phoneNumber);
     } catch (error) {
-        throw new Error("Error fetching user: " + error.message);
+        throw new Error(
+            "Error trying to find an existing user:  " + error.message
+        );
     }
 };
 

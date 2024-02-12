@@ -20,9 +20,10 @@ export const AuthProvider = ({ children }) => {
             if (error) {
                 throw new Error(error);
             }
-         
+            return { data, error };
         } catch (error) {
             console.error("Requesting a code failed: ", error);
+            return { data, error };
         }
     };
 
@@ -39,8 +40,10 @@ export const AuthProvider = ({ children }) => {
             } else {
                 throw new Error(error);
             }
+            return { data, error };
         } catch (error) {
             console.error("Login completion failed: ", error);
+            return { data, error };
         }
     };
 
@@ -50,8 +53,10 @@ export const AuthProvider = ({ children }) => {
             if (error) {
                 throw new Error(error);
             }
+            return {data, error};
         } catch (error) {
             console.error("Requesting a code failed: ", error);
+            return { data, error };
         }
     };
 
@@ -72,8 +77,10 @@ export const AuthProvider = ({ children }) => {
             } else {
                 throw new Error(error);
             }
+            return { data, error };
         } catch (error) {
             console.error("Registration completion failed: ", error);
+            return { data, error };
         }
     }
 

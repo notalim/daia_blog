@@ -125,8 +125,7 @@ class ApiClient {
     }
 }
 
-const API = new ApiClient(
-    import.meta.env.VITE_API_URL || "http://localhost:3000"
-);
+const TEST_SERVER_URL = "https://daia-test-server.onrender.com";
 
+const API = new ApiClient(TEST_SERVER_URL);
 export default API;
