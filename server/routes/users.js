@@ -224,8 +224,8 @@ router.post("/update", async (req, res) => {
     }
 });
 
-router.delete("/delete", async (req, res) => {
-    const { phoneNumber } = req.body;
+router.delete("/delete/:phoneNumber", async (req, res) => {
+    const { phoneNumber } = req.params;
     try {
         const user = await getUserByPhoneNumber(phoneNumber);
         if (!user) {

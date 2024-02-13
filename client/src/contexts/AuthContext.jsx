@@ -110,18 +110,18 @@ export const AuthProvider = ({ children }) => {
     const deleteUser = async (phoneNumber) => {
         try {
             const response = await API.deleteUser(phoneNumber);
-
-            if (response.error) {
-                throw new Error(response.error);
+            console.log(response);
+            if (!response.success) {
+                throw new Error(response.message || "Failed to delete user.");
             }
-           
             setUser(null);
+            localStorage.removeItem("user"); 
             navigate("/");
         } catch (error) {
-            console.error("Deleting user failed: ", error);
-            
+            console.error("Deleting user failed: ", error.message || error);
         }
     };
+
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");

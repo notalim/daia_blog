@@ -66,7 +66,7 @@ class ApiClient {
         code,
         name,
         dexcomUser,
-        dexcomPass,
+        dexcomPass
     ) {
         return await this.request({
             endpoint: "users/signup/complete",
@@ -96,9 +96,8 @@ class ApiClient {
 
     async deleteUser(phoneNumber) {
         return await this.request({
-            endpoint: "users/delete",
+            endpoint: `users/delete/${phoneNumber}`, // Assuming the server can handle this endpoint format
             method: "DELETE",
-            data: { phoneNumber },
         });
     }
 
