@@ -1,11 +1,11 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/useAuth";
 import BloodSugarScatterPlot from "../components/BloodSugarScatterPlot";
 
 import moment from "moment";
 
 const UserProfilePage = () => {
-    const { user, logoutUser, updateUser } = useAuth();
+    const { user, logoutUser, updateUser, deleteUser } = useAuth();
     const [dataIsOld, setDataIsOld] = useState(false);
 
     useEffect(() => {
@@ -36,7 +36,6 @@ const UserProfilePage = () => {
 
     return (
         <div className="container mx-auto p-4">
-            
             <BloodSugarScatterPlot
                 bloodSugarData={bloodSugarData}
                 thresholdValue={200}
@@ -81,13 +80,21 @@ const UserProfilePage = () => {
                         </div>
                     </dl>
                 </div>
-                <div className="px-4 py-4 bg-gray-50 text-right">
+                <div className="px-4 py-4 bg-gray-50 text-right sm:px-6">
                     <button
                         type="button"
                         onClick={handleLogout}
                         className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                     >
                         Log out
+                    </button>
+                    {/* delete user button */}
+                    <button
+                        type="button"
+                        onClick={deleteUser}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    >
+                        Delete Account
                     </button>
                 </div>
             </div>

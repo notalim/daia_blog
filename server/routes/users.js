@@ -8,6 +8,7 @@ import {
     createUser,
     getUserByPhoneNumber,
     addEmergencyContact,
+    deleteUser,
 } from "../db/userDb.js";
 
 import {
@@ -213,6 +214,26 @@ router.post("/update", async (req, res) => {
             user: user,
             message: "User updated successfully",
         });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
+});
+
+router.delete("/delete", async (req, res) => {
+    const { phoneNumber } = req.body;
+    try {
+        const user = await getUserByPhoneNumber(phoneNumber);
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+                error: errorTypes.USER_NOT_FOUND,
+            });
+        }
+        await deleteUser(phoneNumber);
     } catch (error) {
         console.error(error);
         res.status(500).json({

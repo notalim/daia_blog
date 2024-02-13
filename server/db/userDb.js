@@ -194,6 +194,21 @@ const updateBloodSugarData = async (userId, addedBloodSugarData) => {
     }
 };
 
+const deleteUser = async (phoneNumber) => {
+    try {
+        const userCollection = await users();
+        const deleteInfo = await userCollection.deleteOne
+            ({ phoneNumber });
+        if (deleteInfo.deletedCount === 0)
+            throw new Error("Could not delete user!");
+
+        return true;
+    }
+    catch (error) {
+        throw new Error("Error deleting user: " + error.message);
+    }
+}
+
 export {
     createUser,
     getUserByPhoneNumber,
@@ -202,4 +217,5 @@ export {
     getAllUsers,
     updateUserSessionId,
     updateBloodSugarData,
+    deleteUser,
 };

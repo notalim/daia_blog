@@ -94,6 +94,14 @@ class ApiClient {
         });
     }
 
+    async deleteUser(phoneNumber) {
+        return await this.request({
+            endpoint: "users/delete",
+            method: "DELETE",
+            data: { phoneNumber },
+        });
+    }
+
     async addContact(
         phoneNumber,
         contactPhoneNumber,

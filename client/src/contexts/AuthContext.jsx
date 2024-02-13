@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 import API from "../services/apiClient";
 import { errorTypes } from "../services/errorTypes";
 
-
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
@@ -16,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     const loginUser = async (phoneNumber) => {
         try {
             console.log("Requesting a code to login user: ", phoneNumber);
-            const { data, error } = await API.login( phoneNumber );
+            const { data, error } = await API.login(phoneNumber);
 
             if (error) {
                 throw new Error(error);
@@ -30,10 +29,7 @@ export const AuthProvider = ({ children }) => {
 
     const completeLogin = async (phoneNumber, code) => {
         try {
-            const { data, error } = await API.completeLogin(
-                phoneNumber,
-                code,
-            );
+            const { data, error } = await API.completeLogin(phoneNumber, code);
             console.log(data);
             if (!error) {
                 setUser(data.user);
@@ -54,23 +50,27 @@ export const AuthProvider = ({ children }) => {
             if (error) {
                 throw new Error(error);
             }
-            return {data, error};
+            return { data, error };
         } catch (error) {
             console.error("Requesting a code failed: ", error);
             return { data, error };
         }
     };
 
-
-    const completeRegistration = async (phoneNumber, code, name, dexcomUser, dexcomPass) => {
-
+    const completeRegistration = async (
+        phoneNumber,
+        code,
+        name,
+        dexcomUser,
+        dexcomPass
+    ) => {
         try {
             const { data, error } = await API.completeRegistration(
                 phoneNumber,
                 code,
                 name,
                 dexcomUser,
-                dexcomPass,
+                dexcomPass
             );
             if (!error) {
                 setUser(data.user);
@@ -83,7 +83,7 @@ export const AuthProvider = ({ children }) => {
             console.error("Registration completion failed: ", error);
             return { data, error };
         }
-    }
+    };
 
     const logoutUser = () => {
         setUser(null);
@@ -105,8 +105,22 @@ export const AuthProvider = ({ children }) => {
             console.error("Updating user failed: ", error);
             return { data, error };
         }
-    }
+    };
 
+    const deleteUser = async (phoneNumber) => {
+        try {
+            const { data, error } = await API.deleteUser(phoneNumber);
+            if (error) {
+                throw new Error(error);
+            }
+            setUser(null);
+            localStorage.removeItem("user");
+            return { data, error };
+        } catch (error) {
+            console.error("Deleting user failed: ", error);
+            return { data, error };
+        }
+    };
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
@@ -119,12 +133,15 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider
             value={{
                 user,
+
                 loginUser,
                 completeLogin,
                 registerUser,
                 completeRegistration,
-                updateUser,
                 logoutUser,
+
+                updateUser,
+                deleteUser,
             }}
         >
             {children}
