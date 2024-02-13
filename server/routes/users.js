@@ -41,6 +41,7 @@ router.post("/login", async (req, res) => {
             });
         }
         await sendVerificationCode(phoneNumber);
+
         res.status(200).json({
             message: "Verification code sent. Please verify your phone number.",
         });
@@ -234,6 +235,10 @@ router.delete("/delete", async (req, res) => {
             });
         }
         await deleteUser(phoneNumber);
+        res.status(200).json({
+            message: "User deleted successfully",
+            success: true,
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({

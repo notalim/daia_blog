@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
     const loginUser = async (phoneNumber) => {
         try {
             console.log("Requesting a code to login user: ", phoneNumber);
-            const { data, error } = await API.login(phoneNumber);
+            const { data, message, error } = await API.login(phoneNumber);
 
             if (error) {
                 throw new Error(error);
@@ -109,16 +109,17 @@ export const AuthProvider = ({ children }) => {
 
     const deleteUser = async (phoneNumber) => {
         try {
-            const { data, error } = await API.deleteUser(phoneNumber);
-            if (error) {
-                throw new Error(error);
+            const response = await API.deleteUser(phoneNumber);
+
+            if (response.error) {
+                throw new Error(response.error);
             }
+           
             setUser(null);
-            localStorage.removeItem("user");
-            return { data, error };
+            navigate("/");
         } catch (error) {
             console.error("Deleting user failed: ", error);
-            return { data, error };
+            
         }
     };
 

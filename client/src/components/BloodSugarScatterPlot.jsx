@@ -21,11 +21,10 @@ const BloodSugarScatterPlot = ({
     }
 
     function interpolateY(time, data) {
-        // Find the real data points surrounding the time where the ghost point should be
         let beforePoint = data.find((d) => moment(d.WT).isBefore(time));
         let afterPoint = data.find((d) => moment(d.WT).isAfter(time));
 
-        // Linear interpolation formula
+        // * See linear interpolation formula
         let slope =
             (afterPoint.Value - beforePoint.Value) /
             moment(afterPoint.WT).diff(moment(beforePoint.WT));
@@ -33,7 +32,7 @@ const BloodSugarScatterPlot = ({
             slope * moment(time).diff(moment(beforePoint.WT)) +
             beforePoint.Value;
 
-        return interpolatedY;
+        return Math.round(interpolatedY);
     }
 
     function processData(data) {

@@ -17,6 +17,7 @@ const UserProfilePage = () => {
             latestDataTime &&
             moment(latestDataTime).isBefore(thirtyMinutesAgo)
         ) {
+            console.log(latestDataTime, thirtyMinutesAgo);
             setDataIsOld(true);
         }
     }, [user.bloodSugarData]);
