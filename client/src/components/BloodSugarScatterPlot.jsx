@@ -1,16 +1,19 @@
-import React, { useEffect, useRef } from "react";
-import { Chart } from "chart.js/auto";
+import React, { useEffect, useRef, useState } from "react";
+import { Chart, registerables } from "chart.js/auto";
+import annotationPlugin from "chartjs-plugin-annotation";
+
 import moment from "moment-timezone";
 import "chartjs-adapter-moment";
 
 const BloodSugarScatterPlot = ({
     bloodSugarData,
-    thresholdValue,
     onRefresh,
     dataIsOld,
+    onSaveThreshold,
 }) => {
     const chartRef = useRef();
     const chartInstance = useRef(null);
+    Chart.register(annotationPlugin);
 
     function createGhostPoint(time, y = null) {
         return {
@@ -20,110 +23,161 @@ const BloodSugarScatterPlot = ({
         };
     }
 
-    function interpolateY(time, data) {
-        let beforePoint = data.find((d) => moment(d.WT).isBefore(time));
-        let afterPoint = data.find((d) => moment(d.WT).isAfter(time));
+    function interpolateY(currentTime, momentData) {
+        // Find the closest point before the current time
+        let beforePoint = null;
+        let afterPoint = null;
 
-        // * See linear interpolation formula
-        let slope =
-            (afterPoint.Value - beforePoint.Value) /
-            moment(afterPoint.WT).diff(moment(beforePoint.WT));
-        let interpolatedY =
-            slope * moment(time).diff(moment(beforePoint.WT)) +
-            beforePoint.Value;
+        for (let i = 0; i < momentData.length; i++) {
+            if (moment(momentData[i].moment).isBefore(currentTime)) {
+                beforePoint = momentData[i];
+            } else if (
+                moment(momentData[i].moment).isAfter(currentTime) &&
+                afterPoint == null
+            ) {
+                afterPoint = momentData[i];
+                break; // Found the immediate next point, exit the loop
+            }
+        }
 
-        return Math.round(interpolatedY);
+        // Ensure we have valid points to interpolate between
+        if (beforePoint && afterPoint) {
+            let slope =
+                (afterPoint.Value - beforePoint.Value) /
+                moment(afterPoint.moment).diff(
+                    moment(beforePoint.moment),
+                    "milliseconds"
+                );
+            let interpolatedY =
+                beforePoint.Value +
+                slope *
+                    currentTime.diff(
+                        moment(beforePoint.moment),
+                        "milliseconds"
+                    );
+
+            return Math.round(interpolatedY);
+        }
+
+        // If we can't interpolate, return null
+        return null;
     }
 
     function processData(data) {
+        const intervalCount = 12; // The number of data points we expect
         const expectedInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
         const results = [];
-        const currentTime = moment(); // current time
-        const startTime = currentTime.clone().subtract(55, "minutes"); // start time for 12 points (5 minutes interval)
 
-        // Convert data points to moments for easier comparison
-        const momentData = data.map((dp) => ({
-            ...dp,
-            moment: moment(parseInt(dp.WT.replace(/[^0-9]/g, ""), 10)),
-        }));
+        // Sort the incoming data by time
+        const sortedData = data
+            .map((dp) => ({
+                ...dp,
+                moment: moment(dp.WT),
+                Value: dp.Value,
+            }))
+            .sort((a, b) => a.moment.valueOf() - b.moment.valueOf());
 
-        // Sort data points by time
-        momentData.sort((a, b) => a.moment.valueOf() - b.moment.valueOf());
+        // The end time is the last data point's time
+        const endTime =
+            sortedData.length > 0
+                ? sortedData[sortedData.length - 1].moment
+                : moment();
+        const startTime = endTime
+            .clone()
+            .subtract((intervalCount - 1) * expectedInterval, "milliseconds");
 
-        let dataIndex = momentData.findIndex((dp) =>
-            dp.moment.isSameOrAfter(startTime)
-        );
+        let lastKnownValue = null;
+        for (let i = 0; i < intervalCount; i++) {
+            let expectedTime = startTime
+                .clone()
+                .add(i * expectedInterval, "milliseconds");
 
-        // If there's no data point after the start time, set the index to the end of the array
-        if (dataIndex === -1) {
-            dataIndex = momentData.length;
-        }
-
-        for (
-            let time = startTime;
-            time.isSameOrBefore(currentTime);
-            time.add(5, "minutes")
-        ) {
-            if (
-                dataIndex < momentData.length &&
-                momentData[dataIndex].moment.isSameOrBefore(time)
-            ) {
-                // If there's a data point for the current time, add it
+            let realPoint = sortedData.find((d) =>
+                moment(d.moment).isSame(expectedTime, "minute")
+            );
+            if (realPoint) {
                 results.push({
-                    x: time.format("YYYY-MM-DDTHH:mm:ss"),
-                    y: momentData[dataIndex].Value,
+                    x: realPoint.moment.format("YYYY-MM-DDTHH:mm:ss"),
+                    y: realPoint.Value,
                     missing: false,
                 });
-                dataIndex++; // move to the next data point for the next iteration
+                lastKnownValue = realPoint.Value;
             } else {
-                // Cases where data is missing
-                if (time.isBefore(moment(data[0].WT))) {
-                    // Case 1: Missing points on the left
-                    results.push(createGhostPoint(time, data[0].Value));
-                } else if (time.isAfter(moment(data[data.length - 1].WT))) {
-                    // Case 3: Missing points on the right
+                let interpolatedY = interpolateY(expectedTime, sortedData);
+                if (interpolatedY !== null) {
+                    results.push(createGhostPoint(expectedTime, interpolatedY));
+                } else if (lastKnownValue !== null) {
                     results.push(
-                        createGhostPoint(time, data[data.length - 1].Value)
+                        createGhostPoint(expectedTime, lastKnownValue)
                     );
                 } else {
-                    // Case 2: Missing points in between
-                    let interpolatedY = interpolateY(time, data);
-                    results.push(createGhostPoint(time, interpolatedY));
+                    // If there's no last known value, we have no basis to create a ghost point, so do nothing
+                    // This should only happen if there's no data at the start of the hour
                 }
             }
+        }
+
+        // If we have less than 12 points, it means we're missing data at the start of the hour
+        while (results.length < intervalCount) {
+            let timeToAdd = moment(results[0].x).subtract(
+                expectedInterval,
+                "milliseconds"
+            );
+
+            results.unshift(createGhostPoint(timeToAdd, lastKnownValue)); // Use the last known value or null
         }
 
         return results;
     }
 
+    const [thresholdValue, setThresholdValue] = useState(150);
+
+    // const handleThresholdChange = (newThreshold) => {
+    //     console.log("New threshold set to:", newThreshold);
+    //     setThresholdValue(newThreshold);
+    // };
+
+    // const handleThresholdSave = (newThreshold) => {
+    //     onSaveThreshold(newThreshold);
+    // };
+
     useEffect(() => {
         if (!bloodSugarData || bloodSugarData.length === 0) return;
         const ctx = chartRef.current.getContext("2d");
 
-        let dataCopy = [...bloodSugarData];
+        // Calculate one hour ago from the current time
+        const oneHourAgo = moment().subtract(1, "hour");
 
-        const now = moment();
-        if (
-            dataCopy.length > 0 &&
-            now.diff(moment(dataCopy[dataCopy.length - 1].WT), "minutes") < 5
-        ) {
-            dataCopy.pop();
-        }
+        // Filter the bloodSugarData to only include the data from the last hour
+        const lastHourData = bloodSugarData.filter((data) => {
+            return moment(data.WT).isAfter(oneHourAgo);
+        });
 
-        const processedData = processData(dataCopy);
+        const processedData = processData(lastHourData);
 
-        console.log("Processed Data: ", processedData);
+        // console.log("Processed Data: ", processedData);
+
+        const realDataPoints = processedData.filter((point) => !point.missing);
+        const ghostDataPoints = processedData.filter((point) => point.missing);
 
         const data = {
             datasets: [
                 {
-                    label: "Blood Sugar Level (mg/dL)",
-                    data: processedData,
-                    pointRadius: (context) => (context.raw.missing ? 2 : 4),
-                    pointBackgroundColor: (context) =>
-                        context.raw.missing ? "grey" : "rgba(187, 169, 221, 1)",
+                    label: "Tracked Points",
+                    data: realDataPoints,
+                    pointRadius: 4,
+                    pointBackgroundColor: "rgba(187, 169, 221, 1)",
+                    pointBorderColor: "transparent",
+                    pointHoverRadius: 8,
+                    pointHoverBorderColor: "black",
+                },
 
-                    pointBorderColor: "rgba(86, 56, 144, 1)",
+                {
+                    label: "Ghost Points",
+                    data: ghostDataPoints,
+                    pointRadius: 2,
+                    pointBackgroundColor: "grey",
+                    pointBorderColor: "grey",
                     pointHoverRadius: 8,
                 },
             ],
@@ -138,9 +192,29 @@ const BloodSugarScatterPlot = ({
                         const dataset = data.datasets[tooltipItem.datasetIndex];
                         const point = dataset.data[tooltipItem.index];
                         if (point.missing) {
-                            return "Data not available for this time";
+                            return "Ghost points: Data completed by DAIA";
+                        } else {
+                            return `Tracked points: Value from Dexcom - ${tooltipItem.yLabel} mg/dL`;
                         }
-                        return `${dataset.label}: ${tooltipItem.yLabel} mg/dL`;
+                    },
+                },
+            },
+            plugins: {
+                annotation: {
+                    annotations: {
+                        thresholdLine: {
+                            type: "line",
+                            yMin: thresholdValue,
+                            yMax: thresholdValue,
+                            borderColor: "#C185A3",
+                            borderWidth: 2,
+                            borderDash: [6, 6],
+                            label: {
+                                content: "Threshold: " + thresholdValue,
+                                enabled: true,
+                                position: "start",
+                            },
+                        },
                     },
                 },
             },
@@ -163,6 +237,7 @@ const BloodSugarScatterPlot = ({
                     },
                 },
                 y: {
+                    id: "y-axis-0",
                     beginAtZero: false,
                     suggestedMin: 40,
                     suggestedMax: 400,
@@ -186,43 +261,69 @@ const BloodSugarScatterPlot = ({
             options: options,
         });
 
-        // Clean up the Chart instance on component unmount
         return () => {
-            if (chartInstance.current) {
-                chartInstance.current.destroy();
-            }
+            chartInstance.current?.destroy();
         };
+
     }, [bloodSugarData, thresholdValue]);
 
     return (
-        <div className="w-full lg:w-3/5 mx-auto">
-            {dataIsOld && (
-                <div
-                    className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4"
-                    role="alert"
-                >
-                    <p>
-                        The data is older than 30 minutes, would you like to
-                        update?
-                    </p>
-                    <button
-                        onClick={onRefresh}
-                        className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
+        <div>
+            <div className="w-full p-2 mx-auto">
+                {dataIsOld && (
+                    <div
+                        className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4"
+                        role="alert"
                     >
-                        Refresh Data
-                    </button>
-                </div>
-            )}
-            {/* refresh button with an icon */}
-            <button
-                onClick={onRefresh}
-                className="bg-full-purple hover:hover-full-purple text-white font-bold py-2 px-4 rounded mb-4"
-            >
-                {/* need an icon! */}
-                Refresh Data
-            </button>
+                        <p>
+                            The data is older than 30 minutes, would you like to
+                            update?
+                        </p>
+                        <button
+                            onClick={onRefresh}
+                            className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
+                        >
+                            Refresh Data
+                        </button>
+                    </div>
+                )}
+                {/* refresh button with an icon */}
 
-            <canvas ref={chartRef} />
+                <canvas ref={chartRef} className="my-4" />
+
+                <button
+                    onClick={onRefresh}
+                    className="bg-full-purple hover:hover-full-purple text-white font-bold py-2 px-4 rounded mb-4"
+                >
+                    {/* need an icon! */}
+                    Refresh Data
+                </button>
+
+                <div className="text-sm p-4 mb-4 border border-gray-300 rounded bg-white">
+                    <p className="font-bold">Understanding the Chart:</p>
+                    <ul className="list-disc pl-5">
+                        <li>
+                            <span className="text-dim-purple font-bold">
+                                Tracked Points:{" "}
+                            </span>
+                            Values fetched directly from Dexcom.
+                        </li>
+                        <li>
+                            <span className="text-gray-500 font-bold">
+                                Ghost Points:{" "}
+                            </span>
+                            Data completed by DAIA in case Dexcom doesn't
+                            provide a value.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            {/* <ThresholdSlider
+                initialThreshold={thresholdValue}
+                onSave={handleThresholdSave} // Pass this to save the value to the backend
+                onThresholdChange={handleThresholdChange}
+            /> */}
         </div>
     );
 };

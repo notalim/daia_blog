@@ -110,7 +110,7 @@ export const AuthProvider = ({ children }) => {
     const deleteUser = async (phoneNumber) => {
         try {
             const response = await API.deleteUser(phoneNumber);
-            console.log(response);
+
             if (!response.success) {
                 throw new Error(response.message || "Failed to delete user.");
             }
