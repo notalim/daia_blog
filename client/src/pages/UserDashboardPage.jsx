@@ -1,19 +1,87 @@
-import React, { useContext } from "react";
+import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/useAuth";
 
-const UserProfilePage = () => {
-    const { user, logoutUser } = useAuth();
+import BloodSugarScatterPlot from "../components/BloodSugarScatterPlot";
+import ThresholdSlider from "../components/ThresholdSlider/ThresholdSlider";
 
-    const handleLogout = () => {
-        
-        logoutUser();
-        
+import moment from "moment";
+
+const UserProfilePage = () => {
+    const { user, logoutUser, updateUser, updateDexcomSessionId, deleteUser } =
+        useAuth();
+    const [dataIsOld, setDataIsOld] = useState(false);
+    const [thresholdValue, setThresholdValue] = useState(180);
+
+    // ! set user.thresholdValue at backend later!
+
+    useEffect(() => {
+        if (user.bloodSugarData.length === 0) {
+            console.log("No blood sugar data available.");
+            setDataIsOld(false);
+            return;
+        }
+
+        const latestDataTime = moment(user.bloodSugarData[user.bloodSugarData.length - 1].WT);
+        const thirtyMinutesAgo = moment().subtract(30, "minutes");
+
+        // console.log(`Latest Data Time: ${latestDataTime}`);
+        // console.log(`Thirty Minutes Ago: ${thirtyMinutesAgo}`);
+        // console.log(
+        //     `Is latest data time before thirty minutes ago? ${latestDataTime.isBefore(
+        //         thirtyMinutesAgo
+        //     )}`
+        // );
+
+        if (latestDataTime.isBefore(thirtyMinutesAgo)) {
+            setDataIsOld(true);
+        } else {
+            setDataIsOld(false);
+        }
+    }, [user.bloodSugarData]);
+
+    const handleRefreshData = async () => {
+        await updateUser(user.phoneNumber);
+        setDataIsOld(false);
     };
 
-    console.log("User: ", user);
+    const handleDexcomSessionIdRefresh = async () => {
+        await updateDexcomSessionId(
+            user.phoneNumber,
+            user.dexcomUser,
+            user.dexcomPass
+        );
+    };
+
+    const handleLogout = () => {
+        logoutUser();
+    };
+
+    const handleDeleteUser = () => {
+        deleteUser(user.phoneNumber);
+    };
+
+    const handleThresholdSave = (newThreshold) => {
+        // TODO: Save the new threshold to the backend
+        setThresholdValue(newThreshold);
+    };
+
+    const bloodSugarData = user.bloodSugarData;
+
+    // console.log("User: ", user);
 
     return (
         <div className="container mx-auto p-4">
+            <div className="flex flex-col lg:flex-row gap-4">
+                <div className="flex-grow">
+                    <BloodSugarScatterPlot
+                        bloodSugarData={bloodSugarData}
+                        thresholdValue={thresholdValue}
+                        onRefresh={handleRefreshData}
+                        dataIsOld={dataIsOld}
+                        onDexcomSessionIdRefresh={handleDexcomSessionIdRefresh}
+                    />
+                </div>
+            </div>
             <h1 className="text-2xl font-bold mb-4">Hello, {user.name}!</h1>
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">
                 <div className="px-4 py-5 sm:px-6">
@@ -52,13 +120,21 @@ const UserProfilePage = () => {
                         </div>
                     </dl>
                 </div>
-                <div className="px-4 py-4 bg-gray-50 text-right">
+                <div className="px-4 py-4 bg-gray-50 text-right sm:px-6">
                     <button
                         type="button"
                         onClick={handleLogout}
                         className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
                     >
                         Log out
+                    </button>
+                    {/* delete user button */}
+                    <button
+                        type="button"
+                        onClick={handleDeleteUser}
+                        className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                    >
+                        Delete Account
                     </button>
                 </div>
             </div>

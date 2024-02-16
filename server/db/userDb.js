@@ -78,26 +78,12 @@ const getUserByPhoneNumber = async (phoneNumber) => {
         const userCollection = await users();
         let foundUser = await userCollection.findOne({ phoneNumber });
 
-        if (!foundUser) {
-            throw new Error("User not found");
-        }
-
         return foundUser;
     } catch (error) {
-        throw new Error("Error fetching user: " + error.message);
+        throw new Error("Error trying to get an existing user: " + error.message);
     }
 };
 
-const checkUserByPhoneNumber = async (phoneNumber) => {
-    try {
-        const userCollection = await users();
-        let foundUser = await userCollection.findOne({ phoneNumber });
-
-        return foundUser;
-    } catch (error) {
-        throw new Error("Error fetching user: " + error.message);
-    }
-};
 
 const checkPassword = async (phoneNumber, password) => {
     try {
@@ -154,22 +140,14 @@ const addEmergencyContact = async (
     }
 };
 
-
-
-// const modifyUser = async (phoneNumber, ) {
-//     // should be able to modify:
-//     // glucagonType,
-//     // glucagonLocation,
-//     // crisisTextEnabled
-//     // crisisText
-// }
-
 const getAllUsers = async () => {
     try {
         const userCollection = await users();
         let userList = await userCollection.find({}).toArray();
+
         if (!userList) throw "Could not get all users";
-        console.log(userList);
+
+        // console.log(userList);
         return userList;
     } catch (error) {
         throw new Error("Error fetching all users: " + error.message);
@@ -192,12 +170,52 @@ const updateUserSessionId = async (userId, dexcomSessionId) => {
     }
 };
 
+const updateBloodSugarData = async (userId, addedBloodSugarData) => {
+    try {
+        if (Array.isArray(addedBloodSugarData)) {
+            addedBloodSugarData = addedBloodSugarData[0];
+        }
+        const userCollection = await users(); // Assuming `users()` gets the collection
+        const updateInfo = await userCollection.updateOne(
+            { _id: userId },
+            {
+                $push: {
+                    bloodSugarData: addedBloodSugarData,
+                },
+            }
+        );
+
+        if (updateInfo.modifiedCount === 0)
+            throw new Error("Could not update blood sugar data!");
+
+        return updateInfo.modifiedCount === 1;
+    } catch (error) {
+        throw new Error("Error updating blood sugar data: " + error.message);
+    }
+};
+
+const deleteUser = async (phoneNumber) => {
+    try {
+        const userCollection = await users();
+        const deleteInfo = await userCollection.deleteOne
+            ({ phoneNumber });
+        if (deleteInfo.deletedCount === 0)
+            throw new Error("Could not delete user!");
+
+        return true;
+    }
+    catch (error) {
+        throw new Error("Error deleting user: " + error.message);
+    }
+}
+
 export {
     createUser,
     getUserByPhoneNumber,
-    checkUserByPhoneNumber,
     checkPassword,
     addEmergencyContact,
     getAllUsers,
     updateUserSessionId,
+    updateBloodSugarData,
+    deleteUser,
 };

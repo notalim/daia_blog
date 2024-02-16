@@ -4,7 +4,8 @@
 // ! Make sure to add it both to the server and client errorTypes.js files.
 
 export const errorTypes = {
-    INVALID_PHONE_NUMBER: "Invalid phone number format, must be of the form +1XXXXXXXXXX",
+    INVALID_PHONE_NUMBER:
+        "Invalid phone number format, must be of the form +1XXXXXXXXXX",
     PHONE_NUMBER_REQUIRED: "Phone number is missing",
     USER_NOT_FOUND: "User not found",
     CODE_NOT_APPROVED: "Code wasn't approved",
@@ -17,11 +18,14 @@ export const errorTypes = {
     INVALID_PASSWORD:
         "Password must be at least 8 characters and include a number",
     PASSWORDS_DO_NOT_MATCH: "The passwords entered do not match",
-    INVALID_VERIFICATION_CODE: "Invalid verification code, it should be 6 digits long",
-    INVALID_CODE: "Invalid verification code. Try reloading the page and resending it again",
+    INVALID_VERIFICATION_CODE:
+        "Invalid verification code, it should be 6 digits long",
+    INVALID_CODE:
+        "Invalid verification code. Try reloading the page and resending it again",
     INVALID_NAME: "Invalid name format",
     INVALID_STRING: "Invalid characters used",
     AUTHENTICATION_FAILED: "Authentication failed",
+    DEXCOM_SESSION_PROBLEM: "Problem with Dexcom session",
     ACCESS_DENIED: "Access denied",
     SESSION_EXPIRED: "Session has expired",
     ACCOUNT_LOCKED: "Account is locked due to too many failed attempts",

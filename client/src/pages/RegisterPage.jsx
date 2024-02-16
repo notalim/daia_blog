@@ -128,7 +128,7 @@ function RegisterPage() {
                 let concatPhoneNumber =
                     "+1" + formData["Phone Number"].replace(/\D/g, "");
 
-                await completeRegistration(
+                let {data, error} = await completeRegistration(
                     concatPhoneNumber,
                     formData["Verification Code"],
                     formData["Your Name"],
