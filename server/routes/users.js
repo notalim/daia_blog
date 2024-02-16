@@ -9,16 +9,19 @@ import {
     getUserByPhoneNumber,
     addEmergencyContact,
     deleteUser,
+    updateUserSessionId,
 } from "../db/userDb.js";
 
 import {
     getDexcomSessionId,
     getBloodSugarData,
+    refreshDexcomSessionId,
 } from "../services/dexcomHelper.js";
 
 import validation from "../services/validation.js";
 
 import { errorTypes } from "../services/errorTypes.js";
+import { get } from "mongoose";
 
 const router = express.Router();
 
@@ -202,6 +205,7 @@ router.post("/signup/complete", async (req, res) => {
 });
 
 router.post("/update", async (req, res) => {
+    // ! Not working, place holder code
     const { phoneNumber } = req.body;
     try {
         const user = await getUserByPhoneNumber(phoneNumber);
@@ -227,41 +231,27 @@ router.post("/update", async (req, res) => {
 router.post("/update-dexcom", async (req, res) => {
     const { phoneNumber, dexcomUser, dexcomPass } = req.body;
 
-    const dexcomSessionId =
+    const newDexcomSessionId =
         (await getDexcomSessionId(dexcomUser, dexcomPass)) || null;
-    if (dexcomSessionId === "00000000-0000-0000-0000-000000000000") {
+
+    if (newDexcomSessionId === "00000000-0000-0000-0000-000000000000") {
         return res.status(401).json({
             message: "Invalid Dexcom credentials",
             error: errorTypes.INVALID_DEXCOM_CREDENTIALS,
         });
     }
 
-    const bloodSugarData = (await getBloodSugarData(dexcomSessionId)) || null;
-    if (bloodSugarData === "Invalid session") {
-        return res.status(401).json({
-            message: "Problem with Dexcom session",
-            error: errorTypes.DEXCOM_SESSION_PROBLEM,
-        });
-    }
+    let foundUserId = null;
 
     try {
-        const user = await getUserByPhoneNumber(phoneNumber);
-        if (!user) {
+        const foundUser = await getUserByPhoneNumber(phoneNumber);
+        foundUserId = foundUser._id;
+        if (!foundUser) {
             return res.status(404).json({
                 message: "User not found",
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
-        user.dexcomUser = dexcomUser;
-        user.dexcomPass = dexcomPass;
-        user.dexcomSessionId = dexcomSessionId;
-        user.bloodSugarData = bloodSugarData;
-        res.status(200).json({
-            user: user,
-            message: "Dexcom credentials updated successfully",
-            success: true,
-            dexcomSessionId: dexcomSessionId,
-        });
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -269,11 +259,22 @@ router.post("/update-dexcom", async (req, res) => {
             error: errorTypes.SERVER_ERROR,
         });
     }
+
+    try {
+        const updatedUser = await updateUserSessionId(
+            foundUserId,
+            newDexcomSessionId
+        );
+        res.status(200).json({
+            user: updatedUser,
+            message: "Dexcom credentials updated successfully",
+        });
+    }
 });
 
 router.delete("/delete/:phoneNumber", async (req, res) => {
     const { phoneNumber } = req.params;
-    
+
     try {
         const user = await getUserByPhoneNumber(phoneNumber);
         if (!user) {

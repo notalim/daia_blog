@@ -7,26 +7,35 @@ import ThresholdSlider from "../components/ThresholdSlider/ThresholdSlider";
 import moment from "moment";
 
 const UserProfilePage = () => {
-    const { user, logoutUser, updateUser, updateDexcomSessionId, deleteUser } = useAuth();
+    const { user, logoutUser, updateUser, updateDexcomSessionId, deleteUser } =
+        useAuth();
     const [dataIsOld, setDataIsOld] = useState(false);
     const [thresholdValue, setThresholdValue] = useState(180);
 
     // ! set user.thresholdValue at backend later!
 
     useEffect(() => {
-        const latestDataTime =
-            user.bloodSugarData[user.bloodSugarData.length - 1]?.WT;
+        if (user.bloodSugarData.length === 0) {
+            console.log("No blood sugar data available.");
+            setDataIsOld(false);
+            return;
+        }
+
+        const latestDataTime = moment(user.bloodSugarData[user.bloodSugarData.length - 1].WT);
         const thirtyMinutesAgo = moment().subtract(30, "minutes");
 
-        // console.log("Latest Data Time: ", moment(latestDataTime));
-        // console.log("Thirty Minutes Ago: ", thirtyMinutesAgo);
+        // console.log(`Latest Data Time: ${latestDataTime}`);
+        // console.log(`Thirty Minutes Ago: ${thirtyMinutesAgo}`);
+        // console.log(
+        //     `Is latest data time before thirty minutes ago? ${latestDataTime.isBefore(
+        //         thirtyMinutesAgo
+        //     )}`
+        // );
 
-        if (
-            latestDataTime &&
-            moment(latestDataTime).isBefore(thirtyMinutesAgo)
-        ) {
-            console.log(latestDataTime, thirtyMinutesAgo);
+        if (latestDataTime.isBefore(thirtyMinutesAgo)) {
             setDataIsOld(true);
+        } else {
+            setDataIsOld(false);
         }
     }, [user.bloodSugarData]);
 
@@ -69,11 +78,9 @@ const UserProfilePage = () => {
                         thresholdValue={thresholdValue}
                         onRefresh={handleRefreshData}
                         dataIsOld={dataIsOld}
-
                         onDexcomSessionIdRefresh={handleDexcomSessionIdRefresh}
                     />
                 </div>
-                
             </div>
             <h1 className="text-2xl font-bold mb-4">Hello, {user.name}!</h1>
             <div className="bg-white shadow overflow-hidden sm:rounded-lg">

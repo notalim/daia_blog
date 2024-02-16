@@ -298,7 +298,7 @@ const BloodSugarScatterPlot = ({
 
                 <button
                     onClick={onRefresh}
-                    className="bg-full-purple hover:hover-full-purple text-white font-bold py-2 px-4 rounded mb-4"
+                    className="bg-full-purple hover:hover-full-purple text-white font-bold py-2 px-4 rounded mb-4 mx-2"
                 >
                     {/* need an icon! */}
                     Refresh Data
@@ -309,7 +309,8 @@ const BloodSugarScatterPlot = ({
                     className="bg-full-purple hover:hover-full-purple text-white font-bold py-2 px-4 rounded mb-4"
                 >
                     {/* need an icon! */}
-                    Refresh Dexcom session ID (TEST)                </button>
+                    Refresh Dexcom session ID (TEST){" "}
+                </button>
 
                 <div className="text-sm p-4 mb-4 border border-gray-300 rounded bg-white">
                     <p className="font-bold">Understanding the Chart:</p>
