@@ -270,7 +270,15 @@ router.post("/update-dexcom", async (req, res) => {
             message: "Dexcom credentials updated successfully",
         });
     }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
 });
+
 
 router.delete("/delete/:phoneNumber", async (req, res) => {
     const { phoneNumber } = req.params;
