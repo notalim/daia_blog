@@ -7,7 +7,7 @@ import ThresholdSlider from "../components/ThresholdSlider/ThresholdSlider";
 import moment from "moment";
 
 const UserProfilePage = () => {
-    const { user, logoutUser, updateUser, deleteUser } = useAuth();
+    const { user, logoutUser, updateUser, updateDexcomSessionId, deleteUser } = useAuth();
     const [dataIsOld, setDataIsOld] = useState(false);
     const [thresholdValue, setThresholdValue] = useState(180);
 
@@ -33,6 +33,14 @@ const UserProfilePage = () => {
     const handleRefreshData = async () => {
         await updateUser(user.phoneNumber);
         setDataIsOld(false);
+    };
+
+    const handleDexcomSessionIdRefresh = async () => {
+        await updateDexcomSessionId(
+            user.phoneNumber,
+            user.dexcomUser,
+            user.dexcomPass
+        );
     };
 
     const handleLogout = () => {
@@ -61,6 +69,8 @@ const UserProfilePage = () => {
                         thresholdValue={thresholdValue}
                         onRefresh={handleRefreshData}
                         dataIsOld={dataIsOld}
+
+                        onDexcomSessionIdRefresh={handleDexcomSessionIdRefresh}
                     />
                 </div>
                 

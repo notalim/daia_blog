@@ -94,6 +94,14 @@ class ApiClient {
         });
     }
 
+    async updateDexcomSessionId(phoneNumber, dexcomUser, dexcomPass) {
+        return await this.request({
+            endpoint: "users/update-dexcom",
+            method: "POST",
+            data: { phoneNumber, dexcomUser, dexcomPass },
+        });
+    }
+
     async deleteUser(phoneNumber) {
         return await this.request({
             endpoint: `users/delete/${phoneNumber}`, // Assuming the server can handle this endpoint format

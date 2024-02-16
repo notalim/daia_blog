@@ -10,9 +10,9 @@ const BloodSugarScatterPlot = ({
     onRefresh,
     dataIsOld,
     onSaveThreshold,
+
+    onDexcomSessionIdRefresh,
 }) => {
-    const chartRef = useRef();
-    const chartInstance = useRef(null);
     Chart.register(annotationPlugin);
 
     function createGhostPoint(time, y = null) {
@@ -130,8 +130,6 @@ const BloodSugarScatterPlot = ({
         return results;
     }
 
-    const [thresholdValue, setThresholdValue] = useState(150);
-
     // const handleThresholdChange = (newThreshold) => {
     //     console.log("New threshold set to:", newThreshold);
     //     setThresholdValue(newThreshold);
@@ -140,6 +138,12 @@ const BloodSugarScatterPlot = ({
     // const handleThresholdSave = (newThreshold) => {
     //     onSaveThreshold(newThreshold);
     // };
+
+    const chartRef = useRef();
+    const chartInstance = useRef(null);
+    const [isLoading, setIsLoading] = useState(true);
+
+    const [thresholdValue, setThresholdValue] = useState(150);
 
     useEffect(() => {
         if (!bloodSugarData || bloodSugarData.length === 0) return;
@@ -153,7 +157,9 @@ const BloodSugarScatterPlot = ({
             return moment(data.WT).isAfter(oneHourAgo);
         });
 
-        const processedData = processData(lastHourData);
+        const processedData = processData(bloodSugarData).filter(
+            (d) => d.x != null
+        );
 
         // console.log("Processed Data: ", processedData);
 
@@ -264,7 +270,6 @@ const BloodSugarScatterPlot = ({
         return () => {
             chartInstance.current?.destroy();
         };
-
     }, [bloodSugarData, thresholdValue]);
 
     return (
@@ -298,6 +303,13 @@ const BloodSugarScatterPlot = ({
                     {/* need an icon! */}
                     Refresh Data
                 </button>
+
+                <button
+                    onClick={onDexcomSessionIdRefresh}
+                    className="bg-full-purple hover:hover-full-purple text-white font-bold py-2 px-4 rounded mb-4"
+                >
+                    {/* need an icon! */}
+                    Refresh Dexcom session ID (TEST)                </button>
 
                 <div className="text-sm p-4 mb-4 border border-gray-300 rounded bg-white">
                     <p className="font-bold">Understanding the Chart:</p>

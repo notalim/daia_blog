@@ -107,6 +107,21 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updateDexcomSessionId = async (phoneNumber, dexcomUser, dexcomPass) => {
+        try {
+            const { data, error } = await API.updateDexcomSessionId(phoneNumber, dexcomUser, dexcomPass);
+            if (error) {
+                throw new Error(error);
+            }
+            setUser(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            return { data, error };
+        } catch (error) {
+            console.error("Updating user failed: ", error);
+            return { data, error };
+        }
+    }
+
     const deleteUser = async (phoneNumber) => {
         try {
             const response = await API.deleteUser(phoneNumber);
@@ -142,6 +157,7 @@ export const AuthProvider = ({ children }) => {
                 logoutUser,
 
                 updateUser,
+                updateDexcomSessionId,
                 deleteUser,
             }}
         >
