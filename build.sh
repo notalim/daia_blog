@@ -10,7 +10,7 @@ cp ../server/services/errorTypes.js ../client/src/services/
 
 npm run dev &
 
-cd ../server
-npm install
+# cd ../server
+# npm install
 
-npm start
+# npm start

@@ -78,26 +78,12 @@ const getUserByPhoneNumber = async (phoneNumber) => {
         const userCollection = await users();
         let foundUser = await userCollection.findOne({ phoneNumber });
 
-        if (!foundUser) {
-            throw new Error("User not found");
-        }
-
         return foundUser;
     } catch (error) {
-        throw new Error("Error fetching user: " + error.message);
+        throw new Error("Error trying to get an existing user: " + error.message);
     }
 };
 
-const checkUserByPhoneNumber = async (phoneNumber) => {
-    try {
-        const userCollection = await users();
-        let foundUser = await userCollection.findOne({ phoneNumber });
-
-        return foundUser;
-    } catch (error) {
-        throw new Error("Error fetching user: " + error.message);
-    }
-};
 
 const checkPassword = async (phoneNumber, password) => {
     try {
@@ -208,13 +194,28 @@ const updateBloodSugarData = async (userId, addedBloodSugarData) => {
     }
 };
 
+const deleteUser = async (phoneNumber) => {
+    try {
+        const userCollection = await users();
+        const deleteInfo = await userCollection.deleteOne
+            ({ phoneNumber });
+        if (deleteInfo.deletedCount === 0)
+            throw new Error("Could not delete user!");
+
+        return true;
+    }
+    catch (error) {
+        throw new Error("Error deleting user: " + error.message);
+    }
+}
+
 export {
     createUser,
     getUserByPhoneNumber,
-    checkUserByPhoneNumber,
     checkPassword,
     addEmergencyContact,
     getAllUsers,
     updateUserSessionId,
     updateBloodSugarData,
+    deleteUser,
 };

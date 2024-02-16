@@ -7,19 +7,21 @@ import {
 import {
     createUser,
     getUserByPhoneNumber,
-    checkPassword,
-    checkUserByPhoneNumber,
     addEmergencyContact,
+    deleteUser,
+    updateUserSessionId,
 } from "../db/userDb.js";
 
 import {
     getDexcomSessionId,
     getBloodSugarData,
+    refreshDexcomSessionId,
 } from "../services/dexcomHelper.js";
 
 import validation from "../services/validation.js";
 
 import { errorTypes } from "../services/errorTypes.js";
+import { get } from "mongoose";
 
 const router = express.Router();
 
@@ -42,6 +44,7 @@ router.post("/login", async (req, res) => {
             });
         }
         await sendVerificationCode(phoneNumber);
+
         res.status(200).json({
             message: "Verification code sent. Please verify your phone number.",
         });
@@ -99,8 +102,8 @@ router.post("/signup", async (req, res) => {
     }
 
     try {
-        const userExists = await checkUserByPhoneNumber(phoneNumber);
-        if (userExists) {
+        const user = await getUserByPhoneNumber(phoneNumber);
+        if (user) {
             return res.status(409).json({
                 message: "User already exists",
                 error: errorTypes.USER_ALREADY_EXISTS,
@@ -191,6 +194,107 @@ router.post("/signup/complete", async (req, res) => {
             message: "User created and logged in successfully",
             success: true,
             dexcomSessionId: dexcomSessionId,
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
+});
+
+router.post("/update", async (req, res) => {
+    // ! Not working, place holder code
+    const { phoneNumber } = req.body;
+    try {
+        const user = await getUserByPhoneNumber(phoneNumber);
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+                error: errorTypes.USER_NOT_FOUND,
+            });
+        }
+        res.status(200).json({
+            user: user,
+            message: "User updated successfully",
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
+});
+
+router.post("/update-dexcom", async (req, res) => {
+    const { phoneNumber, dexcomUser, dexcomPass } = req.body;
+
+    const newDexcomSessionId =
+        (await getDexcomSessionId(dexcomUser, dexcomPass)) || null;
+
+    if (newDexcomSessionId === "00000000-0000-0000-0000-000000000000") {
+        return res.status(401).json({
+            message: "Invalid Dexcom credentials",
+            error: errorTypes.INVALID_DEXCOM_CREDENTIALS,
+        });
+    }
+
+    let foundUserId = null;
+
+    try {
+        const foundUser = await getUserByPhoneNumber(phoneNumber);
+        foundUserId = foundUser._id;
+        if (!foundUser) {
+            return res.status(404).json({
+                message: "User not found",
+                error: errorTypes.USER_NOT_FOUND,
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
+
+    try {
+        const updatedUser = await updateUserSessionId(
+            foundUserId,
+            newDexcomSessionId
+        );
+        res.status(200).json({
+            user: updatedUser,
+            message: "Dexcom credentials updated successfully",
+        });
+    }
+    catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
+});
+
+
+router.delete("/delete/:phoneNumber", async (req, res) => {
+    const { phoneNumber } = req.params;
+
+    try {
+        const user = await getUserByPhoneNumber(phoneNumber);
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+                error: errorTypes.USER_NOT_FOUND,
+            });
+        }
+        await deleteUser(phoneNumber);
+        res.status(200).json({
+            message: "User deleted successfully",
+            success: true,
         });
     } catch (error) {
         console.error(error);

@@ -39,7 +39,14 @@ export const getDexcomSessionId = async (dexcomUser, dexcomPass) => {
 };
 
 export const refreshDexcomSessionId = async (user) => {
-    // needs to be done for every user
+    // needs to be done for every user every 24 hours
+
+    const newSessionId = await getDexcomSessionId(
+        user.dexcomUser,
+        user.dexcomPass
+    );
+
+    return newSessionId;
 };
 
 export const getBloodSugarData = async (

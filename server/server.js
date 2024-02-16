@@ -4,7 +4,7 @@ import configRoutes from "./routes/index.js";
 import dotenv from "dotenv";
 import cors from "cors";
 
-import { startBloodSugarUpdateTask } from "./utils/scheduler.js";
+import { startBloodSugarUpdateTask, startDexcomSessionUpdateTask } from "./utils/scheduler.js";
 import { handleCrash, handleRejection } from "./services/crashHandler.js";
 
 // ! This will add the environment variables to the process.env object
@@ -24,8 +24,10 @@ process.on("unhandledRejection", handleRejection);
 configRoutes(app);
 app.listen(3000, async () => {
     console.log("We now have a server! 🙏 ");
-    console.log("Your routes will be running on http://localhost:3000");
 
     // * This will start the task to update the blood sugar levels for all users
     startBloodSugarUpdateTask();
+
+    // * This will start the task to update the Dexcom session ID for all users
+    startDexcomSessionUpdateTask();
 });
