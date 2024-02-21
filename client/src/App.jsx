@@ -12,20 +12,25 @@ import UserDashboardPage from "./pages/UserDashboardPage";
 import PageLayout from "./pages/Page/Page";
 import Construction from "./pages/Construction";
 import { footerLinks } from "./components/Footer/footerLinks";
+import AboutUs from "./pages/AboutUs";
 
 function App() {
-	const routes = footerLinks.flatMap((section) =>
-		section.links.map((link) => (
-			<Route
-				key={link}
-				path={`/${link.toLowerCase().replace(/\s/g, "-")}`}
-				element={
-					<PageLayout>
-						<Construction message={link} />
-					</PageLayout>
-				}
-			/>
-		))
+	const implementedPages = ["About"];
+
+	const constructionPages = footerLinks.flatMap((section) =>
+		section.links
+			.filter((item) => !implementedPages.includes(item))
+			.map((link) => (
+				<Route
+					key={link}
+					path={`/${link.toLowerCase().replace(/\s/g, "-")}`}
+					element={
+						<PageLayout>
+							<Construction message={link} />
+						</PageLayout>
+					}
+				/>
+			))
 	);
 
 	return (
@@ -63,7 +68,15 @@ function App() {
 						</PageLayout>
 					}
 				/>
-				{routes}
+				{constructionPages}
+				<Route
+					path="/about"
+					element={
+						<PageLayout>
+							<AboutUs />
+						</PageLayout>
+					}
+				/>
 			</Routes>
 		</AuthProvider>
 	);
