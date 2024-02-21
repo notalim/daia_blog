@@ -10,46 +10,63 @@ import LoginPage from "./pages/LoginPage";
 import UserDashboardPage from "./pages/UserDashboardPage";
 
 import PageLayout from "./pages/Page/Page";
+import Construction from "./pages/Construction";
+import { footerLinks } from "./components/Footer/footerLinks";
 
 function App() {
-    return (
-        <AuthProvider>
-            <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <PageLayout>
-                            <LandingPage />
-                        </PageLayout>
-                    }
-                />
-                <Route
-                    path="/register"
-                    element={
-                        <PageLayout>
-                            <RegisterPage />
-                        </PageLayout>
-                    }
-                />
-                <Route
-                    path="/login"
-                    element={
-                        <PageLayout>
-                            <LoginPage />
-                        </PageLayout>
-                    }
-                />
-                <Route
-                    path="/dashboard"
-                    element={
-                        <PageLayout>
-                            <UserDashboardPage />
-                        </PageLayout>
-                    }
-                />
-            </Routes>
-        </AuthProvider>
-    );
+	const routes = footerLinks.flatMap((section) =>
+		section.links.map((link) => (
+			<Route
+				key={link}
+				path={`/${link.toLowerCase().replace(/\s/g, "-")}`}
+				element={
+					<PageLayout>
+						<Construction message={link} />
+					</PageLayout>
+				}
+			/>
+		))
+	);
+
+	return (
+		<AuthProvider>
+			<Routes>
+				<Route
+					path="/"
+					element={
+						<PageLayout>
+							<LandingPage />
+						</PageLayout>
+					}
+				/>
+				<Route
+					path="/register"
+					element={
+						<PageLayout>
+							<RegisterPage />
+						</PageLayout>
+					}
+				/>
+				<Route
+					path="/login"
+					element={
+						<PageLayout>
+							<LoginPage />
+						</PageLayout>
+					}
+				/>
+				<Route
+					path="/dashboard"
+					element={
+						<PageLayout>
+							<UserDashboardPage />
+						</PageLayout>
+					}
+				/>
+				{routes}
+			</Routes>
+		</AuthProvider>
+	);
 }
 
 export default App;
