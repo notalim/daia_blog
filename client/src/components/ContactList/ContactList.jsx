@@ -2,6 +2,8 @@ import React from "react";
 import AvatarDemo from "./AvatarDemo";
 import { Switch } from "@src/@/components/ui/switch";
 
+import AddContactButton from "./AddContactButton";
+
 const mockContacts = [
     { firstName: "Jane", lastName: "Doe", enabled: true },
     { firstName: "Jesal", lastName: "Gandhi", enabled: false },
@@ -9,6 +11,7 @@ const mockContacts = [
     { firstName: "Federico", lastName: "Yacoubian", enabled: true },
     // Add more contacts as needed
 ];
+
 
 const EmergencyContacts = () => {
     // TODO: Implement the enable/disable contact functionality
@@ -46,6 +49,16 @@ const EmergencyContacts = () => {
                         </div>
                     </div>
                 ))}
+                <div
+                    className="space-y-2 flex flex-col items-center"
+                >
+                    <AddContactButton />
+                    <div className="flex justify-between items-center w-full">
+                        <span className="text-xs text-center">
+                            Add new contact
+                        </span>
+                    </div>
+                </div>
             </div>
         </div>
     );
