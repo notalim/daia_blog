@@ -85,39 +85,6 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const registerUser = async (phoneNumber) => {
-        try {
-            const { data, error } = await API.registerUser(phoneNumber);
-            if (error) {
-                throw new Error(error);
-            }
-        } catch (error) {
-            console.error("Requesting a code failed: ", error);
-        }
-    };
-
-
-    const completeRegistration = async (phoneNumber, code, name, dexcomUser, dexcomPass) => {
-
-        try {
-            const { data, error } = await API.completeRegistration(
-                phoneNumber,
-                code,
-                name,
-                dexcomUser,
-                dexcomPass,
-            );
-            if (!error) {
-                setUser(data.user);
-                localStorage.setItem("user", JSON.stringify(data.user));
-            } else {
-                throw new Error(error);
-            }
-        } catch (error) {
-            console.error("Registration completion failed: ", error);
-        }
-    }
-
     const logoutUser = () => {
         setUser(null);
         localStorage.removeItem("user");
