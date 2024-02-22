@@ -13,9 +13,11 @@ import PageLayout from "./pages/Page/Page";
 import Construction from "./pages/Construction";
 import { footerLinks } from "./components/Footer/footerLinks";
 import AboutUs from "./pages/AboutUs";
+import Faq from "./pages/Faq";
+import ContactUs from "./pages/ContactUs";
 
 function App() {
-	const implementedPages = ["About"];
+	const implementedPages = ["About", "Contact us"];
 
 	const constructionPages = footerLinks.flatMap((section) =>
 		section.links
@@ -74,6 +76,22 @@ function App() {
 					element={
 						<PageLayout>
 							<AboutUs />
+						</PageLayout>
+					}
+				/>
+				<Route
+					path="/faq"
+					element={
+						<PageLayout>
+							<Faq />
+						</PageLayout>
+					}
+				/>
+				<Route
+					path="/contact-us"
+					element={
+						<PageLayout>
+							<ContactUs />
 						</PageLayout>
 					}
 				/>

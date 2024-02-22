@@ -13,7 +13,10 @@ const Construction = ({ message }) => {
 			<p className="text-gray-600 mb-8">Come back soon for updates!</p>
 			<p className="text-sm text-gray-500">
 				Need assistance?{" "}
-				<Link to="/contact" className="text-blue-500 hover:underline">
+				<Link
+					to="/contact-us"
+					className="text-blue-500 hover:underline"
+				>
 					Contact us
 				</Link>
 			</p>
