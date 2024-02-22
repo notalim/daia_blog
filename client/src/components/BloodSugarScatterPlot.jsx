@@ -68,8 +68,10 @@ const BloodSugarScatterPlot = ({
         const expectedInterval = 5 * 60 * 1000; // 5 minutes in milliseconds
         const results = [];
 
+        const validData = data.filter((entry) => entry != null);
+
         // Sort the incoming data by time
-        const sortedData = data
+        const sortedData = validData
             .map((dp) => ({
                 ...dp,
                 moment: moment(dp.WT),
@@ -153,9 +155,9 @@ const BloodSugarScatterPlot = ({
         const oneHourAgo = moment().subtract(1, "hour");
 
         // Filter the bloodSugarData to only include the data from the last hour
-        const lastHourData = bloodSugarData.filter((data) => {
-            return moment(data.WT).isAfter(oneHourAgo);
-        });
+        // const lastHourData = bloodSugarData.filter((data) => {
+        //     return moment(data.WT).isAfter(oneHourAgo);
+        // });
 
         const processedData = processData(bloodSugarData).filter(
             (d) => d.x != null
@@ -172,7 +174,7 @@ const BloodSugarScatterPlot = ({
                     label: "Tracked Points",
                     data: realDataPoints,
                     pointRadius: 4,
-                    pointBackgroundColor: "rgba(187, 169, 221, 1)",
+                    pointBackgroundColor: "#8971B7",
                     pointBorderColor: "transparent",
                     pointHoverRadius: 8,
                     pointHoverBorderColor: "black",
@@ -273,70 +275,62 @@ const BloodSugarScatterPlot = ({
     }, [bloodSugarData, thresholdValue]);
 
     return (
-        <div>
-            <div className="w-full p-2 mx-auto">
-                {dataIsOld && (
-                    <div
-                        className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4"
-                        role="alert"
+        <div className="w-full mx-auto">
+            {dataIsOld && (
+                <div
+                    className="bg-yellow-100 border-l-4 border-yellow-500 text-yellow-700 p-4 mb-4"
+                    role="alert"
+                >
+                    <p>
+                        The data is older than 30 minutes, would you like to
+                        update?
+                    </p>
+                    <button
+                        onClick={onRefresh}
+                        className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
                     >
-                        <p>
-                            The data is older than 30 minutes, would you like to
-                            update?
-                        </p>
-                        <button
-                            onClick={onRefresh}
-                            className="bg-yellow-500 hover:bg-yellow-600 text-white font-bold py-2 px-4 rounded"
-                        >
-                            Refresh Data
-                        </button>
-                    </div>
-                )}
-                {/* refresh button with an icon */}
-
-                <canvas ref={chartRef} className="my-4" />
-
-                <button
-                    onClick={onRefresh}
-                    className="bg-full-purple hover:hover-full-purple text-white font-bold py-2 px-4 rounded mb-4 mx-2"
-                >
-                    {/* need an icon! */}
-                    Refresh Data
-                </button>
-
-                <button
-                    onClick={onDexcomSessionIdRefresh}
-                    className="bg-full-purple hover:hover-full-purple text-white font-bold py-2 px-4 rounded mb-4"
-                >
-                    {/* need an icon! */}
-                    Refresh Dexcom session ID (TEST){" "}
-                </button>
-
-                <div className="text-sm p-4 mb-4 border border-gray-300 rounded bg-white">
-                    <p className="font-bold">Understanding the Chart:</p>
-                    <ul className="list-disc pl-5">
-                        <li>
-                            <span className="text-dim-purple font-bold">
-                                Tracked Points:{" "}
-                            </span>
-                            Values fetched directly from Dexcom.
-                        </li>
-                        <li>
-                            <span className="text-gray-500 font-bold">
-                                Ghost Points:{" "}
-                            </span>
-                            Data completed by DAIA in case Dexcom doesn't
-                            provide a value.
-                        </li>
-                    </ul>
+                        Refresh Data
+                    </button>
                 </div>
-            </div>
+            )}
+            {/* refresh button with an icon */}
 
-            {/* <ThresholdSlider
-                initialThreshold={thresholdValue}
-                onSave={handleThresholdSave} // Pass this to save the value to the backend
-                onThresholdChange={handleThresholdChange}
-            /> */}
+            <canvas ref={chartRef} className="my-4" />
+
+            <button
+                onClick={onRefresh}
+                className="bg-mid-purple hover:bg-full-purple text-white font-bold py-2 px-2 rounded mb-4 mx-2 transition duration-300 ease-in-out"
+            >
+                {/* need an icon! */}
+                Refresh Data
+            </button>
+
+            <button
+                onClick={onDexcomSessionIdRefresh}
+                className="bg-mid-purple hover:bg-full-purple text-white font-bold py-2 px-2 rounded mb-4 mx-2 transition duration-300 ease-in-out"
+            >
+                {/* need an icon! */}
+                Refresh Dexcom session ID (TEST){" "}
+            </button>
+
+            <div className="text-sm p-4 border rounded-lg bg-lavender-purple">
+                <p className="font-bold">Understanding the Chart:</p>
+                <ul className="list-disc pl-5">
+                    <li>
+                        <span className="text-mid-purple font-bold">
+                            Tracked Points:{" "}
+                        </span>
+                        Values fetched directly from Dexcom.
+                    </li>
+                    <li>
+                        <span className="text-gray-500 font-bold">
+                            Ghost Points:{" "}
+                        </span>
+                        Data completed by DAIA in case Dexcom doesn't provide a
+                        value.
+                    </li>
+                </ul>
+            </div>
         </div>
     );
 };

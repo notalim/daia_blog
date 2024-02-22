@@ -1,16 +1,21 @@
 /** @type {import('tailwindcss').Config} */
 export default {
-    content: ["./src/**/*.{jsx,css}", "./index.html"],
+    content: [
+        "./src/**/*.{jsx,css}",
+        "./index.html",
+        "./src/@/components/ui/**/*.{js,jsx,ts,tsx}",
+    ],
     theme: {
         extend: {
             colors: {
-                primary: "",
-                secondary: "",
                 "subtle-purple": "#FAF5FF",
                 "background-purple": "#F3F3FD",
+                "dim-purple": "#BBA9DD",
+                "lavender-purple": "#E5E1F5",
+                "hover-dim-purple": "#D7CEED",
+                "mid-purple": "#8971B7",
                 "full-purple": "#563890",
                 "hover-full-purple": "#352358",
-                "dim-purple": "#BBA9DD;",
                 "input-background": "#EAF0F7",
                 "input-text": "#667085",
             },
