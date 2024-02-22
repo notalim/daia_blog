@@ -84,7 +84,6 @@ const getUserByPhoneNumber = async (phoneNumber) => {
     }
 };
 
-
 const checkPassword = async (phoneNumber, password) => {
     try {
         if (
@@ -104,41 +103,7 @@ const checkPassword = async (phoneNumber, password) => {
     }
 };
 
-const addEmergencyContact = async (
-    phoneNumber,
-    contactPhoneNumber,
-    contactName,
-    contactRelationship
-) => {
-    try {
-        if (!validation.phoneValidation(contactPhoneNumber)) {
-            throw new Error("Invalid emergency contact phone number");
-        }
 
-        if (!validation.nameValidation(contactName)) {
-            throw new Error("Invalid emergency contact name");
-        }
-
-        const contact = {
-            contactPhoneNumber,
-            contactName,
-            contactRelationship,
-            active: true,
-        };
-
-        const userCollection = await users();
-        const updateInfo = await userCollection.updateOne(
-            { phoneNumber },
-            { $push: { contacts: contact } }
-        );
-        if (updateInfo.modifiedCount === 0)
-            throw new Error("Could not add emergency contact!");
-
-        return true;
-    } catch (error) {
-        throw new Error("Error adding emergency contact: " + error.message);
-    }
-};
 
 const getAllUsers = async () => {
     try {
@@ -213,7 +178,6 @@ export {
     createUser,
     getUserByPhoneNumber,
     checkPassword,
-    addEmergencyContact,
     getAllUsers,
     updateUserSessionId,
     updateBloodSugarData,

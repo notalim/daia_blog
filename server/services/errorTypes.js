@@ -22,6 +22,13 @@ export const errorTypes = {
         "Invalid verification code, it should be 6 digits long",
     INVALID_CODE:
         "Invalid verification code. Try reloading the page and resending it again",
+    INVALID_CONTACT_ID: "Invalid contact ID",
+    INVALID_CONTACT_NAME: "Invalid contact name",
+    INVALID_CONTACT_NUMBER: "Invalid contact number",
+    INVALID_CONTACT_RELATIONSHIP: "Invalid contact relationship",
+    CONTACT_NOT_ADDED: "Could not add emergency contact",
+    CONTACT_STATUS_NOT_UPDATED: "Could not update contact status",
+    CONTACT_NOT_REMOVED: "Could not remove emergency contact",
     INVALID_NAME: "Invalid name format",
     INVALID_STRING: "Invalid characters used",
     AUTHENTICATION_FAILED: "Authentication failed",

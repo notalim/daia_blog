@@ -113,18 +113,18 @@ class ApiClient {
     }
 
     async addContact(
-        phoneNumber,
         contactPhoneNumber,
-        contactName,
+        contactFirstName,
+        contactLastName,
         contactRelationship
     ) {
         return await this.request({
-            endpoint: "users/contacts",
+            endpoint: "users/:userId/contacts",
             method: "POST",
             data: {
-                phoneNumber,
                 contactPhoneNumber,
-                contactName,
+                contactFirstName,
+                contactLastName,
                 contactRelationship,
             },
         });
