@@ -1,6 +1,6 @@
 // utils/scheduler.js
 import cron from "node-cron";
-import { getAllUsers, updateBloodSugarData, updateUserSessionId } from "../db/userDb.js";
+import { getAllUsers, updateBloodSugarData, updateUserSessionId } from "../db/usersModule.js";
 
 import { getBloodSugarData, refreshDexcomSessionId } from "../services/dexcomHelper.js";
 
