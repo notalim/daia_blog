@@ -3,7 +3,7 @@ import dotenv from "dotenv";
 import validation from "../services/validation.js";
 import { errorTypes } from "../services/errorTypes.js";
 
-import { getUserById } from "./usersModule.js";}
+import { getUserById } from "./usersModule.js";
 
 dotenv.config();
 

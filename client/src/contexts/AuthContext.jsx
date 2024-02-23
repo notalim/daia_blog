@@ -142,7 +142,7 @@ export const AuthProvider = ({ children }) => {
             navigate("/");
         } catch (error) {
             console.error("Deleting user failed: ", error.message || error);
-            return { error: errorTypes.USER_DELETION_FAILED, error};
+            return { error: errorTypes.USER_DELETION_FAILED};
         }
     };
 
