@@ -27,12 +27,16 @@ class ApiClient {
             const res = await axios({ url, method, data, headers });
             return { data: res.data, error: null };
         } catch (error) {
-            //console.error("APIclient.makeRequest.error:");
             console.error({ errorResponse: error.response });
-            const serverError = error?.response?.data?.message;
+           
+            const serverError = error?.response?.data?.error;
+
+            const errorMessage =
+                errorTypes[serverError] || "An unexpected error occurred";
+
             return {
                 data: null,
-                error: serverError || "An unexpected error occurred",
+                error: errorMessage,
             };
         }
     }
@@ -104,14 +108,14 @@ class ApiClient {
 
     async deleteUser(phoneNumber) {
         return await this.request({
-            endpoint: `users/delete/${phoneNumber}`, 
+            endpoint: `users/delete/${phoneNumber}`,
             method: "DELETE",
         });
     }
 
     async getUserContacts(userId) {
         return await this.request({
-            endpoint: `users/${userId}/contacts`, 
+            endpoint: `users/${userId}/contacts`,
             method: "GET",
         });
     }

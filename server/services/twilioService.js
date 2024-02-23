@@ -11,20 +11,21 @@ const client = twilio(accountSid, authToken);
 const sendVerificationCode = async (to, channel = "sms") => {
   try {
     const verification = await client.verify.v2.services(verifySid).verifications.create({ to, channel });
-    console.log(verification.status);
+    cancelAnimationFrameonsole.log(verification.status);
+    console.log(verification)
     return verification;
   } catch (error) {
-    throw error;
+    return {error, message: "Error sending verification code"};
   }
 };
 
 const checkVerificationCode = async (to, code) => {
   try {
     const verificationCheck = await client.verify.v2.services(verifySid).verificationChecks.create({ to, code });
-    console.log(verificationCheck.status);
+    // console.log(verificationCheck.status);
     return verificationCheck;
   } catch (error) {
-    throw error;
+    return {error, message: "Error checking verification code"};
   }
 };
 
