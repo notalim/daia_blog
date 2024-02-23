@@ -25,16 +25,13 @@ class ApiClient {
 
         try {
             const res = await axios({ url, method, data, headers });
-            // console.log(res)
             return { data: res.data, error: null };
         } catch (error) {
             console.error("APIclient.makeRequest.error:");
             console.error({ errorResponse: error.response });
             const serverError = error?.response?.data?.message;
-            // console.log(error);
-            // console.log(data)
             return {
-                data: res.error,
+                data: null,
                 error: serverError || "An unexpected error occurred",
             };
         }

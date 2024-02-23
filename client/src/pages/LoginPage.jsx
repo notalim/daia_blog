@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import PhoneNumberInput from "../components/PhoneNumberInput";
+import Input from "../components/Input";
 import RegisterButton from "../components/RegisterButton"; // Rename this as needed
-import GradientBackground from "../components/GradientBackground";
+import PhoneNumberInput from "../components/PhoneNumberInput";
 
+import API from "../services/apiClient";
 import validation from "../services/validation";
 import { errorTypes } from "../services/errorTypes";
 
@@ -36,13 +37,20 @@ function LoginPage() {
             return;
         }
 
-        if (!validation.phoneValidation("+1" + phoneNumber.replace(/\D/g, ""))) {
+        if (
+            !validation.phoneValidation("+1" + phoneNumber.replace(/\D/g, ""))
+        ) {
             setError(errorTypes.INVALID_PHONE_NUMBER);
             return;
         }
 
         try {
-            await loginUser("+1" + phoneNumber.replace(/\D/g, ""));
+            // now handled in the context
+            // const { data, error } = await API.login(
+            //     "+1" + phoneNumber.replace(/\D/g, "")
+            // );
+
+            await loginUser( "+1" + phoneNumber.replace(/\D/g, ""));
 
             if (error) {
                 setError(error);
@@ -65,6 +73,11 @@ function LoginPage() {
         }
 
         try {
+            // const { data, error } = await API.completeLogin(
+            //     "+1" + phoneNumber.replace(/\D/g, ""),
+            //     verificationCode
+            // );
+
             await completeLogin(
                 "+1" + phoneNumber.replace(/\D/g, ""),
                 verificationCode
@@ -78,21 +91,22 @@ function LoginPage() {
             if (!error) {
                 navigate("/dashboard");
             }
+
         } catch (error) {
-            setError(error.message || "Failed to verify code. Please try again.");
+            setError(
+                error.message || "Failed to verify code. Please try again."
+            );
         }
     };
 
     return (
-        <div className="min-h-screen flex flex-col items-center justify-center bg-background-purple relative">
-            <GradientBackground />
-            <div className="z-10 w-full max-w-6xl mx-auto flex flex-col items-center">
-                <div className="mb-8 text-center">
-                    <h2 className="text-4xl font-bold text-gray-900 leading-tight">
-                        Log In for Live Glucose <br />
-                        Tracking and Instant Alerts
+        <div className="min-h-screen flex items-center bg-background-purple">
+            <div className="w-full max-w-4xl mx-auto flex justify-between items-start">
+                <div className="space-y-6 p-8">
+                    <h2 className="text-2xl font-bold text-gray-900">
+                        Log In for Live Glucose Tracking and Instant Alerts
                     </h2>
-                    <p className="text-lg">
+                    <p>
                         If you don’t have an account, you can
                         <a
                             href="/register"
@@ -103,41 +117,53 @@ function LoginPage() {
                         </a>
                     </p>
                 </div>
-                {isVerificationCodeSent && (
-                    <div className="text-dim-purple text-center mb-4">
-                        Verification code has been sent
-                    </div>
-                )}
-                {error && (
-                    <div className="text-red-500 text-center mb-4">{error}</div>
-                )}
-                <form
-                    onSubmit={isVerificationCodeSent ? handleVerifyCode : handleSubmitPhoneNumber}
-                    className="flex flex-col items-center space-y-4"
-                >
-                    <div className="mb-4 w-full max-w-md">
-                        <PhoneNumberInput
-                            placeholder="Phone Number"
-                            value={phoneNumber}
-                            onChange={handleChangePhoneNumber}
-                        />
-                    </div>
+                <div className="w-full max-w-xs">
                     {isVerificationCodeSent && (
-                        <PhoneNumberInput
-                            type="tel"
-                            placeholder="Verification Code"
-                            value={verificationCode}
-                            onChange={handleChangeVerificationCode}
-                        />
+                        <div className="text-dim-purple text-center mb-4">
+                            Verification code has been sent
+                        </div>
                     )}
-                    <RegisterButton
-                        type="submit"
-                        disabled={isVerificationCodeSent ? !verificationCode : !phoneNumber}
-                        className="w-full max-w-md"
+                    {error && (
+                        <div className="text-red-500 text-center mb-4">
+                            {error}
+                        </div>
+                    )}
+                    <form
+                        onSubmit={
+                            isVerificationCodeSent
+                                ? handleVerifyCode
+                                : handleSubmitPhoneNumber
+                        }
+                        className="space-y-4 bg-white p-4 shadow rounded-lg"
                     >
-                        {isVerificationCodeSent ? "Verify" : "Log In"}
-                    </RegisterButton>
-                </form>
+                        <div className="flex flex-col items-end mb-4">
+                            <PhoneNumberInput
+                                placeholder="Phone Number"
+                                value={phoneNumber}
+                                onChange={handleChangePhoneNumber}
+                            />
+                        </div>
+
+                        {isVerificationCodeSent && (
+                            <Input
+                                type="tel"
+                                placeholder="Verification Code"
+                                value={verificationCode}
+                                onChange={handleChangeVerificationCode}
+                            />
+                        )}
+                        <RegisterButton
+                            type="submit"
+                            disabled={
+                                isVerificationCodeSent
+                                    ? !verificationCode
+                                    : !phoneNumber
+                            }
+                        >
+                            {isVerificationCodeSent ? "Verify" : "Log In"}
+                        </RegisterButton>
+                    </form>
+                </div>
             </div>
         </div>
     );
