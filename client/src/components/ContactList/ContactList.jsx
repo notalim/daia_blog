@@ -1,19 +1,32 @@
-import React from "react";
+import React, { useContext, useEffect, useState } from "react";
 import AvatarDemo from "./AvatarDemo";
 import { Switch } from "@src/@/components/ui/switch";
 
 import AddContactButton from "./AddContactButton";
 
-const mockContacts = [
-    { firstName: "Jane", lastName: "Doe", enabled: true },
-    { firstName: "Jesal", lastName: "Gandhi", enabled: false },
-    { firstName: "Aidan", lastName: "Giordano", enabled: true },
-    { firstName: "Federico", lastName: "Yacoubian", enabled: true },
-    // Add more contacts as needed
-];
-
+import { AuthContext } from "../../contexts/AuthContext";
 
 const EmergencyContacts = () => {
+    const { user, getUserContacts } = useContext(AuthContext);
+    const [userContacts, setUserContacts] = useState([]);
+
+    useEffect(() => {
+        const fetchContacts = async () => {
+            if (user && user._id) {
+                try {
+                    console.log("Fetching contacts for user:", user._id);
+                    const contacts = await getUserContacts(user._id);
+                    console.log("Contacts:", contacts);
+                    setUserContacts(contacts);
+                } catch (error) {
+                    console.error("Failed to fetch contacts:", error);
+                }
+            }
+        };
+
+        fetchContacts();
+    }, [user, getUserContacts]);
+
     // TODO: Implement the enable/disable contact functionality
     const handleToggleContact = (contact) => {
         console.log("Toggle contact enabled status for:", contact.firstName);
@@ -26,7 +39,7 @@ const EmergencyContacts = () => {
                 Your Emergency Contact List
             </h2>
             <div className="grid grid-cols-3 gap-4 overflow-auto p-4">
-                {mockContacts.map((contact, index) => (
+                {userContacts.map((contact, index) => (
                     <div
                         key={index}
                         className="space-y-2 flex flex-col items-center"
@@ -49,9 +62,7 @@ const EmergencyContacts = () => {
                         </div>
                     </div>
                 ))}
-                <div
-                    className="space-y-2 flex flex-col items-center"
-                >
+                <div className="space-y-2 flex flex-col items-center">
                     <AddContactButton />
                     <div className="flex justify-between items-center w-full">
                         <span className="text-xs text-center">

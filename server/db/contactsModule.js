@@ -90,7 +90,7 @@ export const removeEmergencyContact = async (userId, contactId) => {
     }
 };
 
-export const getEmergencyContacts = async (userId) => {
+export const getUserContacts = async (userId) => {
     try {
         const userCollection = await users();
         const user = await userCollection.findOne({ _id: userId });

@@ -107,9 +107,17 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const updateDexcomSessionId = async (phoneNumber, dexcomUser, dexcomPass) => {
+    const updateDexcomSessionId = async (
+        phoneNumber,
+        dexcomUser,
+        dexcomPass
+    ) => {
         try {
-            const { data, error } = await API.updateDexcomSessionId(phoneNumber, dexcomUser, dexcomPass);
+            const { data, error } = await API.updateDexcomSessionId(
+                phoneNumber,
+                dexcomUser,
+                dexcomPass
+            );
             if (error) {
                 throw new Error(error);
             }
@@ -120,7 +128,7 @@ export const AuthProvider = ({ children }) => {
             console.error("Updating user failed: ", error);
             return { data, error };
         }
-    }
+    };
 
     const deleteUser = async (phoneNumber) => {
         try {
@@ -130,13 +138,68 @@ export const AuthProvider = ({ children }) => {
                 throw new Error(response.message || "Failed to delete user.");
             }
             setUser(null);
-            localStorage.removeItem("user"); 
+            localStorage.removeItem("user");
             navigate("/");
         } catch (error) {
             console.error("Deleting user failed: ", error.message || error);
+            return { error: errorTypes.USER_DELETION_FAILED, error};
         }
     };
 
+    const getUserContacts = async (userId) => {
+        try {
+            const { data, error } = await API.getUserContacts(userId);
+            if (error) {
+                throw new Error(error);
+            }
+            return { data, error };
+        } catch (error) {
+            console.error("Getting user contacts failed: ", error);
+            return { data: errorTypes.CONTACTS_NOT_FOUND, error };
+        }
+    }
+
+    const addContact = async (
+        userId,
+        contactPhoneNumber,
+        contactFirstName,
+        contactLastName,
+        contactRelationship
+    ) => {
+        try {
+            const { data, error } = await API.addContact(
+                userId,
+                contactPhoneNumber,
+                contactFirstName,
+                contactLastName,
+                contactRelationship
+            );
+            if (error) {
+                throw new Error(error);
+            }
+            return { data, error };
+        } catch (error) {
+            console.error("Adding contact failed: ", error);
+            return { data: errorTypes.CONTACT_NOT_ADDED, error };
+        }
+    };
+
+    const verifyContact = async (userId, contactPhoneNumber, code) => {
+        try {
+            const { data, error } = await API.verifyContact(
+                userId,
+                contactPhoneNumber,
+                code
+            );
+            if (error) {
+                throw new Error(error);
+            }
+            return { data, error };
+        } catch (error) {
+            console.error("Verifying contact failed: ", error);
+            return { data: errorTypes.CONTACT_NOT_VERIFIED, error };
+        }
+    };
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
@@ -159,6 +222,10 @@ export const AuthProvider = ({ children }) => {
                 updateUser,
                 updateDexcomSessionId,
                 deleteUser,
+                
+                getUserContacts,
+                addContact,
+                verifyContact,
             }}
         >
             {children}

@@ -26,6 +26,7 @@ export const errorTypes = {
     INVALID_CONTACT_NAME: "Invalid contact name",
     INVALID_CONTACT_NUMBER: "Invalid contact number",
     INVALID_CONTACT_RELATIONSHIP: "Invalid contact relationship",
+    GETTING_USER_CONTACTS_FAILED: "Could not get user contacts",
     CONTACT_NOT_ADDED: "Could not add emergency contact",
     CONTACT_STATUS_NOT_UPDATED: "Could not update contact status",
     CONTACT_NOT_REMOVED: "Could not remove emergency contact",
