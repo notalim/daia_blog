@@ -157,6 +157,7 @@ router.post("/signup/complete", async (req, res) => {
             error: errorTypes.SERVER_ERROR,
         });
     }
+});
 
     const dexcomSessionId =
         (await getDexcomSessionId(dexcomUser, dexcomPass)) || null;
