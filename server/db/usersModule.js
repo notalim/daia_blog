@@ -73,6 +73,21 @@ const createUser = async (
     }
 };
 
+const updateUser = async (id, updatedUser) => {
+  // ! Validate args here
+  console.log(updatedUser);
+  console.log(id);
+  try {
+    const userCollection = await users();
+    const updateInfo = await userCollection.updateOne({ _id: id }, { $set: updatedUser });
+    if (updateInfo.modifiedCount === 0) throw new Error("Could not update user!");
+
+    return true;
+  } catch (error) {
+    throw new Error("Error updating user: " + error.message);
+  }
+};
+
 const getUserByPhoneNumber = async (phoneNumber) => {
     try {
         const userCollection = await users();
@@ -182,4 +197,5 @@ export {
     updateUserSessionId,
     updateBloodSugarData,
     deleteUser,
+    updateUser
 };
