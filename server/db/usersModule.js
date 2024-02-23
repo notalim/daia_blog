@@ -87,7 +87,7 @@ const getUserByPhoneNumber = async (phoneNumber) => {
 const getUserById = async (userId) => {
     try {
         const userCollection = await users();
-        let foundUser = await userCollection.findOne({ _id: ObjectId(userId) });
+        let foundUser = await userCollection.findOne({ _id: new ObjectId(userId) });
 
         return foundUser;
     } catch (error) {
