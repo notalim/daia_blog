@@ -15,12 +15,16 @@ import { errorTypes } from "../services/errorTypes.js";
 
 const router = express.Router();
 
-router.get("/users/:userId/contacts", async (req, res) => {
+router.get("/:userId/contacts", async (req, res) => {
     const userId = req.params.userId;
 
     try {
         const userContacts = await getUserContacts(userId);
-        res.status(200).json(userContacts);
+        console.log(userContacts);
+        res.status(200).json({
+            message: "User contacts retrieved successfully.",
+            contacts: userContacts,
+        });
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -30,7 +34,7 @@ router.get("/users/:userId/contacts", async (req, res) => {
     }
 });
 
-router.post("/users/:userId/contacts", async (req, res) => {
+router.post("/:userId/contacts", async (req, res) => {
     const userId = req.params.userId;
     const { phoneNumber, firstName, lastName, relationship } = req.body;
 
@@ -74,7 +78,7 @@ router.post("/users/:userId/contacts", async (req, res) => {
     }
 });
 
-router.post("/users/:userId/contacts/complete", async (req, res) => {
+router.post("/:userId/contacts/complete", async (req, res) => {
     const userId = req.params.userId;
     const { phoneNumber, code, firstName, lastName, relationship } = req.body;
 

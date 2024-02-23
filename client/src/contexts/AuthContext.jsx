@@ -30,7 +30,7 @@ export const AuthProvider = ({ children }) => {
     const completeLogin = async (phoneNumber, code) => {
         try {
             const { data, error } = await API.completeLogin(phoneNumber, code);
-            console.log(data);
+            //console.log(data);
             if (!error) {
                 setUser(data.user);
                 localStorage.setItem("user", JSON.stringify(data.user));
