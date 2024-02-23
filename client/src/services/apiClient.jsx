@@ -27,12 +27,16 @@ class ApiClient {
             const res = await axios({ url, method, data, headers });
             return { data: res.data, error: null };
         } catch (error) {
-            console.error("APIclient.makeRequest.error:");
             console.error({ errorResponse: error.response });
-            const serverError = error?.response?.data?.message;
+           
+            const serverError = error?.response?.data?.error;
+
+            const errorMessage =
+                errorTypes[serverError] || "An unexpected error occurred";
+
             return {
                 data: null,
-                error: serverError || "An unexpected error occurred",
+                error: errorMessage,
             };
         }
     }
@@ -104,24 +108,31 @@ class ApiClient {
 
     async deleteUser(phoneNumber) {
         return await this.request({
-            endpoint: `users/delete/${phoneNumber}`, // Assuming the server can handle this endpoint format
+            endpoint: `users/delete/${phoneNumber}`,
             method: "DELETE",
         });
     }
 
+    async getUserContacts(userId) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts`,
+            method: "GET",
+        });
+    }
+
     async addContact(
-        phoneNumber,
         contactPhoneNumber,
-        contactName,
+        contactFirstName,
+        contactLastName,
         contactRelationship
     ) {
         return await this.request({
-            endpoint: "users/contacts",
+            endpoint: "users/:userId/contacts",
             method: "POST",
             data: {
-                phoneNumber,
                 contactPhoneNumber,
-                contactName,
+                contactFirstName,
+                contactLastName,
                 contactRelationship,
             },
         });
@@ -135,7 +146,7 @@ class ApiClient {
         contactRelationship
     ) {
         return await this.request({
-            endpoint: "users/contacts/verify",
+            endpoint: "users/:userId/contacts/complete",
             method: "POST",
             data: {
                 phoneNumber,

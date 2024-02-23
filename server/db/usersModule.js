@@ -84,6 +84,16 @@ const getUserByPhoneNumber = async (phoneNumber) => {
     }
 };
 
+const getUserById = async (userId) => {
+    try {
+        const userCollection = await users();
+        let foundUser = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+        return foundUser;
+    } catch (error) {
+        throw new Error("Error trying to get an existing user: " + error.message);
+    }
+}
 
 const checkPassword = async (phoneNumber, password) => {
     try {
@@ -104,41 +114,7 @@ const checkPassword = async (phoneNumber, password) => {
     }
 };
 
-const addEmergencyContact = async (
-    phoneNumber,
-    contactPhoneNumber,
-    contactName,
-    contactRelationship
-) => {
-    try {
-        if (!validation.phoneValidation(contactPhoneNumber)) {
-            throw new Error("Invalid emergency contact phone number");
-        }
 
-        if (!validation.nameValidation(contactName)) {
-            throw new Error("Invalid emergency contact name");
-        }
-
-        const contact = {
-            contactPhoneNumber,
-            contactName,
-            contactRelationship,
-            active: true,
-        };
-
-        const userCollection = await users();
-        const updateInfo = await userCollection.updateOne(
-            { phoneNumber },
-            { $push: { contacts: contact } }
-        );
-        if (updateInfo.modifiedCount === 0)
-            throw new Error("Could not add emergency contact!");
-
-        return true;
-    } catch (error) {
-        throw new Error("Error adding emergency contact: " + error.message);
-    }
-};
 
 const getAllUsers = async () => {
     try {
@@ -212,8 +188,8 @@ const deleteUser = async (phoneNumber) => {
 export {
     createUser,
     getUserByPhoneNumber,
+    getUserById,
     checkPassword,
-    addEmergencyContact,
     getAllUsers,
     updateUserSessionId,
     updateBloodSugarData,

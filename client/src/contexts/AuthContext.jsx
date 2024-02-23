@@ -1,46 +1,45 @@
 import React, { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
 import API from "../services/apiClient";
 import { errorTypes } from "../services/errorTypes";
 
 export const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
-    // console.log(localStorage.getItem("user"));
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
-
     const navigate = useNavigate();
+
+    const processError = (error) => {
+        const errorMessage = error?.response?.data?.error
+            ? errorTypes[error.response.data.error] || error.response.data.error
+            : error.message || errorTypes.SERVER_ERROR;
+        console.error("Error:", errorMessage);
+        return { data: null, error: errorMessage };
+    };
 
     const loginUser = async (phoneNumber) => {
         try {
-            console.log("Requesting a code to login user: ", phoneNumber);
-            const { data, message, error } = await API.login(phoneNumber);
-
+            const { data, error } = await API.login(phoneNumber);
             if (error) {
-                throw new Error(error);
+                return processError({ message: error });
             }
-            return { data, error };
+            return { data, error: null };
         } catch (error) {
-            console.error("Requesting a code failed: ", error);
-            return { data, error };
+            return processError(error);
         }
     };
 
     const completeLogin = async (phoneNumber, code) => {
         try {
             const { data, error } = await API.completeLogin(phoneNumber, code);
-            console.log(data);
             if (!error) {
                 setUser(data.user);
                 localStorage.setItem("user", JSON.stringify(data.user));
-            } else {
-                throw new Error(error);
+                return { data, error: null };
             }
-            return { data, error };
+            return processError({ message: error });
         } catch (error) {
-            console.error("Login completion failed: ", error);
-            return { data, error };
+            return processError(error);
         }
     };
 
@@ -48,12 +47,11 @@ export const AuthProvider = ({ children }) => {
         try {
             const { data, error } = await API.registerUser(phoneNumber);
             if (error) {
-                throw new Error(error);
+                return processError({ message: error });
             }
-            return { data, error };
+            return { data, error: null };
         } catch (error) {
-            console.error("Requesting a code failed: ", error);
-            return { data, error };
+            return processError(error);
         }
     };
 
@@ -75,13 +73,11 @@ export const AuthProvider = ({ children }) => {
             if (!error) {
                 setUser(data.user);
                 localStorage.setItem("user", JSON.stringify(data.user));
-            } else {
-                throw new Error(error);
+                return { data, error: null };
             }
-            return { data, error };
+            return processError({ message: error });
         } catch (error) {
-            console.error("Registration completion failed: ", error);
-            return { data, error };
+            return processError(error);
         }
     };
 
@@ -96,47 +92,106 @@ export const AuthProvider = ({ children }) => {
         try {
             const { data, error } = await API.updateUser(phoneNumber);
             if (error) {
-                throw new Error(error);
+                return processError({ message: error });
             }
             setUser(data.user);
             localStorage.setItem("user", JSON.stringify(data.user));
-            return { data, error };
+            return { data, error: null };
         } catch (error) {
-            console.error("Updating user failed: ", error);
-            return { data, error };
+            return processError(error);
         }
     };
 
-    const updateDexcomSessionId = async (phoneNumber, dexcomUser, dexcomPass) => {
+    const updateDexcomSessionId = async (
+        phoneNumber,
+        dexcomUser,
+        dexcomPass
+    ) => {
         try {
-            const { data, error } = await API.updateDexcomSessionId(phoneNumber, dexcomUser, dexcomPass);
+            const { data, error } = await API.updateDexcomSessionId(
+                phoneNumber,
+                dexcomUser,
+                dexcomPass
+            );
             if (error) {
-                throw new Error(error);
+                return processError({ message: error });
             }
             setUser(data.user);
             localStorage.setItem("user", JSON.stringify(data.user));
-            return { data, error };
+            return { data, error: null };
         } catch (error) {
-            console.error("Updating user failed: ", error);
-            return { data, error };
+            return processError(error);
         }
-    }
+    };
 
     const deleteUser = async (phoneNumber) => {
         try {
             const response = await API.deleteUser(phoneNumber);
-
             if (!response.success) {
-                throw new Error(response.message || "Failed to delete user.");
+                return processError({
+                    message: response.message || "Failed to delete user.",
+                });
             }
             setUser(null);
-            localStorage.removeItem("user"); 
+            localStorage.removeItem("user");
             navigate("/");
+            return { data: response, error: null };
         } catch (error) {
-            console.error("Deleting user failed: ", error.message || error);
+            return processError(error);
         }
     };
 
+    const getUserContacts = async (userId) => {
+        try {
+            const { data, error } = await API.getUserContacts(userId);
+            if (error) {
+                return processError({ message: error });
+            }
+            return { data, error: null };
+        } catch (error) {
+            return processError(error);
+        }
+    };
+
+    const addContact = async (
+        userId,
+        contactPhoneNumber,
+        contactFirstName,
+        contactLastName,
+        contactRelationship
+    ) => {
+        try {
+            const { data, error } = await API.addContact(
+                userId,
+                contactPhoneNumber,
+                contactFirstName,
+                contactLastName,
+                contactRelationship
+            );
+            if (error) {
+                return processError({ message: error });
+            }
+            return { data, error: null };
+        } catch (error) {
+            return processError(error);
+        }
+    };
+
+    const verifyContact = async (userId, contactPhoneNumber, code) => {
+        try {
+            const { data, error } = await API.verifyContact(
+                userId,
+                contactPhoneNumber,
+                code
+            );
+            if (error) {
+                return processError({ message: error });
+            }
+            return { data, error: null };
+        } catch (error) {
+            return processError(error);
+        }
+    };
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
@@ -149,16 +204,17 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider
             value={{
                 user,
-
                 loginUser,
                 completeLogin,
                 registerUser,
                 completeRegistration,
                 logoutUser,
-
                 updateUser,
                 updateDexcomSessionId,
                 deleteUser,
+                getUserContacts,
+                addContact,
+                verifyContact,
             }}
         >
             {children}

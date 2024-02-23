@@ -1,4 +1,3 @@
-// routes/users.js
 import express from "express";
 import {
     sendVerificationCode,
@@ -7,10 +6,9 @@ import {
 import {
     createUser,
     getUserByPhoneNumber,
-    addEmergencyContact,
     deleteUser,
     updateUserSessionId,
-} from "../db/userDb.js";
+} from "../db/usersModule.js";
 
 import {
     getDexcomSessionId,
@@ -19,9 +17,7 @@ import {
 } from "../services/dexcomHelper.js";
 
 import validation from "../services/validation.js";
-
 import { errorTypes } from "../services/errorTypes.js";
-import { get } from "mongoose";
 
 const router = express.Router();
 
@@ -30,7 +26,7 @@ router.post("/login", async (req, res) => {
 
     if (!validation.phoneValidation(phoneNumber)) {
         return res.status(400).json({
-            message: "Invalid phone number format",
+            messyage: "Invalid phone number format",
             error: errorTypes.INVALID_PHONE_NUMBER,
         });
     }
@@ -43,7 +39,15 @@ router.post("/login", async (req, res) => {
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
-        await sendVerificationCode(phoneNumber);
+
+        const verification = await sendVerificationCode(phoneNumber);
+
+        if (verification.status !== "pending") {
+            return res.status(500).json({
+                message: "Failed to send verification code",
+                error: errorTypes.SERVER_ERROR,
+            });
+        }
 
         res.status(200).json({
             message: "Verification code sent. Please verify your phone number.",
@@ -109,7 +113,15 @@ router.post("/signup", async (req, res) => {
                 error: errorTypes.USER_ALREADY_EXISTS,
             });
         }
-        await sendVerificationCode(phoneNumber);
+        
+        const verification = await sendVerificationCode(phoneNumber);
+
+        if (verification.status !== "pending") {
+            return res.status(500).json({
+                message: "Failed to send verification code",
+                error: errorTypes.SERVER_ERROR,
+            });
+        }
         res.status(200).json({
             message: "Verification code sent. Please verify your phone number.",
         });
@@ -269,8 +281,7 @@ router.post("/update-dexcom", async (req, res) => {
             user: updatedUser,
             message: "Dexcom credentials updated successfully",
         });
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({
             message: "Server error",
@@ -278,7 +289,6 @@ router.post("/update-dexcom", async (req, res) => {
         });
     }
 });
-
 
 router.delete("/delete/:phoneNumber", async (req, res) => {
     const { phoneNumber } = req.params;
@@ -294,97 +304,6 @@ router.delete("/delete/:phoneNumber", async (req, res) => {
         await deleteUser(phoneNumber);
         res.status(200).json({
             message: "User deleted successfully",
-            success: true,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            message: "Server error",
-            error: errorTypes.SERVER_ERROR,
-        });
-    }
-});
-
-router.post("/contacts", async (req, res) => {
-    const {
-        phoneNumber,
-        contactPhoneNumber,
-        contactName,
-        contactRelationship,
-    } = req.body;
-
-    try {
-        if (!validation.phoneValidation(contactPhoneNumber)) {
-            return res.status(401).send({
-                message: "Invalid emergency contact phone number",
-                error: errorTypes.INVALID_CONTACT_NUMBER,
-            });
-        } else if (!validation.nameValidation(contactName)) {
-            return res.status(401).send({
-                message: "Invalid emergency contact name",
-                error: errorTypes.INVALID_CONTACT_NAME,
-            });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).send({
-            message: "Server error",
-            error: errorTypes.SERVER_ERROR,
-        });
-    }
-
-    try {
-        const user = await getUserByPhoneNumber(phoneNumber);
-        if (!user) {
-            return res.status(401).send({
-                message: "User not found",
-                error: errorTypes.USER_NOT_FOUND,
-            });
-        }
-
-        await sendVerificationCode(contactPhoneNumber);
-        res.status(200).send({
-            message:
-                "Verification code sent. Please verify the emergency contact's phone number.",
-            success: true,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).send({
-            message: "Server error",
-            error: errorTypes.SERVER_ERROR,
-        });
-    }
-});
-
-router.post("/contacts/verify", async (req, res) => {
-    const {
-        phoneNumber,
-        contactPhoneNumber,
-        code,
-        contactName,
-        contactRelationship,
-    } = req.body;
-
-    try {
-        const verificationCheck = await checkVerificationCode(
-            contactPhoneNumber,
-            code
-        );
-        if (verificationCheck.status !== "approved") {
-            return res.status(400).json({
-                message: "Invalid or expired code.",
-                error: errorTypes.INVALID_CODE,
-            });
-        }
-        await addEmergencyContact(
-            phoneNumber,
-            contactPhoneNumber,
-            contactName,
-            contactRelationship
-        );
-        res.status(201).json({
-            message: "Emergency contact added successfully",
             success: true,
         });
     } catch (error) {

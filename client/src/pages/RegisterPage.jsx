@@ -53,7 +53,7 @@ function RegisterPage() {
     const [currentFormFields, setCurrentFormFields] =
         useState(initialFormFields);
     const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
-    const {registerUser, completeRegistration} = useAuth();
+    const { registerUser, completeRegistration } = useAuth();
 
     const handleChange = (field) => (event) => {
         setFormData({ ...formData, [field]: event.target.value });
@@ -99,15 +99,16 @@ function RegisterPage() {
             let concatPhoneNumber =
                 "+1" + formData["Phone Number"].replace(/\D/g, "");
 
-            await registerUser(concatPhoneNumber);
+            const { data, error } = await API.registerUser(concatPhoneNumber);
 
             if (error) {
                 setError(error);
                 return;
             }
 
-            setIsVerificationCodeSent(true);
-            setCurrentFormFields(additionalFormFields);
+            if (data && !error) {
+                setIsVerificationCodeSent(true);
+            }
         } catch (error) {
             setError(error.message || "Failed to register. Please try again.");
         }
@@ -128,12 +129,12 @@ function RegisterPage() {
                 let concatPhoneNumber =
                     "+1" + formData["Phone Number"].replace(/\D/g, "");
 
-                let {data, error} = await completeRegistration(
+                let { data, error } = await completeRegistration(
                     concatPhoneNumber,
                     formData["Verification Code"],
                     formData["Your Name"],
                     formData["Dexcom Username"],
-                    formData["Dexcom Password"],
+                    formData["Dexcom Password"]
                 );
 
                 if (error) {
