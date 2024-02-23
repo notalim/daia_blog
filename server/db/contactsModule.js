@@ -3,6 +3,8 @@ import dotenv from "dotenv";
 import validation from "../services/validation.js";
 import { errorTypes } from "../services/errorTypes.js";
 
+import { getUserById } from "./usersModule.js";}
+
 dotenv.config();
 
 export const addEmergencyContact = async (
@@ -92,10 +94,10 @@ export const removeEmergencyContact = async (userId, contactId) => {
 
 export const getUserContacts = async (userId) => {
     try {
-        const userCollection = await users();
-        const user = await userCollection.findOne({ _id: userId });
-        if (!user) {
-            throw new Error(errorTypes.USER_NOT_FOUND);
+        const user = await getUserById(userId);
+
+        if (!user.contacts) {
+            throw new Error(errorTypes.CONTACTS_NOT_FOUND);
         }
 
         return user.contacts;
