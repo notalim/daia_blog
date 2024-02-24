@@ -161,6 +161,7 @@ class ApiClient {
 }
 
 const TEST_SERVER_URL = "https://daia-test-server.onrender.com";
+const LOCAL_HOST_URL = "localhost:3000";
 
 const API = new ApiClient(TEST_SERVER_URL);
 export default API;
