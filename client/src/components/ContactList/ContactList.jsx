@@ -14,9 +14,9 @@ const EmergencyContacts = () => {
         const fetchContacts = async () => {
             if (user && user._id) {
                 try {
-                    console.log("Fetching contacts for user:", user._id);
+                    // console.log("Fetching contacts for user:", user._id);
                     const contacts = await getUserContacts(user._id);
-                    console.log("Contacts:", contacts);
+                    // console.log("Contacts:", contacts);
                     setUserContacts(contacts);
                 } catch (error) {
                     console.error("Failed to fetch contacts:", error);

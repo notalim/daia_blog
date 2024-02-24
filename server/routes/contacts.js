@@ -77,7 +77,7 @@ router.post("/:userId/contacts", async (req, res) => {
                 error: errorTypes.SERVER_ERROR,
             });
         }
-        r;
+    
     } catch (error) {
         console.error(error);
         res.status(500).json({
