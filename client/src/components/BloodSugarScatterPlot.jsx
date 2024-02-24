@@ -192,6 +192,7 @@ const BloodSugarScatterPlot = ({
         };
 
         const options = {
+            responsive: true,
             tooltips: {
                 enabled: true,
                 mode: "nearest",

@@ -144,7 +144,7 @@ function LoginPage() {
 					{isVerificationCodeSent && (
 						<Input
 							type="tel"
-							placeholder="Testing Verification Code"
+							placeholder="Verification Code"
 							value={verificationCode}
 							onChange={handleChangeVerificationCode}
 						/>
