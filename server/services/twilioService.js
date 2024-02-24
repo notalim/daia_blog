@@ -26,7 +26,7 @@ const checkVerificationCode = async (to, code) => {
         const verificationCheck = await client.verify.v2
             .services(verifySid)
             .verificationChecks.create({ to, code });
-        console.log("Verification status:", verification.status);
+        console.log("Verification status:", verificationCheck.status);
         return verificationCheck;
     } catch (error) {
         return { error, message: "Error checking verification code" };
