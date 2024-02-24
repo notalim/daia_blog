@@ -26,6 +26,8 @@ run_install() {
     npm install @mui/material @mui/styled-engine-sc styled-components
     npm install @mui/icons-material
     npm install @emailjs/browser
+    npm install @emotion/react
+    npm install @emotion/styled
 }
 
 if [ $# -eq 0 ]; then

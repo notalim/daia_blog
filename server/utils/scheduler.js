@@ -3,6 +3,7 @@ import cron from "node-cron";
 import { getAllUsers, updateBloodSugarData, updateUserSessionId } from "../db/usersModule.js";
 
 import { getBloodSugarData, refreshDexcomSessionId } from "../services/dexcomHelper.js";
+import { checkValues } from "../services/alerts.js"
 
 const updateBloodSugarLevelsForAllUsers = async () => {
     const users = await getAllUsers();
@@ -14,6 +15,7 @@ const updateBloodSugarLevelsForAllUsers = async () => {
                 5,
                 1
             );
+            await checkValues(user, bloodSugarData[0].Value);
             await updateBloodSugarData(user._id, bloodSugarData);
         } catch (error) {
             console.error(

@@ -4,6 +4,7 @@ import validation from "../services/validation.js";
 import { errorTypes } from "../services/errorTypes.js";
 
 import { getUserById } from "./usersModule.js";
+import { ObjectId } from "mongodb";
 
 dotenv.config();
 
@@ -26,6 +27,7 @@ export const addEmergencyContact = async (
         }
 
         const contact = {
+            _id: new ObjectId(),
             contactFirstName,
             contactLastName,
             contactPhoneNumber,
@@ -34,19 +36,36 @@ export const addEmergencyContact = async (
         };
 
         const userCollection = await users();
+
+        const userDoc = await userCollection.findOne({
+            _id: new ObjectId(userId),
+        });
+
+      
+        if (
+            userDoc.contacts.some(
+                (contact) => contact.contactPhoneNumber === contactPhoneNumber
+            )
+        ) {
+            throw new Error(errorTypes.CONTACT_ALREADY_EXISTS);
+        }
         const updateInfo = await userCollection.updateOne(
-            { _id: userId },
-            { $addToSet: { contacts: contact } } // Use $addToSet to avoid duplicates
+            { _id: new ObjectId(userId) }, 
+            { $addToSet: { contacts: contact } }
         );
 
-        if (!updateInfo.matchedCount || !updateInfo.modifiedCount) {
-            throw new Error(errorTypes.CONTACT_NOT_ADDED);
+        if (updateInfo.matchedCount === 0) {
+            throw new Error(errorTypes.USER_NOT_FOUND);
+        }
+
+        if (updateInfo.modifiedCount === 0) {
+            throw new Error(errorTypes.CONTACT_ALREADY_EXISTS);
         }
 
         return { message: "Emergency contact added successfully." };
     } catch (error) {
-        console.error(error);
-        throw new Error(error.message);
+        console.error("Failed to add emergency contact:", error.message);
+        throw new Error(error.message || errorTypes.SERVER_ERROR);
     }
 };
 
