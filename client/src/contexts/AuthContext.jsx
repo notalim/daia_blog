@@ -179,12 +179,22 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-    const verifyContact = async (userId, contactPhoneNumber, code) => {
+    const verifyContact = async (
+        userId,
+        contactPhoneNumber,
+        verificationCode,
+        contactFirstName,
+        contactLastName,
+        contactRelationship
+    ) => {
         try {
             const { data, error } = await API.verifyContact(
                 userId,
                 contactPhoneNumber,
-                code
+                verificationCode,
+                contactFirstName,
+                contactLastName,
+                contactRelationship
             );
             if (error) {
                 return processError({ message: error });

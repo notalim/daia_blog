@@ -35,7 +35,7 @@ export const addEmergencyContact = async (
 
         const userCollection = await users();
         const updateInfo = await userCollection.updateOne(
-            { _id: userId },
+            { _id: new Object(userId) },
             { $addToSet: { contacts: contact } } // Use $addToSet to avoid duplicates
         );
 

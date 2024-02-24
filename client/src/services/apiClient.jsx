@@ -121,39 +121,41 @@ class ApiClient {
     }
 
     async addContact(
-        contactPhoneNumber,
-        contactFirstName,
-        contactLastName,
-        contactRelationship
+        userId,
+        phoneNumber,
+        firstName,
+        lastName,
+        relationship
     ) {
         return await this.request({
-            endpoint: "users/:userId/contacts",
+            endpoint: `users/${userId}/contacts`,
             method: "POST",
             data: {
-                contactPhoneNumber,
-                contactFirstName,
-                contactLastName,
-                contactRelationship,
+                phoneNumber,
+                firstName,
+                lastName,
+                relationship,
             },
         });
     }
 
     async verifyContact(
+        userId,
         phoneNumber,
-        contactPhoneNumber,
         code,
-        contactName,
-        contactRelationship
+        firstName,
+        lastName,
+        relationship
     ) {
         return await this.request({
-            endpoint: "users/:userId/contacts/complete",
+            endpoint: `users/${userId}/contacts/complete`,
             method: "POST",
             data: {
                 phoneNumber,
-                contactPhoneNumber,
                 code,
-                contactName,
-                contactRelationship,
+                firstName,
+                lastName,
+                relationship,
             },
         });
     }
