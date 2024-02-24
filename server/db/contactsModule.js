@@ -4,6 +4,7 @@ import validation from "../services/validation.js";
 import { errorTypes } from "../services/errorTypes.js";
 
 import { getUserById } from "./usersModule.js";
+import { ObjectId } from "mongodb";
 
 dotenv.config();
 
