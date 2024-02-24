@@ -103,7 +103,14 @@ router.post("/:userId/contacts/complete", async (req, res) => {
             });
         }
 
-        // Add emergency contact to user's account
+        console.log({
+            userId,
+            phoneNumber,
+            firstName,
+            lastName,
+            relationship,
+        })
+
         const contact = await addEmergencyContact(
             userId,
             phoneNumber,
