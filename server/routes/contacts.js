@@ -77,7 +77,7 @@ router.post("/:userId/contacts", async (req, res) => {
                 error: errorTypes.SERVER_ERROR,
             });
         }
-        r;
+    
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -92,10 +92,12 @@ router.post("/:userId/contacts/complete", async (req, res) => {
     const { phoneNumber, code, firstName, lastName, relationship } = req.body;
 
     try {
+        // console.log(phoneNumber, code, firstName, lastName, relationship)
         const verificationCheck = await checkVerificationCode(
             phoneNumber,
             code
         );
+        // console.log(verificationCheck.status);
         if (verificationCheck.status !== "approved") {
             return res.status(400).json({
                 message: "Invalid or expired code.",
@@ -103,7 +105,6 @@ router.post("/:userId/contacts/complete", async (req, res) => {
             });
         }
 
-        // Add emergency contact to user's account
         const contact = await addEmergencyContact(
             userId,
             phoneNumber,

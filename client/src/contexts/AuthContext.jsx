@@ -2,44 +2,47 @@ import React, { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import API from "../services/apiClient";
 import { errorTypes } from "../services/errorTypes";
+import { useToast } from "@src/@/components/ui/use-toast";
 
 export const AuthContext = createContext();
+
+import useProcessMessages from "./useProcessMessages";
 
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
     const navigate = useNavigate();
 
-    const processError = (error) => {
-        const errorMessage = error?.response?.data?.error
-            ? errorTypes[error.response.data.error] || error.response.data.error
-            : error.message || errorTypes.SERVER_ERROR;
-        console.error("Error:", errorMessage);
-        return { data: null, error: errorMessage };
-    };
+    const { processError, processSuccess } = useProcessMessages();
 
     const loginUser = async (phoneNumber) => {
         try {
             const { data, error } = await API.login(phoneNumber);
             if (error) {
-                return processError({ message: error });
+                processError(error);
+                return { data: null, error };
             }
+            processSuccess("Verification code sent.");
             return { data, error: null };
         } catch (error) {
-            return processError(error);
+            processError(error);
+            return { data: null, error };
         }
     };
 
     const completeLogin = async (phoneNumber, code) => {
         try {
             const { data, error } = await API.completeLogin(phoneNumber, code);
-            if (!error) {
-                setUser(data.user);
-                localStorage.setItem("user", JSON.stringify(data.user));
-                return { data, error: null };
+            if (error) {
+                processError(error);
+                return { data: null, error };
             }
-            return processError({ message: error });
+            setUser(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            processSuccess("Logged in successfully.");
+            return { data, error: null };
         } catch (error) {
-            return processError(error);
+            processError(error);
+            return { data: null, error };
         }
     };
 
@@ -47,11 +50,14 @@ export const AuthProvider = ({ children }) => {
         try {
             const { data, error } = await API.registerUser(phoneNumber);
             if (error) {
-                return processError({ message: error });
+                processError(error);
+                return { data: null, error };
             }
+            processSuccess("Verification code sent.");
             return { data, error: null };
         } catch (error) {
-            return processError(error);
+            processError(error);
+            return { data: null, error };
         }
     };
 
@@ -70,14 +76,17 @@ export const AuthProvider = ({ children }) => {
                 dexcomUser,
                 dexcomPass
             );
-            if (!error) {
-                setUser(data.user);
-                localStorage.setItem("user", JSON.stringify(data.user));
-                return { data, error: null };
+            if (error) {
+                processError(error);
+                return { data: null, error };
             }
-            return processError({ message: error });
+            setUser(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            processSuccess("Registration completed.");
+            return { data, error: null };
         } catch (error) {
-            return processError(error);
+            processError(error);
+            return { data: null, error };
         }
     };
 
@@ -86,19 +95,23 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem("user");
         API.logout();
         navigate("/");
+        processSuccess("Logged out successfully.");
     };
 
     const updateUser = async (phoneNumber) => {
         try {
             const { data, error } = await API.updateUser(phoneNumber);
             if (error) {
-                return processError({ message: error });
+                processError(error);
+                return { data: null, error };
             }
             setUser(data.user);
             localStorage.setItem("user", JSON.stringify(data.user));
+            processSuccess("User updated.");
             return { data, error: null };
         } catch (error) {
-            return processError(error);
+            processError(error);
+            return { data: null, error };
         }
     };
 
@@ -114,13 +127,16 @@ export const AuthProvider = ({ children }) => {
                 dexcomPass
             );
             if (error) {
-                return processError({ message: error });
+                processError(error);
+                return { data: null, error };
             }
             setUser(data.user);
             localStorage.setItem("user", JSON.stringify(data.user));
+            processSuccess("Dexcom session updated.");
             return { data, error: null };
         } catch (error) {
-            return processError(error);
+            processError(error);
+            return { data: null, error };
         }
     };
 
@@ -128,16 +144,17 @@ export const AuthProvider = ({ children }) => {
         try {
             const response = await API.deleteUser(phoneNumber);
             if (!response.success) {
-                return processError({
-                    message: response.message || "Failed to delete user.",
-                });
+                processError(response.message || "Failed to delete user.");
+                return { data: null, error: response.message };
             }
             setUser(null);
             localStorage.removeItem("user");
             navigate("/");
+            processSuccess("User deleted.");
             return { data: response, error: null };
         } catch (error) {
-            return processError(error);
+            processError(error);
+            return { data: null, error };
         }
     };
 
@@ -145,14 +162,15 @@ export const AuthProvider = ({ children }) => {
         try {
             const { data, error } = await API.getUserContacts(userId);
             if (error) {
-                return processError({ message: error });
+                processError(error);
+                return { data: null, error };
             }
             return { data, error: null };
         } catch (error) {
-            return processError(error);
+            processError(error);
+            return { data: null, error };
         }
     };
-
     const addContact = async (
         userId,
         contactPhoneNumber,
@@ -161,35 +179,51 @@ export const AuthProvider = ({ children }) => {
         contactRelationship
     ) => {
         try {
-            const { data, error } = await API.addContact(
+            const response = await API.addContact(
                 userId,
                 contactPhoneNumber,
                 contactFirstName,
                 contactLastName,
                 contactRelationship
             );
-            if (error) {
-                return processError({ message: error });
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
             }
-            return { data, error: null };
+            processSuccess("Contact added successfully.");
+            return { data: response.data, error: null }; // Assuming response.data contains the added contact information
         } catch (error) {
-            return processError(error);
+            processError(error);
+            return { data: null, error: error.message };
         }
     };
 
-    const verifyContact = async (userId, contactPhoneNumber, code) => {
+    const verifyContact = async (
+        userId,
+        contactPhoneNumber,
+        verificationCode,
+        contactFirstName,
+        contactLastName,
+        contactRelationship
+    ) => {
         try {
-            const { data, error } = await API.verifyContact(
+            const response = await API.verifyContact(
                 userId,
                 contactPhoneNumber,
-                code
+                verificationCode,
+                contactFirstName,
+                contactLastName,
+                contactRelationship
             );
-            if (error) {
-                return processError({ message: error });
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
             }
-            return { data, error: null };
+            processSuccess("Contact verified successfully.");
+            return { data: response.data, error: null }; // Assuming response.data contains the verification result
         } catch (error) {
-            return processError(error);
+            processError(error);
+            return { data: null, error: error.message };
         }
     };
 

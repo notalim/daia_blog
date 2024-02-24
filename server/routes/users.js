@@ -50,37 +50,39 @@ router.post("/login", async (req, res) => {
 });
 
 router.post("/login/complete", async (req, res) => {
-	const { phoneNumber, code } = req.body;
-	try {
-		const verificationCheck = await checkVerificationCode(
-			phoneNumber,
-			code
-		);
-		if (verificationCheck.status !== "approved") {
-			return res.status(400).json({
-				message: "Invalid or expired code.",
-				error: errorTypes.INVALID_CODE,
-			});
-		}
-		const user = await getUserByPhoneNumber(phoneNumber);
-		if (!user) {
-			return res.status(404).json({
-				message: "User not found",
-				error: errorTypes.USER_NOT_FOUND,
-			});
-		}
-		res.status(200).json({
-			user: user,
-			dexcomSessionId: user.dexcomSessionId,
-			message: "User logged in successfully",
-		});
-	} catch (error) {
-		console.error(error);
-		res.status(500).json({
-			message: "Server error",
-			error: errorTypes.SERVER_ERROR,
-		});
-	}
+    const { phoneNumber, code } = req.body;
+    try {
+        const verificationCheck = await checkVerificationCode(
+            phoneNumber,
+            code
+        );
+        // console.log("verification status at login: ", verificationCheck.status);
+        if (verificationCheck.status !== "approved") {
+            return res.status(400).json({
+                message: "Invalid or expired code.",
+                error: errorTypes.INVALID_CODE,
+            });
+        }
+        const user = await getUserByPhoneNumber(phoneNumber);
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+                error: errorTypes.USER_NOT_FOUND,
+            });
+        }
+        res.status(200).json({
+            user: user,
+            dexcomSessionId: user.dexcomSessionId,
+            message: "User logged in successfully",
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
+
 });
 
 router.post("/signup", async (req, res) => {

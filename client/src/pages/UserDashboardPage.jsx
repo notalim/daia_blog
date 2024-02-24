@@ -6,6 +6,7 @@ import ContactList from "../components/ContactList/ContactList";
 import ThresholdSlider from "../components/ThresholdSlider/ThresholdSlider";
 
 import moment from "moment";
+
 import UserInformation from "../components/UserInformation";
 
 const UserDashboardPage = () => {
@@ -90,13 +91,7 @@ const UserDashboardPage = () => {
 					<ContactList />
 				</div>
 			</div>
-			<div className="p-5">
-				<UserInformation
-					user={user}
-					handleDeleteUser={handleDeleteUser}
-					handleLogout={handleLogout}
-				/>
-			</div>
+			
 		</div>
 	);
 };

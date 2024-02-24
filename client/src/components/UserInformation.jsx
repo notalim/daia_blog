@@ -1,3 +1,5 @@
+import React from "react";
+
 function UserInformation({ user, handleDeleteUser, handleLogout }) {
 	return (
 		<div className="bg-white shadow overflow-hidden sm:rounded-lg">

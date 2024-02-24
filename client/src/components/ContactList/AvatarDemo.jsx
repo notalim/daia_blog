@@ -17,7 +17,8 @@ function AvatarDemo({ firstName, lastName, size }) {
             className={`inline-block ${sizeClass} rounded-full overflow-hidden`}
         >
             <AvatarFallback className="flex items-center  justify-center text-subtle-purple">
-                {firstName[0] + lastName[0]}
+                {firstName?.charAt(0) || ""}
+                {lastName?.charAt(0) || ""}
             </AvatarFallback>
         </Avatar>
     );

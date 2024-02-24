@@ -14,8 +14,7 @@ const sendVerificationCode = async (to, channel = "sms") => {
         const verification = await client.verify.v2
             .services(verifySid)
             .verifications.create({ to, channel });
-        console.log(verification.status);
-        console.log(verification)
+        // console.log("Verification status:", verification.status);
         return verification;
     } catch (error) {
         return { error, message: "Error sending verification code" };
@@ -27,7 +26,7 @@ const checkVerificationCode = async (to, code) => {
         const verificationCheck = await client.verify.v2
             .services(verifySid)
             .verificationChecks.create({ to, code });
-        // console.log(verificationCheck.status);
+        // console.log("Verification status:", verificationCheck.status);
         return verificationCheck;
     } catch (error) {
         return { error, message: "Error checking verification code" };
