@@ -11,7 +11,7 @@ import useProcessMessages from "./useProcessMessages";
 export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
     const navigate = useNavigate();
-    
+
     const { processError, processSuccess } = useProcessMessages();
 
     const loginUser = async (phoneNumber) => {
@@ -171,7 +171,6 @@ export const AuthProvider = ({ children }) => {
             return { data: null, error };
         }
     };
-
     const addContact = async (
         userId,
         contactPhoneNumber,
@@ -180,21 +179,22 @@ export const AuthProvider = ({ children }) => {
         contactRelationship
     ) => {
         try {
-            const { data, error } = await API.addContact(
+            const response = await API.addContact(
                 userId,
                 contactPhoneNumber,
                 contactFirstName,
                 contactLastName,
                 contactRelationship
             );
-            if (error) {
-                processError(error);
-                return { data: null, error };
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
             }
-            processSuccess("Verification code has been sent.");
+            processSuccess("Contact added successfully.");
+            return { data: response.data, error: null }; // Assuming response.data contains the added contact information
         } catch (error) {
             processError(error);
-            return { data: null, error };
+            return { data: null, error: error.message };
         }
     };
 
@@ -207,7 +207,7 @@ export const AuthProvider = ({ children }) => {
         contactRelationship
     ) => {
         try {
-            const { data, error } = await API.verifyContact(
+            const response = await API.verifyContact(
                 userId,
                 contactPhoneNumber,
                 verificationCode,
@@ -215,14 +215,15 @@ export const AuthProvider = ({ children }) => {
                 contactLastName,
                 contactRelationship
             );
-            if (error) {
-                processError(error);
-                return { data: null, error };
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
             }
-            processSuccess("Contact verified.");
+            processSuccess("Contact verified successfully.");
+            return { data: response.data, error: null }; // Assuming response.data contains the verification result
         } catch (error) {
             processError(error);
-            return { data: null, error };
+            return { data: null, error: error.message };
         }
     };
 
