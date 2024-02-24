@@ -52,6 +52,12 @@ const NavbarLoggedOut = () => {
 				>
 					Login
 				</Link>
+				<Link
+					to="/register"
+					className="text-black font-medium text-base mr-4"
+				>
+					Register
+				</Link>
 			</div>
 		</nav>
 	);

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import daiaLogo from "../../assets/icons/daia-logo.svg";
 import { LinkItems } from "./navLinks";
