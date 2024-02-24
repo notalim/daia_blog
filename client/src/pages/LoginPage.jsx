@@ -37,14 +37,14 @@ function LoginPage() {
         event.preventDefault();
 
         if (!phoneNumber) {
-            processError(new Error(errorTypes.PHONE_NUMBER_REQUIRED));
+            processError(errorTypes.PHONE_NUMBER_REQUIRED);
             return;
         }
 
         if (
             !validation.phoneValidation("+1" + phoneNumber.replace(/\D/g, ""))
         ) {
-            processError(new Error(errorTypes.INVALID_PHONE_NUMBER));
+            processError(errorTypes.INVALID_PHONE_NUMBER);
             return;
         }
 
@@ -53,7 +53,7 @@ function LoginPage() {
                 "+1" + phoneNumber.replace(/\D/g, "")
             );
             if (error) {
-                processError(new Error(error));
+                processError(error);
             } else {
                 setIsVerificationCodeSent(true);
             }
@@ -125,7 +125,7 @@ function LoginPage() {
 					{isVerificationCodeSent && (
 						<Input
 							type="tel"
-							placeholder="Testing Verification Code"
+							placeholder="Verification Code"
 							value={verificationCode}
 							onChange={handleChangeVerificationCode}
 						/>

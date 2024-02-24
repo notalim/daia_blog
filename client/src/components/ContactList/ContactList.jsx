@@ -15,7 +15,7 @@ const EmergencyContacts = () => {
             if (user && user._id) {
                 try {
                     // console.log("Fetching contacts for user:", user._id);
-                    const {data} = await getUserContacts(user._id);
+                    const { data } = await getUserContacts(user._id);
                     const contacts = data.contacts;
                     console.log("Contacts:", contacts);
 
@@ -68,7 +68,7 @@ const EmergencyContacts = () => {
                               </div>
                           </div>
                       ))
-                    : {}}
+                    : null}
                 <div className="space-y-2 flex flex-col items-center">
                     <AddContactButton />
                     <div className="flex justify-between items-center w-full">

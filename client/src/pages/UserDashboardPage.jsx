@@ -91,13 +91,7 @@ const UserDashboardPage = () => {
 					<ContactList />
 				</div>
 			</div>
-			<div className="p-5">
-				<UserInformation
-					user={user}
-					handleDeleteUser={handleDeleteUser}
-					handleLogout={handleLogout}
-				/>
-			</div>
+			
 		</div>
 	);
 };

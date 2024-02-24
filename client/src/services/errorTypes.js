@@ -30,6 +30,7 @@ export const errorTypes = {
     CONTACT_STATUS_NOT_UPDATED: "Could not update contact status",
     CONTACT_NOT_REMOVED: "Could not remove emergency contact",
     GETTING_USER_CONTACTS_FAILED: "Could not get user contacts",
+    CONTACT_ALREADY_EXISTS: "Contact already exists",
     INVALID_NAME: "Invalid name format",
     INVALID_STRING: "Invalid characters used",
     AUTHENTICATION_FAILED: "Authentication failed",
