@@ -28,14 +28,16 @@ class ApiClient {
             // console.log(res)
             return { data: res.data, error: null };
         } catch (error) {
-            console.error("APIclient.makeRequest.error:");
             console.error({ errorResponse: error.response });
-            const serverError = error?.response?.data?.message;
-            // console.log(error);
-            // console.log(data)
+           
+            const serverError = error?.response?.data?.error;
+
+            const errorMessage =
+                errorTypes[serverError] || "An unexpected error occurred";
+
             return {
-                data: res.error,
-                error: serverError || "An unexpected error occurred",
+                data: null,
+                error: errorMessage,
             };
         }
     }
@@ -107,8 +109,15 @@ class ApiClient {
 
     async deleteUser(phoneNumber) {
         return await this.request({
-            endpoint: `users/delete/${phoneNumber}`, // Assuming the server can handle this endpoint format
+            endpoint: `users/delete/${phoneNumber}`,
             method: "DELETE",
+        });
+    }
+
+    async getUserContacts(userId) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts`,
+            method: "GET",
         });
     }
 
@@ -138,7 +147,7 @@ class ApiClient {
         contactRelationship
     ) {
         return await this.request({
-            endpoint: "users/contacts/verify",
+            endpoint: "users/:userId/contacts/complete",
             method: "POST",
             data: {
                 phoneNumber,

@@ -84,6 +84,17 @@ const getUserByPhoneNumber = async (phoneNumber) => {
     }
 };
 
+const getUserById = async (userId) => {
+    try {
+        const userCollection = await users();
+        let foundUser = await userCollection.findOne({ _id: new ObjectId(userId) });
+
+        return foundUser;
+    } catch (error) {
+        throw new Error("Error trying to get an existing user: " + error.message);
+    }
+}
+
 const checkPassword = async (phoneNumber, password) => {
     try {
         if (
@@ -177,6 +188,7 @@ const deleteUser = async (phoneNumber) => {
 export {
     createUser,
     getUserByPhoneNumber,
+    getUserById,
     checkPassword,
     getAllUsers,
     updateUserSessionId,

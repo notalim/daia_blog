@@ -42,14 +42,22 @@ function LoginPage() {
         }
 
         try {
-            await loginUser("+1" + phoneNumber.replace(/\D/g, ""));
+            // now handled in the context
+            // const { data, error } = await API.login(
+            //     "+1" + phoneNumber.replace(/\D/g, "")
+            // );
+
+            const {data, error} = await loginUser( "+1" + phoneNumber.replace(/\D/g, ""));
 
             if (error) {
                 setError(error);
                 return;
             }
 
-            setIsVerificationCodeSent(true);
+            
+            if (data && !error) {
+                setIsVerificationCodeSent(true);
+            }
         } catch (error) {
             setError(error.message || "Failed to log in. Please try again.");
         }
