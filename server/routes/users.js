@@ -1,6 +1,6 @@
 import express from "express";
 import { sendVerificationCode, checkVerificationCode } from "../services/twilioService.js";
-import { createUser, getUserByPhoneNumber, deleteUser, updateUserSessionId, updateUser } from "../db/usersModule.js";
+import { createUser, getUserByPhoneNumber, deleteUser, updateUserSessionId, updateUser, setLowAlarm } from "../db/usersModule.js";
 
 import { getDexcomSessionId, getBloodSugarData, refreshDexcomSessionId } from "../services/dexcomHelper.js";
 
@@ -369,6 +369,39 @@ router.post("/update-dexcom", async (req, res) => {
     res.status(200).json({
       user: updatedUser,
       message: "Dexcom credentials updated successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server error",
+      error: errorTypes.SERVER_ERROR,
+    });
+  }
+});
+
+router.post("/update-alarm", async (req, res) => {
+  const { phoneNumber, lowAlarm } = req.body;
+
+  try {
+    const user = await getUserByPhoneNumber(phoneNumber);
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        error: errorTypes.USER_NOT_FOUND,
+      });
+    }
+
+    if (typeof lowAlarm !== "number" || lowAlarm < 0 || lowAlarm > 200) {
+      return res.status(400).json({
+        message: "Invalid low alarm value",
+        error: "INVALID_LOW_ALARM",
+      });
+    }
+
+    const updatedUser = await setLowAlarm(user._id, lowAlarm);
+    res.status(200).json({
+      user: updatedUser,
+      message: "Low alarm updated successfully",
     });
   } catch (error) {
     console.error(error);
