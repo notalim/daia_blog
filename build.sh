@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# a short build script to install all dependencies and start the server and client
+# a medium build script to install all dependencies and start the server and client
 
 get_usage() {
     cat << EOF
