@@ -8,7 +8,7 @@ import ThresholdSlider from "../components/ThresholdSlider/ThresholdSlider";
 import moment from "moment";
 import UserInformation from "../components/UserInformation";
 
-const UserProfilePage = () => {
+const UserDashboardPage = () => {
 	const { user, logoutUser, updateUser, updateDexcomSessionId, deleteUser } =
 		useAuth();
 	const [dataIsOld, setDataIsOld] = useState(false);
@@ -101,4 +101,4 @@ const UserProfilePage = () => {
 	);
 };
 
-export default UserProfilePage;
+export default UserDashboardPage;

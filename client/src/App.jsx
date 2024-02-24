@@ -3,19 +3,11 @@ import React from "react";
 
 import { AuthProvider } from "./contexts/AuthContext";
 import { Routes, Route } from "react-router-dom";
-
-import LandingPage from "./pages/LandingPage";
-import RegisterPage from "./pages/RegisterPage";
-import LoginPage from "./pages/LoginPage";
-import UserDashboardPage from "./pages/UserDashboardPage";
-
 import PageLayout from "./pages/Page/Page";
 import Construction from "./pages/Construction";
 import { footerLinks } from "./components/Footer/footerLinks";
-import AboutUs from "./pages/AboutUs";
-import Faq from "./pages/Faq";
-import ContactUs from "./pages/ContactUs";
-import Settings from "./pages/Settings";
+
+import { routes } from "./services/routesObj";
 
 function App() {
 	const implementedPages = ["About", "Contact us"];
@@ -36,74 +28,23 @@ function App() {
 			))
 	);
 
+	const generateRoutes = routes.flatMap((section) => (
+		<Route
+			key={section.path}
+			path={section.path}
+			element={
+				<PageLayout>
+					<section.comp />
+				</PageLayout>
+			}
+		/>
+	));
+
 	return (
 		<AuthProvider>
 			<Routes>
-				<Route
-					path="/"
-					element={
-						<PageLayout>
-							<LandingPage />
-						</PageLayout>
-					}
-				/>
-				<Route
-					path="/register"
-					element={
-						<PageLayout>
-							<RegisterPage />
-						</PageLayout>
-					}
-				/>
-				<Route
-					path="/login"
-					element={
-						<PageLayout>
-							<LoginPage />
-						</PageLayout>
-					}
-				/>
-				<Route
-					path="/dashboard"
-					element={
-						<PageLayout>
-							<UserDashboardPage />
-						</PageLayout>
-					}
-				/>
 				{constructionPages}
-				<Route
-					path="/about"
-					element={
-						<PageLayout>
-							<AboutUs />
-						</PageLayout>
-					}
-				/>
-				<Route
-					path="/faq"
-					element={
-						<PageLayout>
-							<Faq />
-						</PageLayout>
-					}
-				/>
-				<Route
-					path="/contact-us"
-					element={
-						<PageLayout>
-							<ContactUs />
-						</PageLayout>
-					}
-				/>
-				<Route
-					path="/settings"
-					element={
-						<PageLayout>
-							<Settings />
-						</PageLayout>
-					}
-				/>
+				{generateRoutes}
 			</Routes>
 		</AuthProvider>
 	);
