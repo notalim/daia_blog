@@ -117,6 +117,9 @@ router.post("/signup", async (req, res) => {
 
         const verification = await sendVerificationCode(phoneNumber);
 
+        console.log(verification);
+        console.log(verification.status);
+
         if (verification.status === "approved") {
             res.status(200).json({
                 message:
