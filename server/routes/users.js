@@ -41,7 +41,9 @@ router.post("/login", async (req, res) => {
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
-        
+
+        console.log(phoneNumber);
+
         const verification = await sendVerificationCode(phoneNumber);
 
         if (verification.status === "pending") {
