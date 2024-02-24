@@ -45,11 +45,6 @@ function LoginPage() {
         }
 
         try {
-            // now handled in the context
-            // const { data, error } = await API.login(
-            //     "+1" + phoneNumber.replace(/\D/g, "")
-            // );
-
             const {data, error} = await loginUser( "+1" + phoneNumber.replace(/\D/g, ""));
 
             if (error) {
@@ -76,11 +71,6 @@ function LoginPage() {
         }
 
         try {
-            // const { data, error } = await API.completeLogin(
-            //     "+1" + phoneNumber.replace(/\D/g, ""),
-            //     verificationCode
-            // );
-
             await completeLogin(
                 "+1" + phoneNumber.replace(/\D/g, ""),
                 verificationCode

@@ -92,7 +92,7 @@ router.post("/:userId/contacts/complete", async (req, res) => {
     const { phoneNumber, code, firstName, lastName, relationship } = req.body;
 
     try {
-        console.log(phoneNumber, code, firstName, lastName, relationship)
+        // console.log(phoneNumber, code, firstName, lastName, relationship)
         const verificationCheck = await checkVerificationCode(
             phoneNumber,
             code

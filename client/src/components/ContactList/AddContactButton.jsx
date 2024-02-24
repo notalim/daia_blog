@@ -87,7 +87,10 @@ const AddContactButton = () => {
             const { data, error } = await verifyContact(
                 user.id,
                 formData.phoneNumber,
-                formData.verificationCode
+                formData.verificationCode,
+                formData.firstName,
+                formData.lastName,
+                formData.relationship
             );
 
             if (!error) {
