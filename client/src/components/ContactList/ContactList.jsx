@@ -39,37 +39,42 @@ const EmergencyContacts = () => {
                 Your Emergency Contact List
             </h2>
             <div className="grid grid-cols-3 gap-4 overflow-auto p-4">
-                {userContacts.map((contact, index) => (
-                    <div
-                        key={index}
-                        className="space-y-2 flex flex-col items-center"
-                    >
-                        <AvatarDemo
-                            firstName={contact.firstName}
-                            lastName={contact.lastName}
-                            size="large"
-                        />
+                {userContacts.length > 0 ? (
+                    userContacts.map((contact, index) => (
+                        <div
+                            key={index}
+                            className="space-y-2 flex flex-col items-center"
+                        >
+                            <AvatarDemo
+                                firstName={contact.firstName}
+                                lastName={contact.lastName}
+                                size="large"
+                            />
+                            <div className="flex justify-between items-center w-full">
+                                <span className="text-xs text-center">
+                                    {contact.firstName}{" "}
+                                    {contact.lastName.charAt(0)}.
+                                </span>
+                                <Switch
+                                    checked={contact.enabled}
+                                    onChange={() =>
+                                        handleToggleContact(contact)
+                                    }
+                                    className="ml-2"
+                                />
+                            </div>
+                        </div>
+                    ))
+                ) : (
+                    <div className="space-y-2 flex flex-col items-center">
+                        <AddContactButton />
                         <div className="flex justify-between items-center w-full">
                             <span className="text-xs text-center">
-                                {contact.firstName} {contact.lastName.charAt(0)}
-                                .
+                                Add new contact
                             </span>
-                            <Switch
-                                checked={contact.enabled}
-                                onChange={() => handleToggleContact(contact)}
-                                className="ml-2"
-                            />
                         </div>
                     </div>
-                ))}
-                <div className="space-y-2 flex flex-col items-center">
-                    <AddContactButton />
-                    <div className="flex justify-between items-center w-full">
-                        <span className="text-xs text-center">
-                            Add new contact
-                        </span>
-                    </div>
-                </div>
+                )}
             </div>
         </div>
     );
