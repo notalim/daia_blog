@@ -42,16 +42,17 @@ router.post("/login", async (req, res) => {
 
         const verification = await sendVerificationCode(phoneNumber);
 
-        if (verification.status !== "pending") {
-            return res.status(500).json({
+        if (verification.status === "pending") {
+            res.status(200).json({
+                message:
+                    "Verification code sent. Please verify your phone number.",
+            });
+        } else {
+            res.status(500).json({
                 message: "Failed to send verification code",
                 error: errorTypes.SERVER_ERROR,
             });
         }
-
-        res.status(200).json({
-            message: "Verification code sent. Please verify your phone number.",
-        });
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -113,18 +114,20 @@ router.post("/signup", async (req, res) => {
                 error: errorTypes.USER_ALREADY_EXISTS,
             });
         }
-        
+
         const verification = await sendVerificationCode(phoneNumber);
 
-        if (verification.status !== "pending") {
-            return res.status(500).json({
+        if (verification.status === "pending") {
+            res.status(200).json({
+                message:
+                    "Verification code sent. Please verify your phone number.",
+            });
+        } else {
+            res.status(500).json({
                 message: "Failed to send verification code",
                 error: errorTypes.SERVER_ERROR,
             });
         }
-        res.status(200).json({
-            message: "Verification code sent. Please verify your phone number.",
-        });
     } catch (error) {
         console.error(error);
         res.status(500).json({

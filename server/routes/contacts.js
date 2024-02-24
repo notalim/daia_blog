@@ -66,16 +66,18 @@ router.post("/:userId/contacts", async (req, res) => {
     try {
         const verification = await sendVerificationCode(phoneNumber);
 
-        if (verification.status !== "pending") {
-            return res.status(500).json({
+        if (verification.status === "pending") {
+            res.status(200).json({
+                message:
+                    "Verification code sent. Please verify the phone number.",
+            });
+        } else {
+            res.status(500).json({
                 message: "Failed to send verification code",
                 error: errorTypes.SERVER_ERROR,
             });
         }
-
-        res.status(200).json({
-            message: "Verification code sent. Please verify the phone number.",
-        });
+        r;
     } catch (error) {
         console.error(error);
         res.status(500).json({
