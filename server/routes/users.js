@@ -69,6 +69,7 @@ router.post("/login/complete", async (req, res) => {
             phoneNumber,
             code
         );
+        console.log("verification status at login: ", verificationCheck.status);
         if (verificationCheck.status !== "approved") {
             return res.status(400).json({
                 message: "Invalid or expired code.",
