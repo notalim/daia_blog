@@ -1,0 +1,19 @@
+{
+	"name": "daia_blog",
+	"version": "1.0.0",
+	"description": "a blog for daia",
+	"main": "index.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"author": "daia_team",
+	"license": "ISC",
+	"dependencies": {
+		"@emailjs/browser": "^4.1.0",
+		"@emotion/react": "^11.11.3",
+		"@emotion/styled": "^11.11.0",
+		"@mui/icons-material": "^5.15.10",
+		"@mui/material": "^5.15.10",
+		"lucide-react": "^0.336.0"
+	}
+}
