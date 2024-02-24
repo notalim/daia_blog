@@ -5,7 +5,7 @@ import { useToast } from "@src/@/components/ui/use-toast";
 
 import PhoneNumberInput from "../components/PhoneNumberInput";
 
-import RegisterButton from "../components/RegisterButton"; 
+import RegisterButton from "../components/RegisterButton";
 import GradientBackground from "../components/GradientBackground";
 
 import validation from "../services/validation";
@@ -52,20 +52,21 @@ function LoginPage() {
             const { error } = await loginUser(
                 "+1" + phoneNumber.replace(/\D/g, "")
             );
+
             if (error) {
                 processError(error);
             } else {
                 setIsVerificationCodeSent(true);
             }
         } catch (error) {
-            processError(error);
+            processError(error || "An error occurred.");
         }
     };
     const handleVerifyCode = async (event) => {
         event.preventDefault();
 
         if (!validation.codeValidation(verificationCode)) {
-            processError(new Error(errorTypes.INVALID_VERIFICATION_CODE));
+            processError(errorTypes.INVALID_VERIFICATION_CODE);
             return;
         }
 
@@ -75,7 +76,7 @@ function LoginPage() {
                 verificationCode
             );
             if (error) {
-                processError(new Error(error));
+                processError(error);
             } else {
                 navigate("/dashboard");
             }
@@ -83,68 +84,66 @@ function LoginPage() {
             processError(error);
         }
     };
-  
 
+    return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-background-purple relative">
+            <GradientBackground />
+            <div className="z-10 w-full max-w-6xl mx-auto flex flex-col items-center">
+                <div className="mb-8 text-center">
+                    <h2 className="text-4xl font-bold text-gray-900 leading-tight">
+                        Log In for Live Glucose <br />
+                        Tracking and Instant Alerts
+                    </h2>
+                    <p className="text-lg">
+                        If you don’t have an account, you can
+                        <a
+                            href="/register"
+                            className="text-purple-600 hover:text-purple-700"
+                        >
+                            {" "}
+                            Sign up here!
+                        </a>
+                    </p>
+                </div>
 
-	return (
-		<div className="min-h-screen flex flex-col items-center justify-center bg-background-purple relative">
-			<GradientBackground />
-			<div className="z-10 w-full max-w-6xl mx-auto flex flex-col items-center">
-				<div className="mb-8 text-center">
-					<h2 className="text-4xl font-bold text-gray-900 leading-tight">
-						Log In for Live Glucose <br />
-						Tracking and Instant Alerts
-					</h2>
-					<p className="text-lg">
-						If you don’t have an account, you can
-						<a
-							href="/register"
-							className="text-purple-600 hover:text-purple-700"
-						>
-							{" "}
-							Sign up here!
-						</a>
-					</p>
-				</div>
-				
-				<form
-					onSubmit={
-						isVerificationCodeSent
-							? handleVerifyCode
-							: handleSubmitPhoneNumber
-					}
-					className="flex flex-col items-center space-y-4"
-				>
-					<div className="mb-4 w-full max-w-md">
-						<PhoneNumberInput
-							placeholder="Phone Number"
-							value={phoneNumber}
-							onChange={handleChangePhoneNumber}
-						/>
-					</div>
-					{isVerificationCodeSent && (
-						<Input
-							type="tel"
-							placeholder="Verification Code"
-							value={verificationCode}
-							onChange={handleChangeVerificationCode}
-						/>
-					)}
-					<RegisterButton
-						type="submit"
-						disabled={
-							isVerificationCodeSent
-								? !verificationCode
-								: !phoneNumber
-						}
-						className="w-full max-w-md"
-					>
-						{isVerificationCodeSent ? "Verify" : "Log In"}
-					</RegisterButton>
-				</form>
-			</div>
-		</div>
-	);
+                <form
+                    onSubmit={
+                        isVerificationCodeSent
+                            ? handleVerifyCode
+                            : handleSubmitPhoneNumber
+                    }
+                    className="flex flex-col items-center space-y-4"
+                >
+                    <div className="mb-4 w-full max-w-md">
+                        <PhoneNumberInput
+                            placeholder="Phone Number"
+                            value={phoneNumber}
+                            onChange={handleChangePhoneNumber}
+                        />
+                    </div>
+                    {isVerificationCodeSent && (
+                        <Input
+                            type="tel"
+                            placeholder="Verification Code"
+                            value={verificationCode}
+                            onChange={handleChangeVerificationCode}
+                        />
+                    )}
+                    <RegisterButton
+                        type="submit"
+                        disabled={
+                            isVerificationCodeSent
+                                ? !verificationCode
+                                : !phoneNumber
+                        }
+                        className="w-full max-w-md"
+                    >
+                        {isVerificationCodeSent ? "Verify" : "Log In"}
+                    </RegisterButton>
+                </form>
+            </div>
+        </div>
+    );
 }
 
 export default LoginPage;
