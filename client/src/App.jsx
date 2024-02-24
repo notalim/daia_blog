@@ -15,6 +15,7 @@ import { footerLinks } from "./components/Footer/footerLinks";
 import AboutUs from "./pages/AboutUs";
 import Faq from "./pages/Faq";
 import ContactUs from "./pages/ContactUs";
+import Settings from "./pages/Settings";
 
 function App() {
 	const implementedPages = ["About", "Contact us"];
@@ -92,6 +93,14 @@ function App() {
 					element={
 						<PageLayout>
 							<ContactUs />
+						</PageLayout>
+					}
+				/>
+				<Route
+					path="/settings"
+					element={
+						<PageLayout>
+							<Settings />
 						</PageLayout>
 					}
 				/>
