@@ -51,6 +51,7 @@ const createUser = async (
             bloodSugarData: bloodSugarData,
             // Our data
             contacts: [],
+            lowAlarm: 70,
             glucagonLocation: "",
             glucagonType: "",
             activeSession: false,
@@ -71,6 +72,21 @@ const createUser = async (
     } catch (error) {
         throw new Error("Error creating user: " + error.message);
     }
+};
+
+const updateUser = async (id, updatedUser) => {
+  // ! Validate args here
+  console.log(updatedUser);
+  console.log(id);
+  try {
+    const userCollection = await users();
+    const updateInfo = await userCollection.updateOne({ _id: id }, { $set: updatedUser });
+    if (updateInfo.modifiedCount === 0) throw new Error("Could not update user!");
+
+    return true;
+  } catch (error) {
+    throw new Error("Error updating user: " + error.message);
+  }
 };
 
 const getUserByPhoneNumber = async (phoneNumber) => {
@@ -185,6 +201,48 @@ const deleteUser = async (phoneNumber) => {
     }
 }
 
+const updateCrisis = async (userId) => {
+    try {
+        const userCollection = await users();
+        const updateInfo = await userCollection.updateOne(
+            { _id: userId },
+            {
+                $set: {
+                    lastCrisis: new Date(),
+                },
+            }
+        );
+
+        if (updateInfo.modifiedCount === 0)
+            throw new Error("Could not update crisis status!");
+
+        return true;
+    } catch (error) {
+        throw new Error("Error updating crisis status: " + error.message);
+    }
+}
+
+const setLowAlarm = async (userId, lowAlarm) => {
+    try {
+        const userCollection = await users();
+        const updateInfo = await userCollection.updateOne(
+            { _id: userId },
+            {
+                $set: {
+                    lowAlarm,
+                },
+            }
+        );
+
+        if (updateInfo.modifiedCount === 0)
+            throw new Error("Could not update low alarm!");
+
+        return true;
+    } catch (error) {
+        throw new Error("Error updating low alarm: " + error.message);
+    }
+}
+
 export {
     createUser,
     getUserByPhoneNumber,
@@ -194,4 +252,7 @@ export {
     updateUserSessionId,
     updateBloodSugarData,
     deleteUser,
+    updateUser,
+    updateCrisis,
+    setLowAlarm
 };
