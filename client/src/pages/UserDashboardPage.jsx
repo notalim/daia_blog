@@ -13,34 +13,28 @@ const UserProfilePage = () => {
     const [dataIsOld, setDataIsOld] = useState(false);
     const [thresholdValue, setThresholdValue] = useState(180);
 
+    const bloodSugarData = user?.bloodSugarData || [];
+
     // ! set user.thresholdValue at backend later!
 
     useEffect(() => {
-        if (user.bloodSugarData.length === 0) {
+        if (bloodSugarData.length === 0) {
             console.log("No blood sugar data available.");
             setDataIsOld(false);
             return;
         }
 
         const latestDataTime = moment(
-            user.bloodSugarData[user.bloodSugarData.length - 1]?.WT
+            bloodSugarData[bloodSugarData.length - 1]?.WT
         );
         const thirtyMinutesAgo = moment().subtract(30, "minutes");
-
-        // console.log(`Latest Data Time: ${latestDataTime}`);
-        // console.log(`Thirty Minutes Ago: ${thirtyMinutesAgo}`);
-        // console.log(
-        //     `Is latest data time before thirty minutes ago? ${latestDataTime.isBefore(
-        //         thirtyMinutesAgo
-        //     )}`
-        // );
 
         if (latestDataTime.isBefore(thirtyMinutesAgo)) {
             setDataIsOld(true);
         } else {
             setDataIsOld(false);
         }
-    }, [user.bloodSugarData]);
+    }, [bloodSugarData]);
 
     const handleRefreshData = async () => {
         await updateUser(user.phoneNumber);
@@ -67,8 +61,6 @@ const UserProfilePage = () => {
         // TODO: Save the new threshold to the backend
         setThresholdValue(newThreshold);
     };
-
-    const bloodSugarData = user.bloodSugarData;
 
     // console.log("User: ", user);
 

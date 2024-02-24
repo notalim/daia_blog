@@ -17,6 +17,8 @@ export const AuthProvider = ({ children }) => {
         return { data: null, error: errorMessage };
     };
 
+    
+
     const loginUser = async (phoneNumber) => {
         try {
             const { data, error } = await API.login(phoneNumber);

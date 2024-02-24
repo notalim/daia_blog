@@ -1,8 +1,8 @@
-// App.jsx
 import React from "react";
 
 import { AuthProvider } from "./contexts/AuthContext";
 import { Routes, Route } from "react-router-dom";
+import ProtectedRoute from "./contexts/ProtectedRoute";
 
 import LandingPage from "./pages/LandingPage";
 import RegisterPage from "./pages/RegisterPage";
@@ -42,9 +42,11 @@ function App() {
                 <Route
                     path="/dashboard"
                     element={
-                        <PageLayout>
-                            <UserDashboardPage />
-                        </PageLayout>
+                        <ProtectedRoute>
+                            <PageLayout>
+                                <UserDashboardPage />
+                            </PageLayout>
+                        </ProtectedRoute>
                     }
                 />
             </Routes>

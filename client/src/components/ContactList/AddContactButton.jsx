@@ -33,7 +33,7 @@ const AddContactButton = () => {
 
     const [isVerifying, setIsVerifying] = useState(false);
 
-    const { addContact, verifyContact } = useContext(AuthContext);
+    const { user, addContact, verifyContact } = useContext(AuthContext);
 
     const handleVerifyContact = async (e) => {
         e.preventDefault();
@@ -53,16 +53,19 @@ const AddContactButton = () => {
                 : "Please select a relationship",
         };
 
-       
         if (Object.values(newErrors).some((error) => error !== "")) {
             setErrors(newErrors);
         } else {
-            
             setIsVerifying(true);
 
+            let concatPhoneNumber =
+                "+1" + formData.phoneNumber.replace(/\D/g, "");
+
+            console.log(phoneNumber);
+
             const { data, error } = await addContact(
-                user.id, 
-                formData.phoneNumber,
+                user.id,
+                concatPhoneNumber,
                 formData.firstName,
                 formData.lastName,
                 formData.relationship
@@ -81,16 +84,13 @@ const AddContactButton = () => {
         e.preventDefault();
 
         if (validation.codeValidation(formData.verificationCode)) {
-
             const { data, error } = await verifyContact(
-                user.id, 
+                user.id,
                 formData.phoneNumber,
                 formData.verificationCode
             );
 
-         
             if (!error) {
-               
                 console.log("Contact verified successfully.", data);
                 setIsVerifying(false);
 
@@ -102,9 +102,7 @@ const AddContactButton = () => {
                     enableContact: false,
                     verificationCode: "",
                 });
-  
             } else {
-                
                 setErrors({ verificationCode: error });
             }
         } else {
@@ -113,9 +111,8 @@ const AddContactButton = () => {
     };
 
     const handlePhoneNumberChange = (event) => {
-        const newPhoneNumber = event.target.value;
-
-        if (newPhoneNumber.startsWith("+1") && newPhoneNumber.length <= 12) {
+        const newPhoneNumber = event.target.value.trim();
+        if (/^\+1\d*$/.test(newPhoneNumber) && newPhoneNumber.length <= 12) {
             setFormData({ ...formData, phoneNumber: newPhoneNumber });
         }
     };
