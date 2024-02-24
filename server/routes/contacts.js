@@ -66,7 +66,7 @@ router.post("/:userId/contacts", async (req, res) => {
     try {
         const verification = await sendVerificationCode(phoneNumber);
 
-        if (verification.status === "approved") {
+        if (verification.status === "pending") {
             res.status(200).json({
                 message:
                     "Verification code sent. Please verify the phone number.",
@@ -77,7 +77,7 @@ router.post("/:userId/contacts", async (req, res) => {
                 error: errorTypes.SERVER_ERROR,
             });
         }
-
+        r;
     } catch (error) {
         console.error(error);
         res.status(500).json({

@@ -42,7 +42,7 @@ router.post("/login", async (req, res) => {
 
         const verification = await sendVerificationCode(phoneNumber);
 
-        if (verification.status === "approved") {
+        if (verification.status === "pending") {
             res.status(200).json({
                 message:
                     "Verification code sent. Please verify your phone number.",
@@ -117,10 +117,7 @@ router.post("/signup", async (req, res) => {
 
         const verification = await sendVerificationCode(phoneNumber);
 
-        console.log(verification);
-        console.log(verification.status);
-
-        if (verification.status === "approved") {
+        if (verification.status === "pending") {
             res.status(200).json({
                 message:
                     "Verification code sent. Please verify your phone number.",

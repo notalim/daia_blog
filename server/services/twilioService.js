@@ -13,8 +13,8 @@ const sendVerificationCode = async (to, channel = "sms") => {
         const verification = await client.verify.v2
             .services(verifySid)
             .verifications.create({ to, channel });
-        // console.log(verification.status);
-        // console.log(verification)
+        console.log(verification.status);
+        console.log(verification)
         return verification;
     } catch (error) {
         return { error, message: "Error sending verification code" };
