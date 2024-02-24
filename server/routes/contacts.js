@@ -97,21 +97,13 @@ router.post("/:userId/contacts/complete", async (req, res) => {
             phoneNumber,
             code
         );
-        console.log(verificationCheck.status);
+        // console.log(verificationCheck.status);
         if (verificationCheck.status !== "approved") {
             return res.status(400).json({
                 message: "Invalid or expired code.",
                 error: errorTypes.INVALID_CODE,
             });
         }
-
-        console.log({
-            userId,
-            phoneNumber,
-            firstName,
-            lastName,
-            relationship,
-        })
 
         const contact = await addEmergencyContact(
             userId,

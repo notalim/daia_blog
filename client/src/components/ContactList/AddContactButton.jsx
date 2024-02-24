@@ -61,10 +61,8 @@ const AddContactButton = () => {
             let concatPhoneNumber =
                 "+" + formData.phoneNumber.replace(/\D/g, "");
 
-            console.log(concatPhoneNumber);
-
             const { data, error } = await addContact(
-                user.id,
+                user._id,
                 concatPhoneNumber,
                 formData.firstName,
                 formData.lastName,
@@ -85,7 +83,7 @@ const AddContactButton = () => {
 
         if (validation.codeValidation(formData.verificationCode)) {
             const { data, error } = await verifyContact(
-                user.id,
+                user._id,
                 formData.phoneNumber,
                 formData.verificationCode,
                 formData.firstName,

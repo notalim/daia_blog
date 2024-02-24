@@ -26,6 +26,7 @@ export const addEmergencyContact = async (
         }
 
         const contact = {
+            _id: new ObjectId(),
             contactFirstName,
             contactLastName,
             contactPhoneNumber,
@@ -33,22 +34,24 @@ export const addEmergencyContact = async (
             active: true,
         };
 
-        console.log(contact);
-
         const userCollection = await users();
         const updateInfo = await userCollection.updateOne(
-            { _id: new Object(userId) },
-            { $addToSet: { contacts: contact } } 
+            { _id: new ObjectId(userId) }, 
+            { $addToSet: { contacts: contact } }
         );
 
-        if (!updateInfo.matchedCount || !updateInfo.modifiedCount) {
-            throw new Error(errorTypes.CONTACT_NOT_ADDED);
+        if (updateInfo.matchedCount === 0) {
+            throw new Error(errorTypes.USER_NOT_FOUND);
+        }
+
+        if (updateInfo.modifiedCount === 0) {
+            throw new Error(errorTypes.CONTACT_ALREADY_EXISTS);
         }
 
         return { message: "Emergency contact added successfully." };
     } catch (error) {
-        console.error(error);
-        throw new Error(error.message);
+        console.error("Failed to add emergency contact:", error.message);
+        throw new Error(error.message || errorTypes.SERVER_ERROR);
     }
 };
 
