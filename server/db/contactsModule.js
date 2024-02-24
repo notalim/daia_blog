@@ -36,6 +36,19 @@ export const addEmergencyContact = async (
         };
 
         const userCollection = await users();
+
+        const userDoc = await userCollection.findOne({
+            _id: new ObjectId(userId),
+        });
+
+      
+        if (
+            userDoc.contacts.some(
+                (contact) => contact.contactPhoneNumber === contactPhoneNumber
+            )
+        ) {
+            throw new Error(errorTypes.CONTACT_ALREADY_EXISTS);
+        }
         const updateInfo = await userCollection.updateOne(
             { _id: new ObjectId(userId) }, 
             { $addToSet: { contacts: contact } }

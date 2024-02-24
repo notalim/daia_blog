@@ -1,15 +1,17 @@
 import React, { useState } from "react";
+
 import { useNavigate } from "react-router-dom";
+import useAuth from "../contexts/useAuth";
+import { useToast } from "@src/@/components/ui/use-toast";
 
 import Input from "../components/Input";
 import RegisterButton from "../components/RegisterButton"; // Rename this as needed
 import PhoneNumberInput from "../components/PhoneNumberInput";
 
-import API from "../services/apiClient";
 import validation from "../services/validation";
 import { errorTypes } from "../services/errorTypes";
 
-import useAuth from "../contexts/useAuth";
+import useProcessMessages from "../contexts/useProcessMessages";
 
 function LoginPage() {
     const [phoneNumber, setPhoneNumber] = useState("");
@@ -19,6 +21,7 @@ function LoginPage() {
     const navigate = useNavigate();
 
     const { loginUser, completeLogin } = useAuth();
+    const { processError, processSuccess } = useProcessMessages();
 
     const handleChangePhoneNumber = (event) => {
         setPhoneNumber(event.target.value);
@@ -30,68 +33,54 @@ function LoginPage() {
 
     const handleSubmitPhoneNumber = async (event) => {
         event.preventDefault();
-        setError("");
 
         if (!phoneNumber) {
-            setError(errorTypes.PHONE_NUMBER_REQUIRED);
+            processError(new Error(errorTypes.PHONE_NUMBER_REQUIRED));
             return;
         }
 
         if (
             !validation.phoneValidation("+1" + phoneNumber.replace(/\D/g, ""))
         ) {
-            setError(errorTypes.INVALID_PHONE_NUMBER);
+            processError(new Error(errorTypes.INVALID_PHONE_NUMBER));
             return;
         }
 
         try {
-            const {data, error} = await loginUser( "+1" + phoneNumber.replace(/\D/g, ""));
-
+            const { error } = await loginUser(
+                "+1" + phoneNumber.replace(/\D/g, "")
+            );
             if (error) {
-                setError(error);
-                return;
-            }
-
-            
-            if (data && !error) {
+                processError(new Error(error));
+            } else {
                 setIsVerificationCodeSent(true);
             }
         } catch (error) {
-            setError(error.message || "Failed to log in. Please try again.");
+            processError(error);
         }
     };
-
     const handleVerifyCode = async (event) => {
         event.preventDefault();
-        setError("");
 
         if (!validation.codeValidation(verificationCode)) {
-            setError(errorTypes.INVALID_VERIFICATION_CODE);
+            processError(new Error(errorTypes.INVALID_VERIFICATION_CODE));
             return;
         }
 
         try {
-            await completeLogin(
+            const { error } = await completeLogin(
                 "+1" + phoneNumber.replace(/\D/g, ""),
                 verificationCode
             );
-
             if (error) {
-                setError(error);
-                return;
-            }
-
-            if (!error) {
+                processError(new Error(error));
+            } else {
                 navigate("/dashboard");
             }
-
         } catch (error) {
-            setError(
-                error.message || "Failed to verify code. Please try again."
-            );
+            processError(error);
         }
     };
-
     return (
         <div className="min-h-screen flex items-center bg-background-purple">
             <div className="w-full max-w-4xl mx-auto flex justify-between items-start">
@@ -111,16 +100,6 @@ function LoginPage() {
                     </p>
                 </div>
                 <div className="w-full max-w-xs">
-                    {isVerificationCodeSent && (
-                        <div className="text-dim-purple text-center mb-4">
-                            Verification code has been sent
-                        </div>
-                    )}
-                    {error && (
-                        <div className="text-red-500 text-center mb-4">
-                            {error}
-                        </div>
-                    )}
                     <form
                         onSubmit={
                             isVerificationCodeSent

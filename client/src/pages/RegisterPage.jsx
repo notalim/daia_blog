@@ -1,16 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
-import Input from "../components/Input";
-import PhoneNumberInput from "../components/PhoneNumberInput";
-import GradientBackground from "../components/GradientBackground";
-import RegisterButton from "../components/RegisterButton";
-
-import API from "../services/apiClient";
+import useAuth from "../contexts/useAuth";
 import validation from "../services/validation";
 import { errorTypes } from "../services/errorTypes";
+import useProcessMessages from "../contexts/useProcessMessages";
 
-import useAuth from "../contexts/useAuth";
+import Input from "../components/Input";
+import RegisterButton from "../components/RegisterButton";
+import PhoneNumberInput from "../components/PhoneNumberInput";
+import GradientBackground from "../components/GradientBackground";
 
 const initialFormFields = ["Phone Number"];
 const additionalFormFields = [
@@ -20,40 +18,20 @@ const additionalFormFields = [
     "Dexcom Password",
 ];
 
-const validateRegistrationForm = (formData) => {
-    const errors = {};
-    if (
-        !validation.phoneValidation(
-            "+1" + formData["Phone Number"].replace(/\D/g, "")
-        )
-    ) {
-        errors.phone = errorTypes.INVALID_PHONE_NUMBER;
-    }
-    if (!validation.codeValidation(formData["Verification Code"])) {
-        errors.code = errorTypes.INVALID_VERIFICATION_CODE;
-    }
-    if (!validation.nameValidation(formData["Your Name"])) {
-        errors.name = errorTypes.INVALID_NAME;
-    }
-
-    return errors;
-};
-
 function RegisterPage() {
-    const [error, setError] = useState("");
-
     const [formData, setFormData] = useState({
         "Phone Number": "",
         "Verification Code": "",
+        "Your Name": "",
         "Dexcom Username": "",
         "Dexcom Password": "",
-        "Your Name": "",
     });
-
     const [currentFormFields, setCurrentFormFields] =
         useState(initialFormFields);
     const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
     const { registerUser, completeRegistration } = useAuth();
+    const { processError } = useProcessMessages();
+    const navigate = useNavigate();
 
     const handleChange = (field) => (event) => {
         setFormData({ ...formData, [field]: event.target.value });
@@ -65,24 +43,11 @@ function RegisterPage() {
         }
     }, [isVerificationCodeSent]);
 
-    const navigate = useNavigate();
-
-    const getInputType = (fieldName) => {
-        switch (fieldName) {
-            case "Dexcom Password":
-            case "Verification Code":
-                return "tel";
-            default:
-                return "text";
-        }
-    };
-
     const handlePhoneNumberSubmit = async (event) => {
         event.preventDefault();
-        setError("");
 
         if (!formData["Phone Number"]) {
-            setError(errorTypes.PHONE_NUMBER_REQUIRED);
+            processError(new Error(errorTypes.PHONE_NUMBER_REQUIRED));
             return;
         }
 
@@ -91,36 +56,30 @@ function RegisterPage() {
                 "+1" + formData["Phone Number"].replace(/\D/g, "")
             )
         ) {
-            setError(errorTypes.INVALID_PHONE_NUMBER);
+            processError(new Error(errorTypes.INVALID_PHONE_NUMBER));
             return;
         }
 
         try {
-            let concatPhoneNumber =
-                "+1" + formData["Phone Number"].replace(/\D/g, "");
-
-            const { data, error } = await API.registerUser(concatPhoneNumber);
-
+            const { error } = await registerUser(
+                "+1" + formData["Phone Number"].replace(/\D/g, "")
+            );
             if (error) {
-                setError(error);
-                return;
-            }
-
-            if (data && !error) {
+                processError(new Error(error));
+            } else {
                 setIsVerificationCodeSent(true);
             }
         } catch (error) {
-            setError(error.message || "Failed to register. Please try again.");
+            processError(error);
         }
     };
 
     const handleCompleteRegistration = async (event) => {
         event.preventDefault();
-        setError("");
 
         const errors = validateRegistrationForm(formData);
         if (Object.keys(errors).length > 0) {
-            setError(Object.values(errors)[0]);
+            processError(new Error(Object.values(errors)[0]));
             return;
         }
 
@@ -128,8 +87,7 @@ function RegisterPage() {
             try {
                 let concatPhoneNumber =
                     "+1" + formData["Phone Number"].replace(/\D/g, "");
-
-                let { data, error } = await completeRegistration(
+                const { error } = await completeRegistration(
                     concatPhoneNumber,
                     formData["Verification Code"],
                     formData["Your Name"],
@@ -138,18 +96,12 @@ function RegisterPage() {
                 );
 
                 if (error) {
-                    setError(error);
-                    return;
-                }
-
-                if (!error) {
+                    processError(new Error(error));
+                } else {
                     navigate("/dashboard");
                 }
             } catch (error) {
-                setError(
-                    error.message ||
-                        "Failed to complete registration. Please try again."
-                );
+                processError(error);
             }
         }
     };
@@ -186,16 +138,7 @@ function RegisterPage() {
                         }
                         className="flex flex-col items-end"
                     >
-                        {isVerificationCodeSent && (
-                            <div className="text-dim-purple text-center mb-4">
-                                Verification code has been sent
-                            </div>
-                        )}
-                        {error && (
-                            <div className="text-red-500 text-center">
-                                {error}
-                            </div>
-                        )}
+                       
                         <div className="flex flex-col items-end mb-4">
                             <PhoneNumberInput
                                 placeholder="Phone Number"

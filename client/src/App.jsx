@@ -11,9 +11,12 @@ import UserDashboardPage from "./pages/UserDashboardPage";
 
 import PageLayout from "./pages/Page/Page";
 
+import { Toaster } from "@/components/ui/toaster";
+
 function App() {
     return (
         <AuthProvider>
+            <Toaster />
             <Routes>
                 <Route
                     path="/"

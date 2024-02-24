@@ -10,8 +10,6 @@ import {
 } from "@src/@/components/ui/dialog";
 import { Button } from "@src/@/components/ui/button";
 import { Input } from "@src/@/components/ui/input";
-import { Label } from "@src/@/components/ui/label";
-import { Switch } from "@src/@/components/ui/switch";
 import SelectContactType from "./SelectContactType";
 import { Avatar, AvatarFallback } from "@src/@/components/ui/avatar";
 import { Plus } from "lucide-react";
