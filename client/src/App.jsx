@@ -3,53 +3,51 @@ import React from "react";
 
 import { AuthProvider } from "./contexts/AuthContext";
 import { Routes, Route } from "react-router-dom";
-
-import LandingPage from "./pages/LandingPage";
-import RegisterPage from "./pages/RegisterPage";
-import LoginPage from "./pages/LoginPage";
-import UserDashboardPage from "./pages/UserDashboardPage";
-
 import PageLayout from "./pages/Page/Page";
+import Construction from "./pages/Construction";
+import { footerLinks } from "./components/Footer/footerLinks";
+
+import { routes } from "./services/routesObj";
 
 function App() {
-    return (
-        <AuthProvider>
-            <Routes>
-                <Route
-                    path="/"
-                    element={
-                        <PageLayout>
-                            <LandingPage />
-                        </PageLayout>
-                    }
-                />
-                <Route
-                    path="/register"
-                    element={
-                        <PageLayout>
-                            <RegisterPage />
-                        </PageLayout>
-                    }
-                />
-                <Route
-                    path="/login"
-                    element={
-                        <PageLayout>
-                            <LoginPage />
-                        </PageLayout>
-                    }
-                />
-                <Route
-                    path="/dashboard"
-                    element={
-                        <PageLayout>
-                            <UserDashboardPage />
-                        </PageLayout>
-                    }
-                />
-            </Routes>
-        </AuthProvider>
-    );
+	const implementedPages = ["About", "Contact us"];
+
+	const constructionPages = footerLinks.flatMap((section) =>
+		section.links
+			.filter((item) => !implementedPages.includes(item))
+			.map((link) => (
+				<Route
+					key={link}
+					path={`/${link.toLowerCase().replace(/\s/g, "-")}`}
+					element={
+						<PageLayout>
+							<Construction message={link} />
+						</PageLayout>
+					}
+				/>
+			))
+	);
+
+	const generateRoutes = routes.flatMap((section) => (
+		<Route
+			key={section.path}
+			path={section.path}
+			element={
+				<PageLayout>
+					<section.comp />
+				</PageLayout>
+			}
+		/>
+	));
+
+	return (
+		<AuthProvider>
+			<Routes>
+				{constructionPages}
+				{generateRoutes}
+			</Routes>
+		</AuthProvider>
+	);
 }
 
 export default App;
