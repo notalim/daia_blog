@@ -4,7 +4,7 @@ import Alert from "@mui/material/Alert";
 import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Collapse from "@mui/material/Collapse";
-import { sendEmail } from "~/services/emailjs";
+import { sendEmail } from "../services/emailjs";
 
 function ContactUs() {
 	const form = useRef();

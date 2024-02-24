@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useContext } from "react";
 import {
     Dialog,
     DialogContent,
@@ -8,98 +8,212 @@ import {
     DialogTrigger,
     DialogFooter,
 } from "@src/@/components/ui/dialog";
-
 import { Button } from "@src/@/components/ui/button";
 import { Input } from "@src/@/components/ui/input";
 import { Label } from "@src/@/components/ui/label";
-
+import { Switch } from "@src/@/components/ui/switch";
+import SelectContactType from "./SelectContactType";
 import { Avatar, AvatarFallback } from "@src/@/components/ui/avatar";
-
 import { Plus } from "lucide-react";
+import validation from "../../services/validation";
+
+import { AuthContext } from "../../contexts/AuthContext";
 
 const AddContactButton = () => {
-    const [firstName, setFirstName] = useState("");
-    const [lastName, setLastName] = useState("");
-    const [phoneNumber, setPhoneNumber] = useState("");
-    const [relationship, setRelationship] = useState("");
+    const [formData, setFormData] = useState({
+        firstName: "",
+        lastName: "",
+        phoneNumber: "+1",
+        relationship: "",
+        enableContact: false,
+        verificationCode: "",
+    });
 
-    const handleSubmit = async (e) => {
+    const [errors, setErrors] = useState({});
+
+    const [isVerifying, setIsVerifying] = useState(false);
+
+    const { addContact, verifyContact } = useContext(AuthContext);
+
+    const handleVerifyContact = async (e) => {
         e.preventDefault();
-        // Here you would call the API to submit the form data
-        // For now, just log it to the console
-        console.log({ firstName, lastName, phoneNumber, relationship });
+
+        const newErrors = {
+            firstName: validation.nameValidation(formData.firstName)
+                ? ""
+                : "Invalid first name",
+            lastName: validation.nameValidation(formData.lastName)
+                ? ""
+                : "Invalid last name",
+            phoneNumber: validation.phoneValidation(formData.phoneNumber)
+                ? ""
+                : "Invalid phone number",
+            relationship: formData.relationship
+                ? ""
+                : "Please select a relationship",
+        };
+
+       
+        if (Object.values(newErrors).some((error) => error !== "")) {
+            setErrors(newErrors);
+        } else {
+            
+            setIsVerifying(true);
+
+            const { data, error } = await addContact(
+                user.id, 
+                formData.phoneNumber,
+                formData.firstName,
+                formData.lastName,
+                formData.relationship
+            );
+
+            if (!error) {
+                console.log("Contact verification initiated.", data);
+            } else {
+                setErrors({ form: error });
+                setIsVerifying(false);
+            }
+        }
+    };
+
+    const handleVerificationCodeSubmit = async (e) => {
+        e.preventDefault();
+
+        if (validation.codeValidation(formData.verificationCode)) {
+
+            const { data, error } = await verifyContact(
+                user.id, 
+                formData.phoneNumber,
+                formData.verificationCode
+            );
+
+         
+            if (!error) {
+               
+                console.log("Contact verified successfully.", data);
+                setIsVerifying(false);
+
+                setFormData({
+                    firstName: "",
+                    lastName: "",
+                    phoneNumber: "+1",
+                    relationship: "",
+                    enableContact: false,
+                    verificationCode: "",
+                });
+  
+            } else {
+                
+                setErrors({ verificationCode: error });
+            }
+        } else {
+            setErrors({ verificationCode: "Invalid verification code" });
+        }
+    };
+
+    const handlePhoneNumberChange = (event) => {
+        const newPhoneNumber = event.target.value;
+
+        if (newPhoneNumber.startsWith("+1") && newPhoneNumber.length <= 12) {
+            setFormData({ ...formData, phoneNumber: newPhoneNumber });
+        }
+    };
+
+    const handleChange = (eventOrValue) => {
+        const value = eventOrValue.target
+            ? eventOrValue.target.value
+            : eventOrValue;
+        const name = eventOrValue.target
+            ? eventOrValue.target.name
+            : "relationship";
+
+        setFormData({ ...formData, [name]: value });
     };
 
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button
-                    className={`bg-dim-purple hover:bg-hover-dim-purple text-full-purple font-bold p-2 rounded-full flex items-center justify-center w-16 h-16`}
-                >
-                    <Plus className="w-6 h-6" />
-                </Button>
+                <Avatar className="w-16 h-16 rounded-full bg-lavender-purple cursor-pointer flex items-center justify-center">
+                    <AvatarFallback>
+                        <Plus className="w-6 h-6 text-mid-purple" />
+                    </AvatarFallback>
+                </Avatar>
             </DialogTrigger>
-            <DialogContent className="bg-lavender-purple">
-                <DialogHeader>
-                    <DialogTitle>Add New Contact</DialogTitle>
-                    <DialogDescription>
+            <DialogContent className="bg-background-purple p-6">
+                <DialogHeader className="border-b border-dim-purple pb-4">
+                    <DialogTitle className="text-full-purple">
+                        Add New Contact
+                    </DialogTitle>
+                    <DialogDescription className="text-dim-purple">
                         Enter the details for your new emergency contact.
                     </DialogDescription>
                 </DialogHeader>
-                <form onSubmit={handleSubmit} className="grid gap-4 py-4">
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="firstName" className="text-right">
-                            First Name
-                        </Label>
+                {Object.values(errors).map(
+                    (error, index) =>
+                        error && (
+                            <p key={index} className="text-red-500 mt-1 mb-1">
+                                {error}
+                            </p>
+                        )
+                )}
+                {!isVerifying ? (
+                    <form onSubmit={handleVerifyContact} className="space-y-4">
                         <Input
-                            id="firstName"
-                            value={firstName}
-                            onChange={(e) => setFirstName(e.target.value)}
-                            className="col-span-3"
+                            name="firstName"
+                            placeholder="First Name"
+                            className="w-full"
+                            value={formData.firstName}
+                            onChange={handleChange}
                         />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="lastName" className="text-right">
-                            Last Name
-                        </Label>
                         <Input
-                            id="lastName"
-                            value={lastName}
-                            onChange={(e) => setLastName(e.target.value)}
-                            className="col-span-3"
+                            name="lastName"
+                            placeholder="Last Name"
+                            className="w-full"
+                            value={formData.lastName}
+                            onChange={handleChange}
                         />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="phoneNumber" className="text-right">
-                            Phone Number
-                        </Label>
                         <Input
-                            id="phoneNumber"
-                            value={phoneNumber}
-                            onChange={(e) => setPhoneNumber(e.target.value)}
-                            className="col-span-3"
+                            name="phoneNumber"
+                            type="tel"
+                            placeholder="Phone Number"
+                            className="w-full"
+                            value={formData.phoneNumber}
+                            onChange={handlePhoneNumberChange}
+                            maxLength={12}
                         />
-                    </div>
-                    <div className="grid grid-cols-4 items-center gap-4">
-                        <Label htmlFor="relationship" className="text-right">
-                            Relationship
-                        </Label>
-                        <Input
-                            id="relationship"
-                            value={relationship}
-                            onChange={(e) => setRelationship(e.target.value)}
-                            className="col-span-3 "
+                        <SelectContactType
+                            value={formData.relationship}
+                            onChange={handleChange}
                         />
-                    </div>
-                    <DialogFooter>
                         <Button
                             type="submit"
-                            className="bg-full-purple hover:bg-hover-full-purple text-white"
+                            className="w-full bg-background-purple text-input-text placeholder-input-text"
+                        >
+                            Verify Contact
+                        </Button>
+                    </form>
+                ) : (
+                    <form
+                        onSubmit={handleVerificationCodeSubmit}
+                        className="space-y-4"
+                    >
+                        <Input
+                            name="verificationCode"
+                            placeholder="Verification Code"
+                            className="w-full"
+                            value={formData.verificationCode}
+                            onChange={handleChange}
+                            maxLength={6}
+                        />
+                        <Button
+                            type="submit"
+                            className="w-full bg-background-purple text-input-text placeholder-input-text"
                         >
                             Save Contact
                         </Button>
-                    </DialogFooter>
-                </form>
+                    </form>
+                )}
             </DialogContent>
         </Dialog>
     );
