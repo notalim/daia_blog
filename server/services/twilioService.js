@@ -9,24 +9,28 @@ const verifySid = process.env.TWILIO_VERIFY_SERVICE_SID;
 const client = twilio(accountSid, authToken);
 
 const sendVerificationCode = async (to, channel = "sms") => {
-  try {
-    const verification = await client.verify.v2.services(verifySid).verifications.create({ to, channel });
-    cancelAnimationFrameonsole.log(verification.status);
-    console.log(verification)
-    return verification;
-  } catch (error) {
-    return {error, message: "Error sending verification code"};
-  }
+    try {
+        const verification = await client.verify.v2
+            .services(verifySid)
+            .verifications.create({ to, channel });
+        // console.log(verification.status);
+        // console.log(verification)
+        return verification;
+    } catch (error) {
+        return { error, message: "Error sending verification code" };
+    }
 };
 
 const checkVerificationCode = async (to, code) => {
-  try {
-    const verificationCheck = await client.verify.v2.services(verifySid).verificationChecks.create({ to, code });
-    // console.log(verificationCheck.status);
-    return verificationCheck;
-  } catch (error) {
-    return {error, message: "Error checking verification code"};
-  }
+    try {
+        const verificationCheck = await client.verify.v2
+            .services(verifySid)
+            .verificationChecks.create({ to, code });
+        // console.log(verificationCheck.status);
+        return verificationCheck;
+    } catch (error) {
+        return { error, message: "Error checking verification code" };
+    }
 };
 
 export { sendVerificationCode, checkVerificationCode };
