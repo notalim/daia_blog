@@ -4,11 +4,13 @@ import { useNavigate } from "react-router-dom";
 import PhoneNumberInput from "../components/PhoneNumberInput";
 import RegisterButton from "../components/RegisterButton"; // Rename this as needed
 import GradientBackground from "../components/GradientBackground";
+import API from "../services/apiClient";
 
 import validation from "../services/validation";
 import { errorTypes } from "../services/errorTypes";
 
 import useAuth from "../contexts/useAuth";
+import { Input } from "@src/@/components/ui/input";
 
 function LoginPage() {
 	const [phoneNumber, setPhoneNumber] = useState("");
@@ -140,9 +142,9 @@ function LoginPage() {
 						/>
 					</div>
 					{isVerificationCodeSent && (
-						<PhoneNumberInput
+						<Input
 							type="tel"
-							placeholder="Verification Code"
+							placeholder="Testing Verification Code"
 							value={verificationCode}
 							onChange={handleChangeVerificationCode}
 						/>
