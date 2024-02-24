@@ -33,10 +33,12 @@ export const addEmergencyContact = async (
             active: true,
         };
 
+        console.log(contact);
+
         const userCollection = await users();
         const updateInfo = await userCollection.updateOne(
             { _id: new Object(userId) },
-            { $addToSet: { contacts: contact } } // Use $addToSet to avoid duplicates
+            { $addToSet: { contacts: contact } } 
         );
 
         if (!updateInfo.matchedCount || !updateInfo.modifiedCount) {
