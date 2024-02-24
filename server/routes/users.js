@@ -26,7 +26,7 @@ router.post("/login", async (req, res) => {
 
     if (!validation.phoneValidation(phoneNumber)) {
         return res.status(400).json({
-            message: "Invalid phone number format",
+            messyage: "Invalid phone number format",
             error: errorTypes.INVALID_PHONE_NUMBER,
         });
     }
@@ -39,11 +39,20 @@ router.post("/login", async (req, res) => {
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
-        await sendVerificationCode(phoneNumber);
 
-        res.status(200).json({
-            message: "Verification code sent. Please verify your phone number.",
-        });
+        const verification = await sendVerificationCode(phoneNumber);
+
+        if (verification.status === "pending") {
+            res.status(200).json({
+                message:
+                    "Verification code sent. Please verify your phone number.",
+            });
+        } else {
+            res.status(500).json({
+                message: "Failed to send verification code",
+                error: errorTypes.SERVER_ERROR,
+            });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -105,10 +114,20 @@ router.post("/signup", async (req, res) => {
                 error: errorTypes.USER_ALREADY_EXISTS,
             });
         }
-        await sendVerificationCode(phoneNumber);
-        res.status(200).json({
-            message: "Verification code sent. Please verify your phone number.",
-        });
+
+        const verification = await sendVerificationCode(phoneNumber);
+
+        if (verification.status === "pending") {
+            res.status(200).json({
+                message:
+                    "Verification code sent. Please verify your phone number.",
+            });
+        } else {
+            res.status(500).json({
+                message: "Failed to send verification code",
+                error: errorTypes.SERVER_ERROR,
+            });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -266,8 +285,7 @@ router.post("/update-dexcom", async (req, res) => {
             user: updatedUser,
             message: "Dexcom credentials updated successfully",
         });
-    }
-    catch (error) {
+    } catch (error) {
         console.error(error);
         res.status(500).json({
             message: "Server error",
@@ -275,7 +293,6 @@ router.post("/update-dexcom", async (req, res) => {
         });
     }
 });
-
 
 router.delete("/delete/:phoneNumber", async (req, res) => {
     const { phoneNumber } = req.params;
@@ -301,6 +318,5 @@ router.delete("/delete/:phoneNumber", async (req, res) => {
         });
     }
 });
-
 
 export default router;

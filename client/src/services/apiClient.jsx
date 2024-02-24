@@ -4,151 +4,160 @@ import axios from "axios";
 import { errorTypes } from "./errorTypes";
 
 class ApiClient {
-    constructor(remoteHostUrl) {
-        this.remoteHostUrl = remoteHostUrl;
-        this.token = localStorage.getItem("token") || null;
-        this.tokenName = "token";
-    }
+	constructor(remoteHostUrl) {
+		this.remoteHostUrl = remoteHostUrl;
+		this.token = localStorage.getItem("token") || null;
+		this.tokenName = "token";
+	}
 
-    setToken(token) {
-        this.token = token;
-        localStorage.setItem(this.tokenName, token);
-    }
+	setToken(token) {
+		this.token = token;
+		localStorage.setItem(this.tokenName, token);
+	}
 
-    async request({ endpoint, method = "GET", data = {} }) {
-        const url = `${this.remoteHostUrl}/${endpoint}`;
+	async request({ endpoint, method = "GET", data = {} }) {
+		const url = `${this.remoteHostUrl}/${endpoint}`;
 
-        const headers = {
-            "Content-Type": "application/json",
-            Authorization: this.token ? `Bearer ${this.token}` : "",
-        };
+		const headers = {
+			"Content-Type": "application/json",
+			Authorization: this.token ? `Bearer ${this.token}` : "",
+		};
 
-        try {
-            const res = await axios({ url, method, data, headers });
-            // console.log(res)
-            return { data: res.data, error: null };
-        } catch (error) {
-            console.error("APIclient.makeRequest.error:");
-            console.error({ errorResponse: error.response });
-            const serverError = error?.response?.data?.message;
-            // console.log(error);
-            // console.log(data)
-            return {
-                data: res.error,
-                error: serverError || "An unexpected error occurred",
-            };
-        }
-    }
+		try {
+			const res = await axios({ url, method, data, headers });
+			// console.log(res)
+			return { data: res.data, error: null };
+		} catch (error) {
+			console.error({ errorResponse: error.response });
 
-    async login(phoneNumber) {
-        return await this.request({
-            endpoint: "users/login",
-            method: "POST",
-            data: { phoneNumber },
-        });
-    }
+			const serverError = error?.response?.data?.error;
 
-    async completeLogin(phoneNumber, code) {
-        return await this.request({
-            endpoint: "users/login/complete",
-            method: "POST",
-            data: { phoneNumber, code },
-        });
-    }
+			const errorMessage =
+				errorTypes[serverError] || "An unexpected error occurred";
 
-    async registerUser(phoneNumber) {
-        return await this.request({
-            endpoint: "users/signup",
-            method: "POST",
-            data: { phoneNumber },
-        });
-    }
+			return {
+				data: null,
+				error: errorMessage,
+			};
+		}
+	}
 
-    async completeRegistration(
-        phoneNumber,
-        code,
-        name,
-        dexcomUser,
-        dexcomPass
-    ) {
-        return await this.request({
-            endpoint: "users/signup/complete",
-            method: "POST",
-            data: {
-                phoneNumber,
-                code,
-                name,
-                dexcomUser,
-                dexcomPass,
-            },
-        });
-    }
+	async login(phoneNumber) {
+		return await this.request({
+			endpoint: "users/login",
+			method: "POST",
+			data: { phoneNumber },
+		});
+	}
 
-    async logout() {
-        this.setToken(null);
-        // No need to make an API request since logout is handled by removing the token
-    }
+	async completeLogin(phoneNumber, code) {
+		return await this.request({
+			endpoint: "users/login/complete",
+			method: "POST",
+			data: { phoneNumber, code },
+		});
+	}
 
-    async updateUser(phoneNumber) {
-        return await this.request({
-            endpoint: "users/update",
-            method: "POST",
-            data: { phoneNumber },
-        });
-    }
+	async registerUser(phoneNumber) {
+		return await this.request({
+			endpoint: "users/signup",
+			method: "POST",
+			data: { phoneNumber },
+		});
+	}
 
-    async updateDexcomSessionId(phoneNumber, dexcomUser, dexcomPass) {
-        return await this.request({
-            endpoint: "users/update-dexcom",
-            method: "POST",
-            data: { phoneNumber, dexcomUser, dexcomPass },
-        });
-    }
+	async completeRegistration(
+		phoneNumber,
+		code,
+		name,
+		dexcomUser,
+		dexcomPass
+	) {
+		return await this.request({
+			endpoint: "users/signup/complete",
+			method: "POST",
+			data: {
+				phoneNumber,
+				code,
+				name,
+				dexcomUser,
+				dexcomPass,
+			},
+		});
+	}
 
-    async deleteUser(phoneNumber) {
-        return await this.request({
-            endpoint: `users/delete/${phoneNumber}`, // Assuming the server can handle this endpoint format
-            method: "DELETE",
-        });
-    }
+	async logout() {
+		this.setToken(null);
+		// No need to make an API request since logout is handled by removing the token
+	}
 
-    async addContact(
-        contactPhoneNumber,
-        contactFirstName,
-        contactLastName,
-        contactRelationship
-    ) {
-        return await this.request({
-            endpoint: "users/:userId/contacts",
-            method: "POST",
-            data: {
-                contactPhoneNumber,
-                contactFirstName,
-                contactLastName,
-                contactRelationship,
-            },
-        });
-    }
+	async updateUser(phoneNumber) {
+		return await this.request({
+			endpoint: "users/update",
+			method: "POST",
+			data: { phoneNumber },
+		});
+	}
 
-    async verifyContact(
-        phoneNumber,
-        contactPhoneNumber,
-        code,
-        contactName,
-        contactRelationship
-    ) {
-        return await this.request({
-            endpoint: "users/contacts/verify",
-            method: "POST",
-            data: {
-                phoneNumber,
-                contactPhoneNumber,
-                code,
-                contactName,
-                contactRelationship,
-            },
-        });
-    }
+	async updateDexcomSessionId(phoneNumber, dexcomUser, dexcomPass) {
+		return await this.request({
+			endpoint: "users/update-dexcom",
+			method: "POST",
+			data: { phoneNumber, dexcomUser, dexcomPass },
+		});
+	}
+
+	async deleteUser(phoneNumber) {
+		return await this.request({
+			endpoint: `users/delete/${phoneNumber}`,
+			method: "DELETE",
+		});
+	}
+
+	async getUserContacts(userId) {
+		return await this.request({
+			endpoint: `users/${userId}/contacts`,
+			method: "GET",
+		});
+	}
+
+	async addContact(
+		contactPhoneNumber,
+		contactFirstName,
+		contactLastName,
+		contactRelationship
+	) {
+		return await this.request({
+			endpoint: "users/:userId/contacts",
+			method: "POST",
+			data: {
+				contactPhoneNumber,
+				contactFirstName,
+				contactLastName,
+				contactRelationship,
+			},
+		});
+	}
+
+	async verifyContact(
+		phoneNumber,
+		contactPhoneNumber,
+		code,
+		contactName,
+		contactRelationship
+	) {
+		return await this.request({
+			endpoint: "users/:userId/contacts/complete",
+			method: "POST",
+			data: {
+				phoneNumber,
+				contactPhoneNumber,
+				code,
+				contactName,
+				contactRelationship,
+			},
+		});
+	}
 }
 
 const TEST_SERVER_URL = "https://daia-test-server.onrender.com";
