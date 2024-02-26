@@ -11,7 +11,7 @@ function Hero() {
                         Health Matters
                     </div>
                     <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                        Instant low blood sugar alerts.
+                        SMARTER SUGAR SHARING
                     </h1>
                     <p className="text-base md:text-lg mb-8">
                         Using your Dexcom device to keep your loved ones in the know.
