@@ -5,7 +5,7 @@ import { footerLinks } from "./footerLinks";
 
 const Footer = () => {
 	return (
-		<footer className="bg-white p-10 mt-20">
+		<footer className="bg-background-purple p-10">
 			<div className="max-w-6xl mx-auto flex flex-wrap justify-between">
 				<div className="flex flex-col">
 					<Link to="/" className="flex items-center mb-4">
@@ -15,8 +15,7 @@ const Footer = () => {
 							className="h-8 w-auto mr-2"
 						/>
 						<span>
-							Lorem ipsum dolor sit amet consectetur adipiscing
-							elit aliquam
+							{/* Add tagline */}
 						</span>
 					</Link>
 					<div className="flex space-x-3 mb-4">
