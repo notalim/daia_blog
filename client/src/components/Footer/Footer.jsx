@@ -2,10 +2,12 @@ import React from "react";
 import { Link } from "react-router-dom";
 import daiaLogo from "@src/assets/icons/daia-logo.svg";
 import { footerLinks } from "./footerLinks";
+import InstagramIcon from "@mui/icons-material/Instagram";
+import FacebookIcon from "@mui/icons-material/Facebook";
 
 const Footer = () => {
 	return (
-		<footer className="bg-white p-10 mt-20">
+		<footer className="bg-white p-10 mt-5">
 			<div className="max-w-6xl mx-auto flex flex-wrap justify-between">
 				<div className="flex flex-col">
 					<Link to="/" className="flex items-center mb-4">
@@ -15,12 +17,27 @@ const Footer = () => {
 							className="h-8 w-auto mr-2"
 						/>
 						<span>
-							Lorem ipsum dolor sit amet consectetur adipiscing
-							elit aliquam
+							Empowering Healthier Lives, One Glucose Level at a
+							Time
 						</span>
 					</Link>
 					<div className="flex space-x-3 mb-4">
-						{/* Social icons can be added here */}
+						<a
+							href="https://www.instagram.com/your_instagram_account"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-light-purple text-dim-purple hover:text-purple-300"
+						>
+							<InstagramIcon fontSize="large" />
+						</a>
+						<a
+							href="https://www.instagram.com/your_instagram_account"
+							target="_blank"
+							rel="noopener noreferrer"
+							className="text-light-purple text-dim-purple hover:text-purple-300"
+						>
+							<FacebookIcon fontSize="large" />
+						</a>
 					</div>
 					<p className="text-sm">Copyright © 2024</p>
 				</div>
@@ -52,7 +69,7 @@ const Footer = () => {
 								href="mailto:contact@company.com"
 								className="text-gray-600 hover:text-black"
 							>
-								contact@company.com
+								daia@gmail.com
 							</a>
 						</div>
 						<div className="mb-2">
@@ -63,11 +80,6 @@ const Footer = () => {
 								(414) 687 – 5892
 							</a>
 						</div>
-						<address className="not-italic mb-2">
-							794 Mcallister St
-							<br />
-							San Francisco, 94102
-						</address>
 					</div>
 				</div>
 			</div>
