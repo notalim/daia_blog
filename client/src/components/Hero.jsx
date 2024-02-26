@@ -29,18 +29,17 @@ function Hero() {
     <div className="bg-background-purple text-black">
       <div className="container mx-auto px-6 py-16 flex flex-col md:flex-row items-center justify-between">
         <div className="flex-1">
-          <div className="bg-pink-200 text-pink-700 px-3 py-1 inline-block rounded-full text-sm font-medium mb-4">
-            Health Matters
-          </div>
           <h1 className="text-4xl md:text-5xl font-bold mb-4">
             <span id="typewriter" />
           </h1>
-          <p className="text-base md:text-lg mb-8">
+          <div>
+          <p className="text-base md:text-lg mb-4">
             Using your Dexcom device to keep your loved ones in the know.
           </p>
+          </div>
           <a
             href="/about"
-            className="hover:animate-pulse text-primary font-semibold py-2 px-4 rounded bg-subtle-purple "
+            className="bg-subtle-purple text-pink-700 px-3 py-1 inline-block rounded-full text-sm font-medium mb-4 "
           >
             Learn More
           </a>
