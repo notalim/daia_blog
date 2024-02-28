@@ -229,7 +229,7 @@ router.post("/refresh-user", async (req, res) => {
 
     try {
         const updatedUser = await getUserByPhoneNumber(phoneNumber);
-        if (!user) {
+        if (!updatedUser) {
             return res.status(404).json({
                 message: "User not found",
                 error: errorTypes.USER_NOT_FOUND,
