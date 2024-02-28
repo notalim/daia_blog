@@ -14,6 +14,7 @@ export default {
                 "lavender-purple": "#E5E1F5",
                 "hover-dim-purple": "#D7CEED",
                 "mid-purple": "#8971B7",
+                "hover-mid-purple": "#50398B",
                 "full-purple": "#563890",
                 "hover-full-purple": "#352358",
                 "input-background": "#EAF0F7",

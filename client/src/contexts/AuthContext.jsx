@@ -105,15 +105,14 @@ export const AuthProvider = ({ children }) => {
                 processError(error);
                 return { data: null, error };
             }
-            processSuccess("User data refreshed.");
             setUser(data.user);
+            processSuccess("User data refreshed.");
             return { data, error: null };
         } catch (error) {
             processError(error);
             return { data: null, error };
         }
-    }
-
+    };
 
     const updateDexcomSessionId = async (
         phoneNumber,
@@ -158,23 +157,23 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
-      const updateUser = async (phoneNumber) => {
+    const updateUser = async (phoneNumber) => {
         // !
-          try {
-              const { data, error } = await API.updateUser(phoneNumber);
-              if (error) {
-                  processError(error);
-                  return { data: null, error };
-              }
-              setUser(data.user);
-              localStorage.setItem("user", JSON.stringify(data.user));
-              processSuccess("User updated.");
-              return { data, error: null };
-          } catch (error) {
-              processError(error);
-              return { data: null, error };
-          }
-      };
+        try {
+            const { data, error } = await API.updateUser(phoneNumber);
+            if (error) {
+                processError(error);
+                return { data: null, error };
+            }
+            setUser(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            processSuccess("User updated.");
+            return { data, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error };
+        }
+    };
 
     const getUserContacts = async (userId) => {
         try {
