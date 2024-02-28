@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import { useSpring, animated } from "react-spring";
 import purpleLogoSVG from "../assets/images/daia_dark_purple_logo.svg";
 import Typewriter from "typewriter-effect/dist/core";
+import { WavyBackground } from "@src/@/components/ui/wavy-background";
 
 function Hero() {
 	const [showLogo, setShowLogo] = useState(false);
@@ -31,6 +32,7 @@ function Hero() {
 
 	return (
 		<div className="bg-background-purple text-black">
+      <WavyBackground />
 			<div className="container mx-auto px-6 py-16 flex flex-col md:flex-row items-center justify-between">
 				<div className="flex-1">
 					<h1 className="text-4xl md:text-5xl font-bold mb-4">
