@@ -69,6 +69,53 @@ export const addEmergencyContact = async (
     }
 };
 
+export const editEmergencyContact = async (
+    userId,
+    contactId,
+    contactPhoneNumber,
+    contactFirstName,
+    contactLastName,
+    contactRelationship
+) => {
+    try {
+        if (!contactPhoneNumber && !contactFirstName && !contactLastName && !contactRelationship) {
+            throw new Error(errorTypes.INVALID_EDIT_PARAMS);
+        }
+        if (contactPhoneNumber && !validation.phoneValidation(contactPhoneNumber)) {
+            throw new Error(errorTypes.INVALID_CONTACT_NUMBER);
+        }
+        if (
+            (contactFirstName && !validation.nameValidation(contactFirstName)) ||
+            (contactLastName && !validation.nameValidation(contactLastName))
+        ) {
+            throw new Error(errorTypes.INVALID_CONTACT_NAME);
+        }
+
+        const userCollection = await users();
+        const updateInfo = await userCollection.updateOne(
+            { _id: new ObjectId(userId), "contacts._id": contactId },
+            {
+                $set: {
+                    "contacts.$.contactPhoneNumber": contactPhoneNumber,
+                    "contacts.$.contactFirstName": contactFirstName,
+                    "contacts.$.contactLastName": contactLastName,
+                    "contacts.$.contactRelationship": contactRelationship,
+                },
+            }
+        );
+
+        if (!updateInfo.matchedCount || !updateInfo.modifiedCount) {
+            throw new Error(errorTypes.CONTACT_NOT_ADDED);
+        }
+
+        return { message: "Emergency contact updated successfully." };
+    }
+    catch (error) {
+        console.error("Failed to edit emergency contact:", error.message);
+        throw new Error(error.message || errorTypes.SERVER_ERROR);
+    }
+};
+
 export const toggleContactActiveStatus = async (
     userId,
     contactId,
@@ -125,4 +172,3 @@ export const getUserContacts = async (userId) => {
         throw new Error(error.message);
     }
 };
-

@@ -42,6 +42,7 @@ export const errorTypes = {
     TOO_MANY_REQUESTS: "Too many requests, please try again later",
     NOT_VERIFIED: "Account not verified",
     INVALID_REQUEST: "Invalid request parameters",
+    INVALID_EDIT_PARAMS: "Invalid request parameters, need to update atleast 1 field",
     RESOURCE_NOT_FOUND: "Requested resource not found",
     OPERATION_NOT_PERMITTED: "Operation not permitted",
     DATABASE_ERROR: "Database error occurred",

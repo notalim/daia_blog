@@ -5,6 +5,7 @@ import {
 } from "../services/twilioService.js";
 import {
     addEmergencyContact,
+    editEmergencyContact,
     getUserContacts,
     toggleContactActiveStatus,
     removeEmergencyContact,
@@ -79,6 +80,58 @@ router.post("/:userId/contacts", async (req, res) => {
         }
     
     } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
+});
+
+router.patch("/:userId/contacts/:contactId", async (req, res) => {
+    const userId = req.params.userId;
+    const contactId = req.params.contactId;
+    const { phoneNumber, firstName, lastName, relationship } = req.body;
+
+    if (phoneNumber && !validation.phoneValidation(phoneNumber)) {
+        return res.status(400).json({
+            message: "Invalid phone number format",
+            error: errorTypes.INVALID_PHONE_NUMBER,
+        });
+    }
+
+    if ((firstName && !validation.nameValidation(firstName)) ||
+        (lastName && !validation.nameValidation(lastName))
+    ) {
+        return res.status(400).json({
+            message: "Invalid name format",
+            error: errorTypes.INVALID_NAME,
+        });
+    }
+
+    if (relationship && !validation.stringValidation(relationship)) {
+        return res.status(400).json({
+            message: "Invalid relationship format",
+            error: errorTypes.INVALID_RELATIONSHIP,
+        });
+    }
+
+    try {
+        const contact = await editEmergencyContact(
+            userId,
+            contactId,
+            phoneNumber,
+            firstName,
+            lastName,
+            relationship
+        );
+
+        res.status(200).json({
+            message: "Emergency contact updated successfully.",
+            contact: contact,
+        });
+    }
+    catch (error) {
         console.error(error);
         res.status(500).json({
             message: "Server error",
