@@ -224,6 +224,34 @@ router.post("/signup/complete", async (req, res) => {
     }
 });
 
+router.post("/refresh-data", async (req, res) => {
+    const { phoneNumber } = req.body;
+
+    try {
+        const user = await getUserByPhoneNumber(phoneNumber);
+        if (!user) {
+            return res.status(404).json({
+                message: "User not found",
+                error: errorTypes.USER_NOT_FOUND,
+            });
+        }
+
+        const updatedBloodSugarData = user.bloodSugarData;
+
+        return res.status(200).json({
+            message: "Blood sugar data refreshed",
+            bloodSugarData: updatedBloodSugarData,
+        });
+    } catch (error) {   
+        console.error(error);
+        return res.status(500).json({
+            message: "Server error",
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
+});
+
+
 router.patch("/update", async (req, res) => {
     const {
         phoneNumber,

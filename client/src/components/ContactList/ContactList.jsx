@@ -45,7 +45,7 @@ const EmergencyContacts = () => {
                     ? userContacts.map((contact, index) => (
                           <div
                               key={index}
-                              className="space-y-2 flex flex-col items-center"
+                              className="space-y-2 flex flex-col items-center justify-end"
                           >
                               <AvatarDemo
                                   firstName={contact.contactFirstName}
@@ -54,24 +54,22 @@ const EmergencyContacts = () => {
                               />
                               <div className="flex justify-between items-center w-full">
                                   <span className="text-xs text-center">
-                                      {contact.contactFirstName}{" "}
-                                      {contact.contactLastName?.charAt(0) || ""}
-                                      .
+                                      {contact.contactFirstName}
                                   </span>
                                   <Switch
                                       checked={contact.enabled}
                                       onChange={() =>
                                           handleToggleContact(contact)
                                       }
-                                      className="ml-2"
+                                      className="ml-2 transform scale-80"
                                   />
                               </div>
                           </div>
                       ))
                     : null}
-                <div className="space-y-2 flex flex-col items-center">
+                <div className="space-y-2 flex flex-col items-center justify-end">
                     <AddContactButton />
-                    <div className="flex justify-between items-center w-full">
+                    <div className="flex justify-between items-center w-full h-6 align-center">
                         <span className="text-xs text-center">
                             Add new contact
                         </span>

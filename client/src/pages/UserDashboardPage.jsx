@@ -10,7 +10,7 @@ import moment from "moment";
 import UserInformation from "../components/UserInformation";
 
 const UserDashboardPage = () => {
-	const { user, logoutUser, updateUser, updateDexcomSessionId, deleteUser } =
+	const { user, logoutUser, refreshBloodSugarData, updateDexcomSessionId, deleteUser } =
 		useAuth();
 	const [dataIsOld, setDataIsOld] = useState(false);
 	const [thresholdValue, setThresholdValue] = useState(180);
@@ -45,7 +45,7 @@ const UserDashboardPage = () => {
 	}, [user.bloodSugarData]);
 
 	const handleRefreshData = async () => {
-		await updateUser(user.phoneNumber);
+		await refreshBloodSugarData(user.phoneNumber);
 		setDataIsOld(false);
 	};
 
@@ -74,26 +74,25 @@ const UserDashboardPage = () => {
 
 	// console.log("User: ", user);
 
-	return (
-		<div className="container mx-auto">
-			<h1 className="text-2xl font-bold">Hello, {user.name}!</h1>
-			<div className="grid grid-cols-5 my-4 gap-4">
-				<div className="col-span-3">
-					<BloodSugarScatterPlot
-						bloodSugarData={bloodSugarData}
-						thresholdValue={thresholdValue}
-						onRefresh={handleRefreshData}
-						dataIsOld={dataIsOld}
-						onDexcomSessionIdRefresh={handleDexcomSessionIdRefresh}
-					/>
-				</div>
-				<div className="col-span-2 bg-lavender-purple p-4 border rounded-lg">
-					<ContactList />
-				</div>
-			</div>
-			
-		</div>
-	);
+ return (
+    <div className="container mx-auto px-4">
+      <h1 className="text-2xl font-bold text-center sm:text-left">Hello, {user.name}!</h1>
+      <div className="mt-4 grid grid-cols-1 md:grid-cols-5 gap-4">
+        <div className="md:col-span-3">
+          <BloodSugarScatterPlot
+            bloodSugarData={bloodSugarData}
+            thresholdValue={thresholdValue}
+            onRefresh={handleRefreshData}
+            dataIsOld={dataIsOld}
+            onDexcomSessionIdRefresh={handleDexcomSessionIdRefresh}
+          />
+        </div>
+        <div className="md:col-span-2 bg-lavender-purple p-4 border rounded-lg">
+          <ContactList />
+        </div>
+      </div>
+    </div>
+	  );
 };
 
 export default UserDashboardPage;

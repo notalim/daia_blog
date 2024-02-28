@@ -28,7 +28,7 @@ class ApiClient {
             return { data: res.data, error: null };
         } catch (error) {
             console.error({ errorResponse: error.response });
-           
+
             const serverError = error?.response?.data?.error;
 
             const errorMessage =
@@ -90,9 +90,9 @@ class ApiClient {
         // No need to make an API request since logout is handled by removing the token
     }
 
-    async updateUser(phoneNumber) {
+    async refreshBloodSugarData(phoneNumber) {
         return await this.request({
-            endpoint: "users/update",
+            endpoint: "users/refresh-data",
             method: "POST",
             data: { phoneNumber },
         });
@@ -103,6 +103,14 @@ class ApiClient {
             endpoint: "users/update-dexcom",
             method: "POST",
             data: { phoneNumber, dexcomUser, dexcomPass },
+        });
+    }
+
+    async updateUser(phoneNumber) {
+        return await this.request({
+            endpoint: "users/update",
+            method: "POST",
+            data: { phoneNumber },
         });
     }
 
@@ -120,13 +128,7 @@ class ApiClient {
         });
     }
 
-    async addContact(
-        userId,
-        phoneNumber,
-        firstName,
-        lastName,
-        relationship
-    ) {
+    async addContact(userId, phoneNumber, firstName, lastName, relationship) {
         return await this.request({
             endpoint: `users/${userId}/contacts`,
             method: "POST",

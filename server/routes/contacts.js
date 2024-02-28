@@ -20,7 +20,7 @@ router.get("/:userId/contacts", async (req, res) => {
 
     try {
         const userContacts = await getUserContacts(userId);
-        console.log(userContacts);
+        // console.log(userContacts);
         res.status(200).json({
             message: "User contacts retrieved successfully.",
             contacts: userContacts,

@@ -98,22 +98,21 @@ export const AuthProvider = ({ children }) => {
         processSuccess("Logged out successfully.");
     };
 
-    const updateUser = async (phoneNumber) => {
+    const refreshBloodSugarData = async (phoneNumber) => {
         try {
-            const { data, error } = await API.updateUser(phoneNumber);
+            const { data, error } = await API.refreshBloodSugarData(phoneNumber);
             if (error) {
                 processError(error);
                 return { data: null, error };
             }
-            setUser(data.user);
-            localStorage.setItem("user", JSON.stringify(data.user));
-            processSuccess("User updated.");
+            processSuccess("Blood sugar data refreshed.");
             return { data, error: null };
         } catch (error) {
             processError(error);
             return { data: null, error };
         }
-    };
+    }
+
 
     const updateDexcomSessionId = async (
         phoneNumber,
@@ -157,6 +156,24 @@ export const AuthProvider = ({ children }) => {
             return { data: null, error };
         }
     };
+
+      const updateUser = async (phoneNumber) => {
+        // !
+          try {
+              const { data, error } = await API.updateUser(phoneNumber);
+              if (error) {
+                  processError(error);
+                  return { data: null, error };
+              }
+              setUser(data.user);
+              localStorage.setItem("user", JSON.stringify(data.user));
+              processSuccess("User updated.");
+              return { data, error: null };
+          } catch (error) {
+              processError(error);
+              return { data: null, error };
+          }
+      };
 
     const getUserContacts = async (userId) => {
         try {
@@ -238,14 +255,19 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider
             value={{
                 user,
+                //
                 loginUser,
                 completeLogin,
                 registerUser,
                 completeRegistration,
                 logoutUser,
-                updateUser,
+                //
                 updateDexcomSessionId,
+                refreshBloodSugarData,
+                //
                 deleteUser,
+                updateUser,
+                //
                 getUserContacts,
                 addContact,
                 verifyContact,
