@@ -105,7 +105,9 @@ export const AuthProvider = ({ children }) => {
                 processError(error);
                 return { data: null, error };
             }
-            setUser(data.user);
+            const newUser = { ...data.user };
+            setUser(newUser);
+            localStorage.setItem("user", JSON.stringify(newUser));
             processSuccess("User data refreshed.");
             return { data, error: null };
         } catch (error) {
