@@ -29,14 +29,6 @@ const UserDashboardPage = () => {
 		);
 		const thirtyMinutesAgo = moment().subtract(30, "minutes");
 
-		// console.log(`Latest Data Time: ${latestDataTime}`);
-		// console.log(`Thirty Minutes Ago: ${thirtyMinutesAgo}`);
-		// console.log(
-		//     `Is latest data time before thirty minutes ago? ${latestDataTime.isBefore(
-		//         thirtyMinutesAgo
-		//     )}`
-		// );
-
 		if (latestDataTime.isBefore(thirtyMinutesAgo)) {
 			setDataIsOld(true);
 		} else {
@@ -91,7 +83,6 @@ const UserDashboardPage = () => {
 					<ContactList />
 				</div>
 			</div>
-			
 		</div>
 	);
 };

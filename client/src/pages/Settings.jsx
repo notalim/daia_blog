@@ -22,8 +22,8 @@ const Settings = () => {
 
 	return (
 		<div className="container mx-auto">
-			<h1 className="text-3xl font-bold mb-4">Settings</h1>
-			<div className="p5">
+			<h1 className="text-3xl font-bold mb-4">Welcome {user.name}</h1>
+			<div className="p5 mb-5">
 				<UserInformation
 					user={user}
 					handleDeleteUser={handleDeleteUser}
@@ -31,41 +31,6 @@ const Settings = () => {
 				/>
 			</div>
 		</div>
-		// <div
-		// 	className={`bg-${theme === "light" ? "white" : "gray-900"} text-${
-		// 		theme === "light" ? "black" : "white"
-		// 	} min-h-screen`}
-		// >
-		// 	<div className="container mx-auto p-4">
-		// 		<h1
-		// 			className={`text-${
-		// 				theme === "light" ? "black" : "white"
-		// 			} text-3xl font-bold mb-4`}
-		// 		>
-		// 			Settings
-		// 		</h1>
-		// 		<div className="flex items-center mb-4">
-		// 			{/* <span
-		// 				className={`text-${
-		// 					theme === "light" ? "black" : "white"
-		// 				} mr-2`}
-		// 			>
-		// 				Theme:
-		// 			</span> */}
-		// 			{/* <select
-		// 				className={`px-2 py-1 border border-${
-		// 					theme === "light" ? "gray-300" : "gray-700"
-		// 				} rounded`}
-		// 				value={theme}
-		// 				onChange={(e) => handleThemeChange(e.target.value)}
-		// 			>
-		// 				<option value="light">Light</option>
-		// 				<option value="dark">Dark</option>
-		// 			</select> */}
-		// 		</div>
-		// 		{/* Other settings options can be added here */}
-		// 	</div>
-		// </div>
 	);
 };
 
