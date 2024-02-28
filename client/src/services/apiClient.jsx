@@ -90,9 +90,9 @@ class ApiClient {
         // No need to make an API request since logout is handled by removing the token
     }
 
-    async refreshBloodSugarData(phoneNumber) {
+    async refreshUser(phoneNumber) {
         return await this.request({
-            endpoint: "users/refresh-data",
+            endpoint: "users/refresh-user",
             method: "POST",
             data: { phoneNumber },
         });

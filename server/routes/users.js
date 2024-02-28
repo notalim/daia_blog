@@ -224,7 +224,7 @@ router.post("/signup/complete", async (req, res) => {
     }
 });
 
-router.post("/refresh-data", async (req, res) => {
+router.post("/refresh-user", async (req, res) => {
     const { phoneNumber } = req.body;
 
     try {

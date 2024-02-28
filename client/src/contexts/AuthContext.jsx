@@ -98,14 +98,14 @@ export const AuthProvider = ({ children }) => {
         processSuccess("Logged out successfully.");
     };
 
-    const refreshBloodSugarData = async (phoneNumber) => {
+    const refreshUser = async (phoneNumber) => {
         try {
-            const { data, error } = await API.refreshBloodSugarData(phoneNumber);
+            const { data, error } = await API.refreshUser(phoneNumber);
             if (error) {
                 processError(error);
                 return { data: null, error };
             }
-            processSuccess("Blood sugar data refreshed.");
+            processSuccess("User data refreshed.");
             return { data, error: null };
         } catch (error) {
             processError(error);
@@ -263,7 +263,7 @@ export const AuthProvider = ({ children }) => {
                 logoutUser,
                 //
                 updateDexcomSessionId,
-                refreshBloodSugarData,
+                refreshUser,
                 //
                 deleteUser,
                 updateUser,
