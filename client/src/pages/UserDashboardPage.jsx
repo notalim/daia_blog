@@ -58,7 +58,10 @@ const UserDashboardPage = () => {
 		}
 
 		console.log("Data: ", data);
-		setUser(data.user);
+
+		
+
+
     };
 
     const handleDexcomSessionIdRefresh = async () => {

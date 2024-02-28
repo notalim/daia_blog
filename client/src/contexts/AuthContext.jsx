@@ -106,6 +106,7 @@ export const AuthProvider = ({ children }) => {
                 return { data: null, error };
             }
             processSuccess("User data refreshed.");
+            setUser(data.user);
             return { data, error: null };
         } catch (error) {
             processError(error);

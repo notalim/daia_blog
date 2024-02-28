@@ -228,7 +228,7 @@ router.post("/refresh-user", async (req, res) => {
     const { phoneNumber } = req.body;
 
     try {
-        const user = await getUserByPhoneNumber(phoneNumber);
+        const updatedUser = await getUserByPhoneNumber(phoneNumber);
         if (!user) {
             return res.status(404).json({
                 message: "User not found",
@@ -236,11 +236,9 @@ router.post("/refresh-user", async (req, res) => {
             });
         }
 
-        const updatedBloodSugarData = user.bloodSugarData;
-
         return res.status(200).json({
             message: "Blood sugar data refreshed",
-            bloodSugarData: updatedBloodSugarData,
+            user: updatedUser,
         });
     } catch (error) {   
         console.error(error);
