@@ -10,7 +10,7 @@ const Page = ({ children }) => {
 	return (
 		<>
 			{user ? <NavbarLoggedIn /> : <NavbarLoggedOut />}
-			<div className="bg-background-purple flex flex-col overflow-x-hidden h-screen justify-center items-center">
+			<div className="bg-background-purple flex flex-col overflow-x-hidden justify-center items-center">
 				{children}
 			</div>
 			<Footer />

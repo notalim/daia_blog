@@ -32,9 +32,8 @@ function Hero() {
 
 	return (
     <div className="bg-background-purple text-black">
-      <WavyBackground />
 			<div className="container mx-auto px-6 py-16 flex flex-col md:flex-row items-center justify-between">
-        
+			{/* <WavyBackground className="container mx-auto px-6 py-16 flex flex-col md:flex-row items-center justify-between"> */}
 				<div className="flex-1">
 					<h1 className="text-4xl md:text-5xl font-bold mb-4">
 						<span id="typewriter" />
@@ -60,7 +59,7 @@ function Hero() {
 						style={logoAnimation}
 						onLoad={() => setShowLogo(true)}
 					/>
-				</div>
+        </div>
 			</div>
 			<div className="container mx-auto px-6 py-8">
 				<div className="md:flex justify-between items-start">
