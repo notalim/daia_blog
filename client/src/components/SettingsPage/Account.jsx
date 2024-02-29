@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Input } from "../../@/components/ui/input";
 import { Button } from "../../@/components/ui/button";
 
-const AccountPage = () => {
+const AccountPage = ({ user }) => {
 	// Initial user data
 	const initialUserData = {
 		photo: "URL_TO_DEFAULT_PHOTO",
@@ -33,22 +33,7 @@ const AccountPage = () => {
 
 	return (
 		<div className="container mx-auto">
-			<form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
-				<div className="flex items-center">
-					<label htmlFor="photo" className="mr-2">
-						Photo
-					</label>
-				</div>
-				<div>
-					<Input
-						type="text"
-						id="photo"
-						name="photo"
-						value={userData.photo}
-						onChange={handleInputChange}
-						className="border border-gray-300 p-2 w-full"
-					/>
-				</div>
+			<form onSubmit={handleSubmit} className="grid grid-cols-2 gap-8">
 				<div className="flex items-center">
 					<label htmlFor="name" className="mr-2">
 						Name
@@ -59,7 +44,7 @@ const AccountPage = () => {
 						type="text"
 						id="name"
 						name="name"
-						value={userData.name}
+						value={user.name}
 						onChange={handleInputChange}
 						className="border border-gray-300 p-2 w-full"
 					/>
@@ -74,7 +59,7 @@ const AccountPage = () => {
 						type="text"
 						id="username"
 						name="username"
-						value={userData.username}
+						value={user.dexcomUser}
 						onChange={handleInputChange}
 						className="border border-gray-300 p-2 w-full"
 					/>
@@ -104,7 +89,7 @@ const AccountPage = () => {
 						type="tel"
 						id="phoneNumber"
 						name="phoneNumber"
-						value={userData.phoneNumber}
+						value={user.phoneNumber}
 						onChange={handleInputChange}
 						className="border border-gray-300 p-2 w-full"
 					/>

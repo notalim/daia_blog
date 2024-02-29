@@ -16,14 +16,13 @@ const LeftSidebar = ({ selectedTab, handleTabClick }) => {
 
 	return (
 		<div className="bg-purple-200 p-4">
-			{/* Render sidebar links */}
 			{sidebarLinks.map((link, index) => (
 				<Button
 					key={index}
-					className={`rounded-md mb-6 w-full hover:cursor-pointer bg-full-purple${
-						location.pathname === link.path
-							? "bg-purple-300"
-							: "hover:bg-purple-400"
+					className={`rounded-md mb-6 w-full hover:bg-purple-400 hover:cursor-pointer ${
+						selectedTab === link.name
+							? "bg-purple-400"
+							: "bg-full-purple"
 					}`}
 					onClick={() => handleTabClick(link.name)}
 				>

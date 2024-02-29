@@ -1,31 +1,17 @@
-import React, { useState } from "react";
-import UserInformation from "../components/UserInformation";
+import { useState } from "react";
 import { useAuth } from "../contexts/useAuth";
 import LeftSidebar from "../components/SettingsPage/LeftSideBar";
 import AccountPage from "../components/SettingsPage/Account";
 
 const Settings = () => {
-	const { user, logoutUser, updateUser, updateDexcomSessionId, deleteUser } =
-		useAuth();
+	const { user } = useAuth();
 
 	const [selectedTab, setSelectedTab] = useState("Account");
 
-	const handleLogout = () => {
-		logoutUser();
-	};
-
-	const handleDeleteUser = () => {
-		deleteUser(user.phoneNumber);
-	};
-
 	const handleTabClick = (tab) => {
+		console.log(user);
 		setSelectedTab(tab);
 	};
-
-	// const handleThemeChange = (selectedTheme) => {
-	// 	setTheme(selectedTheme);
-	// 	// You can implement logic to persist the selected theme, such as storing it in local storage or sending it to a backend server
-	// };
 
 	return (
 		<div className="container mx-auto">
@@ -39,37 +25,42 @@ const Settings = () => {
 					/>
 				</div>
 
-				<div className="bg-white w-3/4 p-4 h-fit flex justify-center">
+				<div className="bg-white w-3/4 p-4 h-full flex justify-center">
 					<div className="flex flex-col justify-center items-center">
-						<h1 className="text-3xl font-bold mb-4 text-left">
-							Account
-						</h1>
 						{/* Content for the right side goes here */}
 						{selectedTab === "Account" && (
-							<div className="h-96 w-full flex justify-center">
-								<AccountPage />
+							<div className="h-96">
+								<h1 className="text-3xl font-bold mb-8">
+									Account
+								</h1>
+								<div className="w-full flex justify-center">
+									<AccountPage user={user} />
+								</div>
 							</div>
 						)}
 						{selectedTab === "Health" && (
-							<div className="h-96 w-full flex justify-center">
-								Health
+							<div className="h-96">
+								<h1 className="text-3xl font-bold mb-4">
+									Health
+								</h1>
+								<div className="w-full flex justify-center">
+									<AccountPage user={user} />
+								</div>
 							</div>
 						)}
 						{selectedTab === "Notifications" && (
-							<div className="h-96 w-full flex justify-center">
-								Notifications
+							<div className="h-96">
+								<h1 className="text-3xl font-bold mb-4 text-left">
+									Notifications
+								</h1>
+								<div className="w-full flex justify-center">
+									<AccountPage user={user} />
+								</div>
 							</div>
 						)}
 					</div>
 				</div>
 			</div>
-			{/* <div className="p5 mb-5">
-				<UserInformation
-					user={user}
-					handleDeleteUser={handleDeleteUser}
-					handleLogout={handleLogout}
-				/>
-			</div> */}
 		</div>
 	);
 };
