@@ -67,9 +67,9 @@ const UserDashboardPage = () => {
 	// console.log("User: ", user);
 
 	return (
-		<div className="container mx-auto">
+		<div className="container mx-auto m-8">
 			<h1 className="text-2xl font-bold">Hello, {user.name}!</h1>
-			<div className="grid grid-cols-5 my-4 gap-4">
+			<div className="">
 				<div className="col-span-3">
 					<BloodSugarScatterPlot
 						bloodSugarData={bloodSugarData}
@@ -79,9 +79,9 @@ const UserDashboardPage = () => {
 						onDexcomSessionIdRefresh={handleDexcomSessionIdRefresh}
 					/>
 				</div>
-				<div className="col-span-2 bg-lavender-purple p-4 border rounded-lg">
-					<ContactList />
-				</div>
+			</div>
+			<div className="col-span-2 bg-lavender-purple p-4 border rounded-lg mt-8">
+				<ContactList />
 			</div>
 		</div>
 	);
