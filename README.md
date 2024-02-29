@@ -8,6 +8,13 @@ This project extends the capabilities of the Daia mobile application onto the we
 
 ## Getting Started
 
+* Make sure to create a .env file with the following fields:
+  * TWILIO_ACCOUNT_SID
+  * TWILIO_AUTH_TOKEN
+  * TWILIO_VERIFY_SERVICE_SID
+  * ENCRYPTION_SECRET_KEY
+  * MONGO_URL
+
 ### Installing
 
 * Clone the repo
