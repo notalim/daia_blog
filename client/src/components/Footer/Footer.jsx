@@ -1,4 +1,3 @@
-import React from "react";
 import { Link } from "react-router-dom";
 import daiaLogo from "@src/assets/icons/daia-logo.svg";
 import { footerLinks } from "./footerLinks";
