@@ -9,10 +9,13 @@ const Page = ({ children }) => {
 	const { user } = useContext(AuthContext);
 	return (
 		<>
-			{user ? <NavbarLoggedIn /> : <NavbarLoggedOut />}
-			<div className="bg-background-purple flex flex-col overflow-x-hidden justify-center items-center">
-				{children}
-			</div>
+			<div className="fixed top-0 w-full z-50">
+                {user ? <NavbarLoggedIn /> : <NavbarLoggedOut />}
+            </div>
+            {/* Adjust pt (padding-top) based on your navbar's height, example uses pt-16 (4rem) which might need adjustment */}
+            <div className="bg-background-purple flex flex-col overflow-x-hidden justify-center items-center pt-16">
+                {children}
+            </div>
 			<Footer />
 		</>
 	);
