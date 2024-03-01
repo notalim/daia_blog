@@ -132,10 +132,9 @@ router.patch("/:userId/contacts/:contactId", async (req, res) => {
         });
     }
     catch (error) {
-        console.error(error);
         res.status(500).json({
             message: "Server error",
-            error: errorTypes.SERVER_ERROR,
+            error: error.message,
         });
     }
 });
