@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useSpring, animated } from "react-spring";
 import purpleLogoSVG from "../assets/images/daia_dark_purple_logo.svg";
-import Typewriter from "typewriter-effect/dist/core";
+import blackTextLogo from "../assets/images/black_text_and_logo.svg";
+// import Typewriter from "typewriter-effect/dist/core";
 import { WavyBackground } from "@src/@/components/ui/wavy-background";
 
 function Hero() {
@@ -12,29 +13,29 @@ function Hero() {
 		transform: showLogo ? "scale(1)" : "scale(0)",
 	});
 
-	useEffect(() => {
-		const typewriter = new Typewriter("#typewriter", {
-			strings: [
-				"Introducing Daia",
-				"Smarter Sugar Sharing",
-				"Easy Glucose Tracking",
-			],
-			autoStart: true,
-			loop: true,
-			delay: 75,
-			deleteSpeed: "natural",
-		});
+	// useEffect(() => {
+	// 	const typewriter = new Typewriter("#typewriter", {
+	// 		strings: [
+	// 			"Introducing Daia",
+	// 			"Smarter Sugar Sharing",
+	// 			"Easy Glucose Tracking",
+	// 		],
+	// 		autoStart: true,
+	// 		loop: true,
+	// 		delay: 75,
+	// 		deleteSpeed: "natural",
+	// 	});
 
-		return () => {
-			typewriter.stop();
-		};
-	}, []);
+	// 	return () => {
+	// 		typewriter.stop();
+	// 	};
+	// }, []);
 
 	return (
     <div className="bg-background-purple text-black">
 			{/* <div className="container mx-auto px-6 py-16 flex flex-col md:flex-row items-center justify-between"> */}
 			<WavyBackground className="max-w-4xl mx-auto pb-40">
-				<div className="flex-1">
+				{/* <div className="flex-1">
 					<h1 className="text-4xl md:text-5xl font-bold mb-4">
 						<span id="typewriter" />
 					</h1>
@@ -50,10 +51,10 @@ function Hero() {
 					>
 						Learn More
 					</a>
-				</div>
+				</div> */}
 				<div className="flex-1 mb-16 md:mb-0">
 					<animated.img
-						src={purpleLogoSVG}
+						src={blackTextLogo}
 						alt="Daia Logo"
 						className="max-w-xs md:max-w-lg mx-auto"
 						style={logoAnimation}
