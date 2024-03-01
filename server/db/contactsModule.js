@@ -41,7 +41,6 @@ export const addEmergencyContact = async (
             _id: new ObjectId(userId),
         });
 
-      
         if (
             userDoc.contacts.some(
                 (contact) => contact.contactPhoneNumber === contactPhoneNumber
@@ -50,7 +49,7 @@ export const addEmergencyContact = async (
             throw new Error(errorTypes.CONTACT_ALREADY_EXISTS);
         }
         const updateInfo = await userCollection.updateOne(
-            { _id: new ObjectId(userId) }, 
+            { _id: new ObjectId(userId) },
             { $addToSet: { contacts: contact } }
         );
 
@@ -69,16 +68,26 @@ export const addEmergencyContact = async (
     }
 };
 
-export const toggleContactActiveStatus = async (
-    userId,
-    contactId,
-    activeStatus
-) => {
+export const toggleContactActiveStatus = async (userId, contactId) => {
     try {
         const userCollection = await users();
+        const user = await userCollection.findOne({
+            _id: userId,
+            "contacts._id": contactId,
+        });
+        if (!user) {
+            throw new Error(errorTypes.USER_NOT_FOUND);
+        }
+        const contact = user.contacts.find((c) => c._id === contactId);
+        if (!contact) {
+            throw new Error(errorTypes.CONTACT_NOT_FOUND);
+        }
+
+        const newActiveStatus = !contact.active;
+
         const updateInfo = await userCollection.updateOne(
             { _id: userId, "contacts._id": contactId },
-            { $set: { "contacts.$.active": activeStatus } }
+            { $set: { "contacts.$.active": newActiveStatus } }
         );
 
         if (!updateInfo.matchedCount || !updateInfo.modifiedCount) {
@@ -125,4 +134,3 @@ export const getUserContacts = async (userId) => {
         throw new Error(error.message);
     }
 };
-

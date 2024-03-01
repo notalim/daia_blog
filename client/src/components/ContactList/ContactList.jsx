@@ -7,7 +7,7 @@ import AddContactButton from "./AddContactButton";
 import { AuthContext } from "../../contexts/AuthContext";
 
 const EmergencyContacts = () => {
-    const { user, getUserContacts } = useContext(AuthContext);
+    const { user, getUserContacts, toggleContactStatus} = useContext(AuthContext);
     const [userContacts, setUserContacts] = useState([]);
 
     useEffect(() => {
@@ -29,10 +29,8 @@ const EmergencyContacts = () => {
         fetchContacts();
     }, [user, getUserContacts]);
 
-    // TODO: Implement the enable/disable contact functionality
     const handleToggleContact = (contact) => {
-        console.log("Toggle contact enabled status for:", contact.firstName);
-        // Logic to enable/disable contact in the database goes here
+        toggleContactStatus(user._id, contact._id);
     };
 
     return (

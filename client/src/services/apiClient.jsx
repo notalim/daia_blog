@@ -161,6 +161,13 @@ class ApiClient {
             },
         });
     }
+
+    async toggleContactStatus(userId, contactId) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts/${contactId}/toggle`,
+            method: "PUT",
+        });
+    }
 }
 
 const TEST_SERVER_URL = "https://daia-test-server.onrender.com";

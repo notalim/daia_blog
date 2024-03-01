@@ -126,4 +126,20 @@ router.post("/:userId/contacts/complete", async (req, res) => {
     }
 });
 
+router.put("/:userId/contacts/:contactId/toggle", async (req, res) => {
+    const userId = req.params.userId;
+    const contactId = req.params.contactId;
+
+    try {
+        const result = await toggleContactActiveStatus(userId, contactId);
+        res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: error.message || errorTypes.SERVER_ERROR,
+        });
+    }
+});
+
 export default router;

@@ -239,12 +239,27 @@ export const AuthProvider = ({ children }) => {
                 return { data: null, error: response.error };
             }
             processSuccess("Contact verified successfully.");
-            return { data: response.data, error: null }; // Assuming response.data contains the verification result
+            return { data: response.data, error: null };
         } catch (error) {
             processError(error);
             return { data: null, error: error.message };
         }
     };
+
+    const toggleContactActiveStatus = async (userId, contactId) => {
+        try {
+            const response = await API.toggleContactStatus(userId, contactId);
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
+            }
+            processSuccess("Contact toggled.");
+            return { data: response.data, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error: error.message };
+        }
+    }
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
@@ -273,6 +288,7 @@ export const AuthProvider = ({ children }) => {
                 getUserContacts,
                 addContact,
                 verifyContact,
+                toggleContactActiveStatus,
             }}
         >
             {children}
