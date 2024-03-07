@@ -72,12 +72,12 @@ export const toggleContactActiveStatus = async (userId, contactId) => {
     try {
         const userCollection = await users();
         const user = await userCollection.findOne({
-            _id: userId,
+            _id: new ObjectId(userId),
         });
         if (!user) {
             throw new Error(errorTypes.USER_NOT_FOUND);
         }
-        const contact = user.contacts.find((c) => c._id === contactId);
+        const contact = user.contacts.find((c) => c._id === new ObjectId(contactId));
         if (!contact) {
             throw new Error(errorTypes.CONTACT_NOT_FOUND);
         }
@@ -85,7 +85,7 @@ export const toggleContactActiveStatus = async (userId, contactId) => {
         const newActiveStatus = !contact.active;
 
         const updateInfo = await userCollection.updateOne(
-            { _id: userId, "contacts._id": contactId },
+            { _id: new ObjectId(userId), "contacts._id": new ObjectId(contactId) },
             { $set: { "contacts.$.active": newActiveStatus } }
         );
 
