@@ -64,7 +64,7 @@ const EmergencyContacts = () => {
                                       {contact.contactFirstName}
                                   </span>
                                   <Switch
-                                      checked={contact.enabled}
+                                      checked={contact.active}
                                       onCheckedChange={() =>
                                           handleToggleContact(contact)
                                       }
