@@ -73,7 +73,6 @@ export const toggleContactActiveStatus = async (userId, contactId) => {
         const userCollection = await users();
         const user = await userCollection.findOne({
             _id: userId,
-            "contacts._id": contactId,
         });
         if (!user) {
             throw new Error(errorTypes.USER_NOT_FOUND);

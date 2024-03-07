@@ -7,7 +7,8 @@ import AddContactButton from "./AddContactButton";
 import { AuthContext } from "../../contexts/AuthContext";
 
 const EmergencyContacts = () => {
-    const { user, getUserContacts, toggleContactStatus} = useContext(AuthContext);
+    const { user, getUserContacts, toggleContactActiveStatus } =
+        useContext(AuthContext);
     const [userContacts, setUserContacts] = useState([]);
 
     useEffect(() => {
@@ -29,10 +30,18 @@ const EmergencyContacts = () => {
         fetchContacts();
     }, [user, getUserContacts]);
 
-    const handleToggleContact = (contact) => {
-        toggleContactStatus(user._id, contact._id);
+    const handleToggleContact = async (contact) => {
+        console.log("Toggling contact:", contact._id);
+        const response = await toggleContactActiveStatus(user._id, contact._id);
+        if (!response.error) {
+            // Optimistically update the UI
+            setUserContacts((prevContacts) =>
+                prevContacts.map((c) =>
+                    c._id === contact._id ? { ...c, enabled: !c.enabled } : c
+                )
+            );
+        }
     };
-
     return (
         <div>
             <h2 className="text-l font-bold mb-2">
@@ -56,7 +65,7 @@ const EmergencyContacts = () => {
                                   </span>
                                   <Switch
                                       checked={contact.enabled}
-                                      onChange={() =>
+                                      onCheckedChange={() =>
                                           handleToggleContact(contact)
                                       }
                                       className="ml-2 transform scale-80"

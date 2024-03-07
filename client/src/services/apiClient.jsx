@@ -162,10 +162,10 @@ class ApiClient {
         });
     }
 
-    async toggleContactStatus(userId, contactId) {
+    async toggleContactActiveStatus(userId, contactId) {
         return await this.request({
             endpoint: `users/${userId}/contacts/${contactId}/toggle`,
-            method: "PUT",
+            method: "PUT",  
         });
     }
 }

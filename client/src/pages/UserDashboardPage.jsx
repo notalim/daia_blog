@@ -48,7 +48,6 @@ const UserDashboardPage = () => {
     }, [user.bloodSugarData]);
 
     const handleRefreshData = async () => {
-        console.log("Refreshing user: ", user);
         // set user's bloodsugardata to the new data
 
         const { data, error } = await refreshUser(user.phoneNumber);

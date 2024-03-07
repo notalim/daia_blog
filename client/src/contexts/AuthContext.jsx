@@ -248,7 +248,7 @@ export const AuthProvider = ({ children }) => {
 
     const toggleContactActiveStatus = async (userId, contactId) => {
         try {
-            const response = await API.toggleContactStatus(userId, contactId);
+            const response = await API.toggleContactActiveStatus(userId, contactId);
             if (response.error) {
                 processError(response.error);
                 return { data: null, error: response.error };

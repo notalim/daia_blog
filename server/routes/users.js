@@ -249,7 +249,6 @@ router.post("/refresh-user", async (req, res) => {
     }
 });
 
-
 router.patch("/update", async (req, res) => {
     const {
         phoneNumber,
