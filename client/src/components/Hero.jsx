@@ -13,45 +13,10 @@ function Hero() {
 		transform: showLogo ? "scale(1)" : "scale(0)",
 	});
 
-	// useEffect(() => {
-	// 	const typewriter = new Typewriter("#typewriter", {
-	// 		strings: [
-	// 			"Introducing Daia",
-	// 			"Smarter Sugar Sharing",
-	// 			"Easy Glucose Tracking",
-	// 		],
-	// 		autoStart: true,
-	// 		loop: true,
-	// 		delay: 75,
-	// 		deleteSpeed: "natural",
-	// 	});
-
-	// 	return () => {
-	// 		typewriter.stop();
-	// 	};
-	// }, []);
-
 	return (
     <div className="bg-background-purple text-black">
 			{/* <div className="container mx-auto px-6 py-16 flex flex-col md:flex-row items-center justify-between"> */}
 			<WavyBackground className="max-w-4xl mx-auto pb-40">
-				{/* <div className="flex-1">
-					<h1 className="text-4xl md:text-5xl font-bold mb-4">
-						<span id="typewriter" />
-					</h1>
-					<div>
-						<p className="text-base md:text-lg mb-4">
-							Using your Dexcom device to keep your loved ones in
-							the know.
-						</p>
-					</div>
-					<a
-						href="/about"
-						className="bg-subtle-purple text-pink-700 px-3 py-1 inline-block rounded-full text-sm font-medium mb-4 "
-					>
-						Learn More
-					</a>
-				</div> */}
 				<div className="flex-1 mb-16 md:mb-0">
 					<animated.img
 						src={blackTextLogo}
@@ -60,6 +25,12 @@ function Hero() {
 						style={logoAnimation}
 						onLoad={() => setShowLogo(true)}
 					/>
+					<animated.div 
+					style={logoAnimation}
+					className=""
+					>
+						<p className="text-center text-2xl">Smarter Sugar Sharing</p>
+					</animated.div>
         </div>
       </WavyBackground>
 			{/* </div> */}
