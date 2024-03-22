@@ -1,10 +1,11 @@
 import { getAllUsers } from "../db/userDb.js";
 import { getDexcomSessionId } from "../routes/dexcomHelper.js";
-import { updateUserSessionId } from "../db/userDb.js";
+import { updateUserSessionId, decrypt } from "../db/usersModule.js";
 
 async function refreshDexcomSessionId(user) {
   try {
-    const newSessionId = await getDexcomSessionId(user.dexcomUser, user.dexcomPass);
+    let decryptedPass = decrypt(user.dexcomPass);
+    const newSessionId = await getDexcomSessionId(user.dexcomUser, decryptedPass);
 
     await updateUserSessionId(user._id, newSessionId);
   } catch (error) {
@@ -34,9 +35,10 @@ import { updateUserSessionId } from "../db/userDb.js";
 // !DEPRECATED
 async function refreshDexcomSessionId(user) {
     try {
+      let decryptedPass = decrypt(user.dexcomPass);
         const newSessionId = await getDexcomSessionId(
             user.dexcomUser,
-            user.dexcomPass
+            decryptedPass
         );
 
         await updateUserSessionId(user._id, newSessionId);
