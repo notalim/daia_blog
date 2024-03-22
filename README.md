@@ -1,4 +1,4 @@
-# DAIA
+# <img src="./client/src/assets/images/daia_dark_purple_logo.png" alt="Daia Logo" width="25"/> DAIA: Smarter Sugar Sharing 
 
 Daia is a mobile application that allows for short-term sharing of blood sugar levels, with a focus on ease of use, customizability, and universality. The app, intended for those with diabetes (Type I and II), allows individuals to easily share their glucose levels with others through sessions, which is important to ensure that emergency medication can be administered if a serious blood sugar dip were to occur.
 
@@ -8,12 +8,17 @@ This project extends the capabilities of the Daia mobile application onto the we
 
 ## Getting Started
 
-* Make sure to create a .env file with the following fields:
+* Make sure to create a `.env` file in the `server` folder with the following fields, and populate them with your own services:
   * TWILIO_ACCOUNT_SID
   * TWILIO_AUTH_TOKEN
   * TWILIO_VERIFY_SERVICE_SID
   * ENCRYPTION_SECRET_KEY
   * MONGO_URL
+
+* Then, create another `.env` file to be populated in the `client` folder with the following fields:
+  * VITE_EMAIL_SERVICE_ID
+  * VITE_EMAIL_TEMPLATE_ID
+  * VITE_EMAIL_USER_ID
 
 ### Installing
 
@@ -28,7 +33,7 @@ gh repo clone notalim/daia_blog
 ```
 ./build.sh
 ```
-* Start the server
+* Start the server (in a separate terminal)
 ```
 cd server
 npm i
@@ -37,7 +42,7 @@ npm start
 
 ## Authors
 
-Contributors names and emails
+Contributors' names and emails
 
 [Alim Kassymo](mailto:akassymo@stevens.edu)
 
@@ -47,6 +52,6 @@ Contributors names and emails
 
 [Federico Yacoubian](mailto:fyacoubi@stevens.edu)
 
-[Jesal Gandhi](mailto:jgandhi5@stevens.edu)
+[Jesal Gandhi](mailto:jesalgandhi9988@gmail.com)
 
 [Sarang Hadagali](mailto:shadagal@stevens.edu)
