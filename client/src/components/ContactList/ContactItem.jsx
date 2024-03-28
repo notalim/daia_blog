@@ -34,6 +34,7 @@ const ContactItem = ({ contact, onToggleContact }) => {
         e.preventDefault();
         // ! Your validation and edit logic here
         try {
+            console.log("Submitting the following data:", formData);
             const { error } = await editContact(
                 user._id,
                 contact._id,
@@ -63,11 +64,11 @@ const ContactItem = ({ contact, onToggleContact }) => {
     };
 
     const handleChange = (e) => {
-        setFormData({ ...formData, [e.target.name]: e.target.value });
-    };
-
-    const openEditModal = () => {
-        setIsEditing(true);
+        const { name, value } = e.target;
+        setFormData((prevFormData) => ({
+            ...prevFormData,
+            [name]: value,
+        }));
     };
 
     const closeEditModal = () => {

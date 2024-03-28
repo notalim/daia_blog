@@ -68,7 +68,6 @@ export const addEmergencyContact = async (
     }
 };
 
-
 export const toggleContactActiveStatus = async (userId, contactId) => {
     try {
         const userObjectId = new ObjectId(userId);
