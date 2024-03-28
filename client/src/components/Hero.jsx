@@ -29,7 +29,7 @@ function Hero() {
 					style={logoAnimation}
 					className=""
 					>
-						<p className="text-center text-2xl">Smarter Sugar Sharing</p>
+						<p className="text-center text-2xl font-bold">Smarter Sugar Sharing</p>
 					</animated.div>
         </div>
       </WavyBackground>
