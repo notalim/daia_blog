@@ -98,16 +98,17 @@ export const AuthProvider = ({ children }) => {
         processSuccess("Logged out successfully.");
     };
 
-    const updateUser = async (phoneNumber) => {
+    const refreshUser = async (phoneNumber) => {
         try {
-            const { data, error } = await API.updateUser(phoneNumber);
+            const { data, error } = await API.refreshUser(phoneNumber);
             if (error) {
                 processError(error);
                 return { data: null, error };
             }
-            setUser(data.user);
-            localStorage.setItem("user", JSON.stringify(data.user));
-            processSuccess("User updated.");
+            const newUser = { ...data.user };
+            setUser(newUser);
+            localStorage.setItem("user", JSON.stringify(newUser));
+            processSuccess("User data refreshed.");
             return { data, error: null };
         } catch (error) {
             processError(error);
@@ -152,6 +153,24 @@ export const AuthProvider = ({ children }) => {
             navigate("/");
             processSuccess("User deleted.");
             return { data: response, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error };
+        }
+    };
+
+    const updateUser = async (phoneNumber) => {
+        // !
+        try {
+            const { data, error } = await API.updateUser(phoneNumber);
+            if (error) {
+                processError(error);
+                return { data: null, error };
+            }
+            setUser(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
+            processSuccess("User updated.");
+            return { data, error: null };
         } catch (error) {
             processError(error);
             return { data: null, error };
@@ -220,7 +239,67 @@ export const AuthProvider = ({ children }) => {
                 return { data: null, error: response.error };
             }
             processSuccess("Contact verified successfully.");
-            return { data: response.data, error: null }; // Assuming response.data contains the verification result
+            return { data: response.data, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error: error.message };
+        }
+    };
+
+    const toggleContactActiveStatus = async (userId, contactId) => {
+        try {
+            const response = await API.toggleContactActiveStatus(
+                userId,
+                contactId
+            );
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
+            }
+            processSuccess("Contact toggled.");
+            return { data: response.data, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error: error.message };
+        }
+    };
+
+    const editContact = async (
+        userId,
+        contactId,
+        contactFirstName,
+        contactLastName,
+        contactRelationship
+    ) => {
+        try {
+            const { data, error } = await API.editContact(
+                userId,
+                contactId,
+                contactFirstName,
+                contactLastName,
+                contactRelationship
+            );
+            if (error) {
+                processError(error);
+                return { data: null, error };
+            }
+            processSuccess("Contact updated successfully.");
+            return { data, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error: error.message };
+        }
+    };
+
+    const deleteContact = async (userId, contactId) => {
+        try {
+            const response = await API.deleteContact(userId, contactId);
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
+            }
+            processSuccess("Contact deleted successfully.");
+            return { data: response.data, error: null };
         } catch (error) {
             processError(error);
             return { data: null, error: error.message };
@@ -238,17 +317,25 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider
             value={{
                 user,
+                //
                 loginUser,
                 completeLogin,
                 registerUser,
                 completeRegistration,
                 logoutUser,
-                updateUser,
+                //
                 updateDexcomSessionId,
+                refreshUser,
+                //
                 deleteUser,
+                updateUser,
+                //
                 getUserContacts,
                 addContact,
                 verifyContact,
+                toggleContactActiveStatus,
+                editContact,
+                deleteContact,
             }}
         >
             {children}

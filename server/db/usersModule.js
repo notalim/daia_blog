@@ -168,15 +168,19 @@ const updateUserSessionId = async (userId, dexcomSessionId) => {
 
 const updateBloodSugarData = async (userId, addedBloodSugarData) => {
     try {
-        if (Array.isArray(addedBloodSugarData)) {
-            addedBloodSugarData = addedBloodSugarData[0];
+        if (!Array.isArray(addedBloodSugarData)) {
+            addedBloodSugarData = [addedBloodSugarData];
         }
-        const userCollection = await users(); // Assuming `users()` gets the collection
+
+        const userCollection = await users(); 
         const updateInfo = await userCollection.updateOne(
             { _id: userId },
             {
                 $push: {
-                    bloodSugarData: addedBloodSugarData,
+                    bloodSugarData: {
+                        $each: addedBloodSugarData,
+                        $slice: -288,
+                    },
                 },
             }
         );

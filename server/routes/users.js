@@ -15,8 +15,7 @@ import {
 import {
     getDexcomSessionId,
     getBloodSugarData,
-    refreshDexcomSessionId,
-} from "../services/dexcomHelper.js";
+} from "../services/dexcomService.js";
 
 import validation from "../services/validation.js";
 import { errorTypes } from "../services/errorTypes.js";
@@ -218,6 +217,31 @@ router.post("/signup/complete", async (req, res) => {
     } catch (error) {
         console.error(error);
         res.status(500).json({
+            message: "Server error",
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
+});
+
+router.post("/refresh-user", async (req, res) => {
+    const { phoneNumber } = req.body;
+
+    try {
+        const updatedUser = await getUserByPhoneNumber(phoneNumber);
+        if (!updatedUser) {
+            return res.status(404).json({
+                message: "User not found",
+                error: errorTypes.USER_NOT_FOUND,
+            });
+        }
+
+        return res.status(200).json({
+            message: "Blood sugar data refreshed",
+            user: updatedUser,
+        });
+    } catch (error) {   
+        console.error(error);
+        return res.status(500).json({
             message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
