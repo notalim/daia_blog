@@ -55,47 +55,52 @@ const UserDashboardPage = () => {
 			processError(error);
 			return;
 		}
-
     };
 
-    const handleDexcomSessionIdRefresh = async () => {
-        await updateDexcomSessionId(
-            user.phoneNumber,
-            user.dexcomUser,
-            user.dexcomPass
-        );
-    };
+	const handleDexcomSessionIdRefresh = async () => {
+		await updateDexcomSessionId(
+			user.phoneNumber,
+			user.dexcomUser,
+			user.dexcomPass
+		);
+	};
 
-    const handleThresholdSave = (newThreshold) => {
-        // TODO: Save the new threshold to the backend
-        setThresholdValue(newThreshold);
-    };
+	const handleLogout = () => {
+		logoutUser();
+	};
 
-    const bloodSugarData = user.bloodSugarData;
+	const handleDeleteUser = () => {
+		deleteUser(user.phoneNumber);
+	};
 
-    // console.log("User: ", user);
+	const handleThresholdSave = (newThreshold) => {
+		// TODO: Save the new threshold to the backend
+		setThresholdValue(newThreshold);
+	};
 
-    return (
-        <div className="container mx-auto px-4">
-            <h1 className="text-2xl font-bold text-center sm:text-left">
-                Hello, {user.name}!
-            </h1>
-            <div className="mt-4 grid grid-cols-1 md:grid-cols-5 gap-4">
-                <div className="md:col-span-3">
-                    <BloodSugarScatterPlot
-                        bloodSugarData={bloodSugarData}
-                        thresholdValue={thresholdValue}
-                        onRefresh={handleRefreshData}
-                        dataIsOld={dataIsOld}
-                        onDexcomSessionIdRefresh={handleDexcomSessionIdRefresh}
-                    />
-                </div>
-                <div className="md:col-span-2 bg-lavender-purple p-4 border rounded-lg">
-                    <ContactList />
-                </div>
-            </div>
-        </div>
-    );
+	const bloodSugarData = user.bloodSugarData;
+
+	// console.log("User: ", user);
+
+	return (
+		<div className="container mx-auto m-8">
+			<h1 className="text-2xl font-bold">Hello, {user.name}!</h1>
+			<div className="">
+				<div className="col-span-3">
+					<BloodSugarScatterPlot
+						bloodSugarData={bloodSugarData}
+						thresholdValue={thresholdValue}
+						onRefresh={handleRefreshData}
+						dataIsOld={dataIsOld}
+						onDexcomSessionIdRefresh={handleDexcomSessionIdRefresh}
+					/>
+				</div>
+			</div>
+			<div className="col-span-2 bg-lavender-purple p-4 border rounded-lg mt-8">
+				<ContactList />
+			</div>
+		</div>
+	);
 };
 
 export default UserDashboardPage;

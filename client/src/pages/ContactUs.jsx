@@ -5,6 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import CloseIcon from "@mui/icons-material/Close";
 import Collapse from "@mui/material/Collapse";
 import { sendEmail } from "../services/emailjs";
+import GradientBackground from "../components/GradientBackground";
 
 function ContactUs() {
 	const form = useRef();
@@ -17,9 +18,9 @@ function ContactUs() {
 		e.target.reset();
 	};
 	return (
-		<div className="min-h-screen flex items-center bg-gradient-to-br from-purple-100 to-pink-500">
+		<div className="min-h-screen flex items-center bg-gradient-to-br">
 			<div className="w-full max-w-4xl mx-auto">
-				<div className="p-8 bg-gray-200 rounded-lg shadow-lg">
+				<div className="p-8 bg-purple-200 rounded-lg shadow-lg">
 					<h2 className="text-3xl font-bold text-gray-900 mb-8">
 						Contact Us
 					</h2>
@@ -97,6 +98,7 @@ function ContactUs() {
 				</div>
 			</div>
 		</div>
+		// </GradientBackground>
 	);
 }
 

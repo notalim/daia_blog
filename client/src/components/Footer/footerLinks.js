@@ -1,20 +1,10 @@
 export const footerLinks = [
 	{
 		heading: "Product",
-		links: ["Features", "Pricing", "Case studies", "Reviews", "Updates"],
+		links: ["Features", "Pricing"],
 	},
 	{
 		heading: "Company",
-		links: ["About", "Contact us", "Careers", "Culture", "Blog"],
-	},
-	{
-		heading: "Support",
-		links: [
-			"Getting started",
-			"Help center",
-			"Server status",
-			"Report a bug",
-			"Chat support",
-		],
+		links: ["About", "Contact us"],
 	},
 ];
