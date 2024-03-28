@@ -41,7 +41,6 @@ export const addEmergencyContact = async (
             _id: new ObjectId(userId),
         });
 
-      
         if (
             userDoc.contacts.some(
                 (contact) => contact.contactPhoneNumber === contactPhoneNumber
@@ -50,7 +49,7 @@ export const addEmergencyContact = async (
             throw new Error(errorTypes.CONTACT_ALREADY_EXISTS);
         }
         const updateInfo = await userCollection.updateOne(
-            { _id: new ObjectId(userId) }, 
+            { _id: new ObjectId(userId) },
             { $addToSet: { contacts: contact } }
         );
 
@@ -66,6 +65,46 @@ export const addEmergencyContact = async (
     } catch (error) {
         console.error("Failed to add emergency contact:", error.message);
         throw new Error(error.message || errorTypes.SERVER_ERROR);
+    }
+};
+
+
+export const toggleContactActiveStatus = async (userId, contactId) => {
+    try {
+        const userObjectId = new ObjectId(userId);
+        const contactObjectId = new ObjectId(contactId);
+        const userCollection = await users();
+
+        const user = await userCollection.findOne({ _id: userObjectId });
+        if (!user) {
+            throw new Error(errorTypes.USER_NOT_FOUND);
+        }
+
+        const contact = user.contacts.find((c) =>
+            c._id.equals(contactObjectId)
+        );
+
+        if (!contact) {
+            throw new Error(errorTypes.CONTACT_NOT_FOUND);
+        }
+
+        const newActiveStatus = !contact.active;
+
+        const updateInfo = await userCollection.updateOne(
+            { _id: userObjectId, "contacts._id": contactObjectId },
+            { $set: { "contacts.$.active": newActiveStatus } }
+        );
+
+        if (!updateInfo.matchedCount || !updateInfo.modifiedCount) {
+            throw new Error(errorTypes.CONTACT_STATUS_NOT_UPDATED);
+        }
+
+        return { message: "Contact active status updated successfully." };
+    } catch (error) {
+        console.error("Error occurred:", error);
+        throw new Error(
+            error.message || "An error occurred while toggling contact status"
+        );
     }
 };
 
@@ -139,29 +178,6 @@ export const editEmergencyContact = async (
     catch (error) {
         console.error("Failed to edit emergency contact:", error.message);
         throw new Error(error.message || errorTypes.SERVER_ERROR);
-    }
-};
-
-export const toggleContactActiveStatus = async (
-    userId,
-    contactId,
-    activeStatus
-) => {
-    try {
-        const userCollection = await users();
-        const updateInfo = await userCollection.updateOne(
-            { _id: userId, "contacts._id": contactId },
-            { $set: { "contacts.$.active": activeStatus } }
-        );
-
-        if (!updateInfo.matchedCount || !updateInfo.modifiedCount) {
-            throw new Error(errorTypes.CONTACT_STATUS_NOT_UPDATED);
-        }
-
-        return { message: "Contact active status updated successfully." };
-    } catch (error) {
-        console.error(error);
-        throw new Error(error.message);
     }
 };
 

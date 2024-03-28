@@ -21,7 +21,7 @@ router.get("/:userId/contacts", async (req, res) => {
 
     try {
         const userContacts = await getUserContacts(userId);
-        console.log(userContacts);
+        // console.log(userContacts);
         res.status(200).json({
             message: "User contacts retrieved successfully.",
             contacts: userContacts,
@@ -174,6 +174,22 @@ router.post("/:userId/contacts/complete", async (req, res) => {
         res.status(500).json({
             message: "Server error",
             error: errorTypes.SERVER_ERROR,
+        });
+    }
+});
+
+router.put("/:userId/contacts/:contactId/toggle", async (req, res) => {
+    const userId = req.params.userId;
+    const contactId = req.params.contactId;
+
+    try {
+        const result = await toggleContactActiveStatus(userId, contactId);
+        res.status(200).json(result);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: error.message || errorTypes.SERVER_ERROR,
         });
     }
 });
