@@ -169,18 +169,27 @@ class ApiClient {
         });
     }
 
-    async editContact(
-        userId,
-        contactId,
-        firstName,
-        lastName,
-        relationship
-    ) {
-        // console.log("Editing contact, userId:", userId, "contactId:", contactId, "firstName:", firstName, "lastName:", lastName, "relationship:", relationship);
+    async editContact(userId, contactId, firstName, lastName, relationship) {
+        console.log(
+            "Editing contact, userId:",
+            userId,
+            "contactId:",
+            contactId,
+            "firstName:",
+            firstName,
+            "lastName:",
+            lastName,
+            "relationship:",
+            relationship
+        );
         return await this.request({
             endpoint: `users/${userId}/contacts/${contactId}`,
             method: "PATCH",
-            data: { firstName, lastName, relationship },
+            data: {
+                firstName: firstName,
+                lastName: lastName,
+                relationship: relationship,
+            },
         });
     }
 
@@ -192,8 +201,6 @@ class ApiClient {
     }
 }
 
-const API = new ApiClient(
-    API_URL ? API_URL : "http://localhost:3001"
-);
+const API = new ApiClient(API_URL ? API_URL : "http://localhost:3001");
 
 export default API;

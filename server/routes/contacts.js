@@ -229,7 +229,7 @@ router.patch("/:userId/contacts/:contactId", async (req, res) => {
     if (!validation.stringValidation(relationship)) {
         return res.status(400).json({
             message: "Invalid relationship format",
-            error: errorTypes.INVALID_RELATIONSHIP,
+            error: errorTypes.INVALID_CONTACT_RELATIONSHIP,
         });
     }
 

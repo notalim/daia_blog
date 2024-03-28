@@ -248,7 +248,10 @@ export const AuthProvider = ({ children }) => {
 
     const toggleContactActiveStatus = async (userId, contactId) => {
         try {
-            const response = await API.toggleContactActiveStatus(userId, contactId);
+            const response = await API.toggleContactActiveStatus(
+                userId,
+                contactId
+            );
             if (response.error) {
                 processError(response.error);
                 return { data: null, error: response.error };
@@ -259,7 +262,7 @@ export const AuthProvider = ({ children }) => {
             processError(error);
             return { data: null, error: error.message };
         }
-    }
+    };
 
     const editContact = async (
         userId,
@@ -269,19 +272,19 @@ export const AuthProvider = ({ children }) => {
         contactRelationship
     ) => {
         try {
-            const response = await API.editContact(
+            const { data, error } = await API.editContact(
                 userId,
                 contactId,
                 contactFirstName,
                 contactLastName,
                 contactRelationship
             );
-            if (response.error) {
-                processError(response.error);
-                return { data: null, error: response.error };
+            if (error) {
+                processError(error);
+                return { data: null, error };
             }
             processSuccess("Contact updated successfully.");
-            return { data: response.data, error: null };
+            return { data, error: null };
         } catch (error) {
             processError(error);
             return { data: null, error: error.message };

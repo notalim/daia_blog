@@ -1,13 +1,20 @@
 // utils/scheduler.js
 import cron from "node-cron";
-import { getAllUsers, updateBloodSugarData, updateUserSessionId } from "../db/usersModule.js";
+import {
+    getAllUsers,
+    updateBloodSugarData,
+    updateUserSessionId,
+} from "../db/usersModule.js";
 
-import { getBloodSugarData, refreshDexcomSessionId } from "../services/dexcomHelper.js";
-import { checkValues } from "../services/alerts.js"
+import {
+    getBloodSugarData,
+    refreshDexcomSessionId,
+} from "../services/dexcomHelper.js";
+import { checkValues } from "../services/alerts.js";
 
 const updateBloodSugarLevelsForAllUsers = async () => {
     const users = await getAllUsers();
-    
+
     for (const user of users) {
         try {
             const bloodSugarData = await getBloodSugarData(
@@ -19,11 +26,25 @@ const updateBloodSugarLevelsForAllUsers = async () => {
             await updateBloodSugarData(user._id, bloodSugarData);
         } catch (error) {
             console.error(
-                `Error fetching blood sugar data for user ${user._id}, ${user.dexcomUser}: ${error}`
+                `Error fetching blood sugar data for user ${user._id}, ${user.dexcomUser}: ${error.message}`
             );
+            console.log(
+                "Trying to refresh Dexcom session ID for this user",
+                user._id
+            );
+            try {
+                const newSessionId = await refreshDexcomSessionId(user);
+                await refreshDexcomSessionId(user).then((newSessionId) => {
+                    updateUserSessionId(user._id, newSessionId);
+                });
+            } catch (error) {
+                console.error(
+                    `Error refreshing Dexcom session ID for user ${user._id}, ${user.dexcomUser}: ${error}`
+                );
+            }
         }
     }
-}
+};
 
 // This will run the function every 5 minutes
 export function startBloodSugarUpdateTask() {
@@ -46,7 +67,7 @@ const updateDexcomSessionIdForAllUsers = async () => {
             );
         }
     }
-}
+};
 
 export function startDexcomSessionUpdateTask() {
     // This will run the function every 24 hours
@@ -55,4 +76,3 @@ export function startDexcomSessionUpdateTask() {
         timezone: "America/New_York", // Or your respective timezone
     });
 }
-
