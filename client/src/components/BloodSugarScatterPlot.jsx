@@ -83,6 +83,8 @@ const BloodSugarScatterPlot = ({
                 <input
                     id="thresholdInput"
                     type="number"
+                    min="0"
+                    max="199"
                     value={thresholdValue}
                     onChange={onThresholdChange}
                     className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-24 p-2 text-center"
@@ -93,6 +95,9 @@ const BloodSugarScatterPlot = ({
                 >
                     Save Threshold
                 </button>
+                <div className="text-xs text-gray-500 mt-2">
+                    Threshold can be set to any value between 0 and 200.
+                </div>
             </div>
 
             <div className="text-sm p-4 border rounded-lg bg-lavender-purple">

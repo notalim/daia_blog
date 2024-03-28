@@ -15,9 +15,7 @@ const UserDashboardPage = () => {
     );
 
     const { processError, processSuccess } = useProcessMessages();
-
-    // ! set user.thresholdValue at backend later!
-
+	
     useEffect(() => {
         if (user.bloodSugarData.length === 0) {
             console.log("No blood sugar data available.");
@@ -86,33 +84,6 @@ const UserDashboardPage = () => {
                 onThresholdChange={handleThresholdChange}
                 onSaveThreshold={handleSaveThreshold}
             />
-
-            <div className="my-4">
-                <label
-                    htmlFor="thresholdInput"
-                    className="block text-sm font-medium text-gray-700"
-                >
-                    Set your threshold:
-                </label>
-                <div className="mt-1 flex rounded-md shadow-sm">
-                    <input
-                        type="number"
-                        name="threshold"
-                        id="thresholdInput"
-                        className="focus:ring-indigo-500 focus:border-indigo-500 flex-grow block w-full min-w-0 rounded-md sm:text-sm border-gray-300"
-                        value={thresholdValue}
-                        onChange={handleThresholdChange}
-                    />
-                    <button
-                        type="button"
-                        className="ml-2 inline-flex items-center px-3 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-mid-purple hover:bg-full-purple focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                        onClick={handleSaveThreshold}
-                    >
-                        Save Threshold
-                    </button>
-                </div>
-            </div>
-
             <ContactList />
         </div>
     );
