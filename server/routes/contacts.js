@@ -78,7 +78,6 @@ router.post("/:userId/contacts", async (req, res) => {
                 error: errorTypes.SERVER_ERROR,
             });
         }
-    
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -100,7 +99,8 @@ router.patch("/:userId/contacts/:contactId", async (req, res) => {
         });
     }
 
-    if ((firstName && !validation.nameValidation(firstName)) ||
+    if (
+        (firstName && !validation.nameValidation(firstName)) ||
         (lastName && !validation.nameValidation(lastName))
     ) {
         return res.status(400).json({
@@ -130,8 +130,7 @@ router.patch("/:userId/contacts/:contactId", async (req, res) => {
             message: "Emergency contact updated successfully.",
             contact: contact,
         });
-    }
-    catch (error) {
+    } catch (error) {
         res.status(500).json({
             message: "Server error",
             error: error.message,
@@ -190,6 +189,66 @@ router.put("/:userId/contacts/:contactId/toggle", async (req, res) => {
         res.status(500).json({
             message: "Server error",
             error: error.message || errorTypes.SERVER_ERROR,
+        });
+    }
+});
+
+router.delete("/:userId/contacts/:contactId", async (req, res) => {
+    const { userId, contactId } = req.params;
+
+    try {
+        const result = await removeEmergencyContact(userId, contactId);
+        res.status(201).json({
+            message: "Emergency contact removed successfully.",
+        });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({
+            message: "Server error",
+            error: error.message,
+        });
+    }
+});
+
+router.patch("/:userId/contacts/:contactId", async (req, res) => {
+    const userId = req.params.userId;
+    const contactId = req.params.contactId;
+    const { firstName, lastName, relationship } = req.body;
+
+    if (
+        !validation.nameValidation(firstName) ||
+        !validation.nameValidation(lastName)
+    ) {
+        return res.status(400).json({
+            message: "Invalid name format",
+            error: errorTypes.INVALID_NAME,
+        });
+    }
+
+    if (!validation.stringValidation(relationship)) {
+        return res.status(400).json({
+            message: "Invalid relationship format",
+            error: errorTypes.INVALID_RELATIONSHIP,
+        });
+    }
+
+    try {
+        const contact = await editEmergencyContact(
+            userId,
+            contactId,
+            firstName,
+            lastName,
+            relationship
+        );
+
+        res.status(200).json({
+            message: "Emergency contact updated successfully.",
+            contact,
+        });
+    } catch (error) {
+        res.status(500).json({
+            message: "Server error",
+            error: error.message,
         });
     }
 });

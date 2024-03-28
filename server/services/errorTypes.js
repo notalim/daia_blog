@@ -33,6 +33,7 @@ export const errorTypes = {
     GETTING_USER_CONTACTS_FAILED: "Could not get user contacts",
     CONTACT_ALREADY_EXISTS: "Contact already exists",
     CONTACT_NOT_FOUND: "Contact not found",
+    CONTACTS_NOT_FOUND: "Contacts not found",
     INVALID_NAME: "Invalid name format",
     INVALID_STRING: "Invalid characters used",
     AUTHENTICATION_FAILED: "Authentication failed",

@@ -261,6 +261,48 @@ export const AuthProvider = ({ children }) => {
         }
     }
 
+    const editContact = async (
+        userId,
+        contactId,
+        contactFirstName,
+        contactLastName,
+        contactRelationship
+    ) => {
+        try {
+            const response = await API.editContact(
+                userId,
+                contactId,
+                contactFirstName,
+                contactLastName,
+                contactRelationship
+            );
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
+            }
+            processSuccess("Contact updated successfully.");
+            return { data: response.data, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error: error.message };
+        }
+    };
+
+    const deleteContact = async (userId, contactId) => {
+        try {
+            const response = await API.deleteContact(userId, contactId);
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
+            }
+            processSuccess("Contact deleted successfully.");
+            return { data: response.data, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error: error.message };
+        }
+    };
+
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -289,6 +331,8 @@ export const AuthProvider = ({ children }) => {
                 addContact,
                 verifyContact,
                 toggleContactActiveStatus,
+                editContact,
+                deleteContact,
             }}
         >
             {children}

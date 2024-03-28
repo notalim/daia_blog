@@ -111,71 +111,50 @@ export const toggleContactActiveStatus = async (userId, contactId) => {
 export const editEmergencyContact = async (
     userId,
     contactId,
-    contactPhoneNumber,
     contactFirstName,
     contactLastName,
     contactRelationship
 ) => {
     try {
-        if (!contactPhoneNumber && !contactFirstName && !contactLastName && !contactRelationship) {
+        if (!contactFirstName && !contactLastName && !contactRelationship) {
             throw new Error(errorTypes.INVALID_EDIT_PARAMS);
         }
-        if (contactPhoneNumber && !validation.phoneValidation(contactPhoneNumber)) {
-            throw new Error(errorTypes.INVALID_CONTACT_NUMBER);
-        }
+
         if (
-            (contactFirstName && !validation.nameValidation(contactFirstName)) ||
+            (contactFirstName &&
+                !validation.nameValidation(contactFirstName)) ||
             (contactLastName && !validation.nameValidation(contactLastName))
         ) {
             throw new Error(errorTypes.INVALID_CONTACT_NAME);
         }
 
         const userCollection = await users();
-
-        const userDoc = await userCollection.findOne({
-            _id: new ObjectId(userId),
-        });
-
-        if (!userDoc) {
-            throw new Error(errorTypes.USER_NOT_FOUND);
-        }
-
-        const contact = userDoc.contacts.find(
-            (contact) => contact._id.toString() === contactId
-        );
-
-        if (!contact) {
-            throw new Error(errorTypes.INVALID_CONTACT_ID);
-        }
-
         const updateFields = {};
-        if (contactPhoneNumber) {
-            updateFields["contacts.$.contactPhoneNumber"] = contactPhoneNumber;
-        }
-        if (contactFirstName) {
+        const contactObjectId = new ObjectId(contactId);
+
+        if (contactFirstName)
             updateFields["contacts.$.contactFirstName"] = contactFirstName;
-        }
-        if (contactLastName) {
+        if (contactLastName)
             updateFields["contacts.$.contactLastName"] = contactLastName;
-        }
-        if (contactRelationship) {
-            updateFields["contacts.$.contactRelationship"] = contactRelationship;
-        }
+        if (contactRelationship)
+            updateFields["contacts.$.contactRelationship"] =
+                contactRelationship;
 
         const updateInfo = await userCollection.updateOne(
-            { _id: new ObjectId(userId), "contacts._id": contact._id },
-            {
-                $set: updateFields,
-            }
+            { _id: new ObjectId(userId), "contacts._id": contactObjectId },
+            { $set: updateFields }
         );
 
-        if (!updateInfo.matchedCount || !updateInfo.modifiedCount) {
+        if (updateInfo.matchedCount === 0)
+            throw new Error(errorTypes.USER_NOT_FOUND);
+        if (updateInfo.modifiedCount === 0)
             throw new Error(errorTypes.CONTACT_NOT_UPDATED);
-        }
 
-        return { message: "Emergency contact updated successfully." };
-    }
-    catch (error) {
+        return {
+            message: "Emergency contact updated successfully.",
+            contactId,
+        };
+    } catch (error) {
         console.error("Failed to edit emergency contact:", error.message);
         throw new Error(error.message || errorTypes.SERVER_ERROR);
     }

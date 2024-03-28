@@ -168,6 +168,27 @@ class ApiClient {
             method: "PUT",
         });
     }
+
+    async editContact(
+        userId,
+        contactId,
+        contactFirstName,
+        contactLastName,
+        contactRelationship
+    ) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts/${contactId}`,
+            method: "PATCH",
+            data: { contactFirstName, contactLastName, contactRelationship },
+        });
+    }
+
+    async deleteContact(userId, contactId) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts/${contactId}`,
+            method: "DELETE",
+        });
+    }
 }
 
 const API = new ApiClient(
