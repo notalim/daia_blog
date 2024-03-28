@@ -34,9 +34,10 @@ const updateBloodSugarLevelsForAllUsers = async () => {
             );
             try {
                 const newSessionId = await refreshDexcomSessionId(user);
-                await refreshDexcomSessionId(user).then((newSessionId) => {
-                    updateUserSessionId(user._id, newSessionId);
-                });
+                await updateUserSessionId(user._id, newSessionId);
+                console.log(
+                    `Successfully refreshed Dexcom session ID for user ${user._id}, ${user.dexcomUser}`
+                ); 
             } catch (error) {
                 console.error(
                     `Error refreshing Dexcom session ID for user ${user._id}, ${user.dexcomUser}: ${error}`
