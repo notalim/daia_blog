@@ -115,6 +115,7 @@ export const editEmergencyContact = async (
     contactRelationship
 ) => {
     try {
+        console.log("Editing contact:", contactId, contactFirstName, contactLastName, contactRelationship)
         if (!contactFirstName && !contactLastName && !contactRelationship) {
             throw new Error(errorTypes.INVALID_EDIT_PARAMS);
         }
