@@ -1,31 +1,10 @@
 // server/db/userDb.js
 import { users } from "../config/mongoCollections.js";
 import bcrypt from "bcrypt";
-import crypto from "crypto";
 import dotenv from "dotenv";
 import validation from "../services/validation.js";
 import { ObjectId } from "mongodb";
 dotenv.config();
-const saltRounds = 10;
-
-// const algorithm = "aes-256-ctr";
-// const secretKey = process.env.ENCRYPTION_SECRET_KEY;
-// const iv = crypto.randomBytes(16); // Initialization vector
-
-// const encrypt = (text) => {
-//   const cipher = crypto.createCipheriv(algorithm, secretKey, iv);
-//   const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
-//   return {
-//     iv: iv.toString("hex"),
-//     content: encrypted.toString("hex"),
-//   };
-// };
-
-// const decrypt = (hash) => {
-//   const decipher = crypto.createDecipheriv(algorithm, secretKey, Buffer.from(hash.iv, "hex"));
-//   const decrpyted = Buffer.concat([decipher.update(Buffer.from(hash.content, "hex")), decipher.final()]);
-//   return decrpyted.toString();
-// };
 
 const createUser = async (
     phoneNumber,
@@ -227,6 +206,7 @@ const updateCrisis = async (userId) => {
 }
 
 const setLowAlarm = async (userId, lowAlarm) => {
+    // * Threshold in the frontend
     try {
         const userCollection = await users();
         const updateInfo = await userCollection.updateOne(

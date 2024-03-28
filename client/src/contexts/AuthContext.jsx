@@ -306,6 +306,24 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const updateThresholdValue = async (phoneNumber, lowAlarm) => {
+        try {
+            const response = await API.updateLowAlarm(
+                phoneNumber,
+                lowAlarm
+            );
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
+            }
+            processSuccess("Threshold updated successfully.");
+            return { success: true };
+        } catch (error) {
+            processError(error.message);
+            return { success: false };
+        }
+    };
+
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
         if (storedUser) {
@@ -326,6 +344,7 @@ export const AuthProvider = ({ children }) => {
                 //
                 updateDexcomSessionId,
                 refreshUser,
+                updateThresholdValue,
                 //
                 deleteUser,
                 updateUser,
