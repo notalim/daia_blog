@@ -31,7 +31,7 @@ const EmergencyContacts = () => {
     }, [user, getUserContacts]);
 
     const handleToggleContact = async (contact) => {
-        console.log("Toggling contact:", contact._id);
+        // console.log("Toggling contact:", contact._id);
         const response = await toggleContactActiveStatus(user._id, contact._id);
         if (!response.error) {
             // Optimistically update the UI

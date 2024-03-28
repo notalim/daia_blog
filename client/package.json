@@ -33,6 +33,7 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
     "lucide-react": "^0.294.0",
     "moment-timezone": "^0.5.45",
     "path": "^0.12.7",

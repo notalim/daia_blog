@@ -1,7 +1,7 @@
-// apiClient.js
 import axios from "axios";
-
 import { errorTypes } from "./errorTypes";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 class ApiClient {
     constructor(remoteHostUrl) {
@@ -165,13 +165,13 @@ class ApiClient {
     async toggleContactActiveStatus(userId, contactId) {
         return await this.request({
             endpoint: `users/${userId}/contacts/${contactId}/toggle`,
-            method: "PUT",  
+            method: "PUT",
         });
     }
 }
 
-const TEST_SERVER_URL = "https://daia-test-server.onrender.com";
-const LOCAL_HOST_URL = "localhost:3000";
+const API = new ApiClient(
+    API_URL ? API_URL : "http://localhost:3001"
+);
 
-const API = new ApiClient(TEST_SERVER_URL);
 export default API;
