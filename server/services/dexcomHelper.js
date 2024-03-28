@@ -3,40 +3,44 @@ import { errorTypes } from "./errorTypes.js";
 import { getAllUsers, updateUserSessionId } from "../db/usersModule.js";
 
 const dexcomApiConfig = {
-  headers: {
-    "Content-Type": "application/json",
-  },
+    headers: {
+        "Content-Type": "application/json",
+    },
 };
 
 const dexcomApplicationId = "d8665ade-9673-4e27-9ff6-92db4ce13d13";
 
 const handleAxiosError = (error, customMessage) => {
-  console.error(`${customMessage}:`, error);
-  throw {
-    message: customMessage,
-    error: errorTypes.DEXCOM_SESSION_PROBLEM,
-  };
+    console.error(`${customMessage}:`, error);
+    throw {
+        message: customMessage,
+        error: errorTypes.DEXCOM_SESSION_PROBLEM,
+    };
 };
 
 export const getDexcomSessionId = async (dexcomUser, dexcomPass) => {
-  const loginUrl = "https://share2.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName";
-  const body = {
-    accountName: dexcomUser,
-    password: dexcomPass,
-    applicationId: dexcomApplicationId,
-  };
+    const loginUrl =
+        "https://share2.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName";
+    const body = {
+        accountName: dexcomUser,
+        password: dexcomPass,
+        applicationId: dexcomApplicationId,
+    };
 
-  try {
-    const { data } = await axios.post(loginUrl, body, dexcomApiConfig);
-    const sessionId = data.replace(/^"|"$/g, "");
-    return sessionId;
+    try {
+        const { data } = await axios.post(loginUrl, body, dexcomApiConfig);
+        const sessionId = data.replace(/^"|"$/g, "");
+        return sessionId;
     } catch (error) {
-    handleAxiosError(error, "Error fetching Dexcom session ID");
+        handleAxiosError(error, "Error fetching Dexcom session ID");
     }
-
 };
 
-export const getBloodSugarData = async (sessionId, minutes = 60, maxCount = 12) => {
+export const getBloodSugarData = async (
+    sessionId,
+    minutes = 60,
+    maxCount = 12
+) => {
     const url = `https://share2.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId=${sessionId}&minutes=${minutes}&maxCount=${maxCount}`;
 
     try {
@@ -45,7 +49,6 @@ export const getBloodSugarData = async (sessionId, minutes = 60, maxCount = 12) 
     } catch (error) {
         handleAxiosError(error, "Error fetching blood sugar data");
     }
-
 };
 
 export async function refreshDexcomSessionId(user) {
@@ -72,6 +75,3 @@ export async function refreshAllUserSessionIds() {
         console.error("Error refreshing all user session IDs:", error);
     }
 }
-
-
-
