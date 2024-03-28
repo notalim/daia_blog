@@ -213,9 +213,9 @@ router.delete("/:userId/contacts/:contactId", async (req, res) => {
 router.patch("/:userId/contacts/:contactId", async (req, res) => {
     const userId = req.params.userId;
     const contactId = req.params.contactId;
-    console.log(req.body);
+    
     const { firstName, lastName, relationship } = req.body;
-
+    console.log("Editing contact:", contactId, firstName, lastName, relationship);
     if (
         !validation.nameValidation(firstName) ||
         !validation.nameValidation(lastName)
