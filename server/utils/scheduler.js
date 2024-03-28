@@ -10,7 +10,7 @@ import {
     getBloodSugarData,
     refreshDexcomSessionId,
     refreshAllUserSessionIds,
-} from "../services/dexcomHelper.js";
+} from "../services/dexcomService.js";
 import { checkValues } from "../services/alerts.js";
 
 const updateBloodSugarLevelsForAllUsers = async () => {

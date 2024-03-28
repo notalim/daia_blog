@@ -15,8 +15,7 @@ import {
 import {
     getDexcomSessionId,
     getBloodSugarData,
-    refreshDexcomSessionId,
-} from "../services/dexcomHelper.js";
+} from "../services/dexcomService.js";
 
 import validation from "../services/validation.js";
 import { errorTypes } from "../services/errorTypes.js";

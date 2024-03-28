@@ -15,10 +15,11 @@ import { Input } from "@src/@/components/ui/input";
 import SelectContactType from "./SelectContactType";
 import useProcessMessages from "../../contexts/useProcessMessages";
 
+import validation from "../../services/validation";
+
 const ContactItem = ({ contact, onToggleContact }) => {
     const { user, editContact, deleteContact } = useContext(AuthContext);
     const { processError, processSuccess } = useProcessMessages();
-    const [isEditing, setIsEditing] = useState(false);
 
     const [formData, setFormData] = useState({
         firstName: contact.contactFirstName,
@@ -33,8 +34,23 @@ const ContactItem = ({ contact, onToggleContact }) => {
     const handleEditContact = async (e) => {
         e.preventDefault();
         // ! Your validation and edit logic here
+        if (!validation.nameValidation(formData.firstName)) {
+            processError("Invalid first name");
+            return;
+        }
+
+        if (!validation.nameValidation(formData.lastName)) {
+            processError("Invalid last name");
+            return;
+        }
+
+        if (!formData.relationship) {
+            processError("Please select a relationship");
+            return;
+        }
+
         try {
-            console.log("Submitting the following data:", formData);
+            // console.log("Submitting the following data:", formData);
             const { error } = await editContact(
                 user._id,
                 contact._id,
@@ -44,7 +60,6 @@ const ContactItem = ({ contact, onToggleContact }) => {
             );
             if (!error) {
                 processSuccess("Contact updated successfully.");
-                closeEditModal();
             } else {
                 processError(error);
             }
@@ -63,18 +78,16 @@ const ContactItem = ({ contact, onToggleContact }) => {
         }
     };
 
-    const handleChange = (e) => {
-        const { name, value } = e.target;
-        setFormData((prevFormData) => ({
-            ...prevFormData,
-            [name]: value,
-        }));
-    };
+    const handleChange = (eventOrValue) => {
+        const value = eventOrValue.target
+            ? eventOrValue.target.value
+            : eventOrValue;
+        const name = eventOrValue.target
+            ? eventOrValue.target.name
+            : "relationship";
 
-    const closeEditModal = () => {
-        setIsEditing(false);
+        setFormData({ ...formData, [name]: value });
     };
-
     return (
         <Dialog>
             <div className="space-y-2 flex flex-col items-center justify-end">
@@ -118,26 +131,23 @@ const ContactItem = ({ contact, onToggleContact }) => {
                     <Input
                         type="text"
                         name="firstName"
+                        placeholder="First Name"
                         value={formData.firstName}
                         onChange={handleChange}
-                        label="First Name"
                         required
                     />
                     <Input
                         type="text"
                         name="lastName"
+                        placeholder="Last Name"
                         value={formData.lastName}
                         onChange={handleChange}
-                        label="Last Name"
                         required
                     />
-                    <Input
-                        type="text"
+                    <SelectContactType
                         name="relationship"
                         value={formData.relationship}
                         onChange={handleChange}
-                        label="Relationship"
-                        required
                     />
                     <div className="flex justify-between space-x-4">
                         <Button type="button" onClick={handleDeleteContact}>

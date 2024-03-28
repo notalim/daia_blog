@@ -19,7 +19,7 @@ const ContactList = () => {
                     // console.log("Fetching contacts for user:", user._id);
                     const { data } = await getUserContacts(user._id);
                     const contacts = data.contacts;
-                    console.log("Contacts:", contacts);
+                    // console.log("Contacts:", contacts);
 
                     setUserContacts(contacts);
                 } catch (error) {
