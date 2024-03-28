@@ -164,8 +164,8 @@ export const removeEmergencyContact = async (userId, contactId) => {
     try {
         const userCollection = await users();
         const updateInfo = await userCollection.updateOne(
-            { _id: userId },
-            { $pull: { contacts: { _id: contactId } } }
+            { _id: new ObjectId(userId) },
+            { $pull: { contacts: { _id: new ObjectId(contactId) } } }
         );
 
         if (!updateInfo.matchedCount || !updateInfo.modifiedCount) {
