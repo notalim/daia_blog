@@ -3,10 +3,11 @@ import AvatarDemo from "./AvatarDemo";
 import { Switch } from "@src/@/components/ui/switch";
 
 import AddContactButton from "./AddContactButton";
+import ContactItem from "./ContactItem";
 
 import { AuthContext } from "../../contexts/AuthContext";
 
-const EmergencyContacts = () => {
+const ContactList = () => {
     const { user, getUserContacts, toggleContactActiveStatus } =
         useContext(AuthContext);
     const [userContacts, setUserContacts] = useState([]);
@@ -18,7 +19,7 @@ const EmergencyContacts = () => {
                     // console.log("Fetching contacts for user:", user._id);
                     const { data } = await getUserContacts(user._id);
                     const contacts = data.contacts;
-                    console.log("Contacts:", contacts);
+                    // console.log("Contacts:", contacts);
 
                     setUserContacts(contacts);
                 } catch (error) {
@@ -50,28 +51,11 @@ const EmergencyContacts = () => {
             <div className="grid grid-cols-3 gap-4 overflow-auto p-4">
                 {userContacts.length > 0
                     ? userContacts.map((contact, index) => (
-                          <div
-                              key={index}
-                              className="space-y-2 flex flex-col items-center justify-end"
-                          >
-                              <AvatarDemo
-                                  firstName={contact.contactFirstName}
-                                  lastName={contact.contactLastName}
-                                  size="large"
-                              />
-                              <div className="flex justify-between items-center w-full">
-                                  <span className="text-xs text-center">
-                                      {contact.contactFirstName}
-                                  </span>
-                                  <Switch
-                                      checked={contact.active}
-                                      onCheckedChange={() =>
-                                          handleToggleContact(contact)
-                                      }
-                                      className="ml-2 transform scale-80"
-                                  />
-                              </div>
-                          </div>
+                            <ContactItem
+                                key={index}
+                                contact={contact}
+                                onToggleContact={handleToggleContact}
+                            />
                       ))
                     : null}
                 <div className="space-y-2 flex flex-col items-center justify-end">
@@ -87,4 +71,4 @@ const EmergencyContacts = () => {
     );
 };
 
-export default EmergencyContacts;
+export default ContactList;

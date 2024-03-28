@@ -168,10 +168,27 @@ class ApiClient {
             method: "PUT",
         });
     }
+
+    async editContact(userId, contactId, firstName, lastName, relationship) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts/${contactId}`,
+            method: "PATCH",
+            data: {
+                firstName: firstName,
+                lastName: lastName,
+                relationship: relationship,
+            },
+        });
+    }
+
+    async deleteContact(userId, contactId) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts/${contactId}`,
+            method: "DELETE",
+        });
+    }
 }
 
-const API = new ApiClient(
-    API_URL ? API_URL : "http://localhost:3001"
-);
+const API = new ApiClient(API_URL ? API_URL : "http://localhost:3001");
 
 export default API;

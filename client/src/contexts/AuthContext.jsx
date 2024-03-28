@@ -248,7 +248,10 @@ export const AuthProvider = ({ children }) => {
 
     const toggleContactActiveStatus = async (userId, contactId) => {
         try {
-            const response = await API.toggleContactActiveStatus(userId, contactId);
+            const response = await API.toggleContactActiveStatus(
+                userId,
+                contactId
+            );
             if (response.error) {
                 processError(response.error);
                 return { data: null, error: response.error };
@@ -259,7 +262,49 @@ export const AuthProvider = ({ children }) => {
             processError(error);
             return { data: null, error: error.message };
         }
-    }
+    };
+
+    const editContact = async (
+        userId,
+        contactId,
+        contactFirstName,
+        contactLastName,
+        contactRelationship
+    ) => {
+        try {
+            const { data, error } = await API.editContact(
+                userId,
+                contactId,
+                contactFirstName,
+                contactLastName,
+                contactRelationship
+            );
+            if (error) {
+                processError(error);
+                return { data: null, error };
+            }
+            processSuccess("Contact updated successfully.");
+            return { data, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error: error.message };
+        }
+    };
+
+    const deleteContact = async (userId, contactId) => {
+        try {
+            const response = await API.deleteContact(userId, contactId);
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
+            }
+            processSuccess("Contact deleted successfully.");
+            return { data: response.data, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error: error.message };
+        }
+    };
 
     useEffect(() => {
         const storedUser = localStorage.getItem("user");
@@ -289,6 +334,8 @@ export const AuthProvider = ({ children }) => {
                 addContact,
                 verifyContact,
                 toggleContactActiveStatus,
+                editContact,
+                deleteContact,
             }}
         >
             {children}
