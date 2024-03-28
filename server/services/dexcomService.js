@@ -1,6 +1,7 @@
 import axios from "axios";
 import { errorTypes } from "./errorTypes.js";
 import { getAllUsers, updateUserSessionId } from "../db/usersModule.js";
+import { decrypt } from "../db/usersModule.js";
 
 const dexcomApiConfig = {
     headers: {
