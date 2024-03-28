@@ -16,5 +16,8 @@
 		"@mui/material": "^5.15.10",
 		"lucide-react": "^0.336.0",
 		"react-responsive": "^9.0.2"
+	},
+	"devDependencies": {
+		"typescript": "^5.3.3"
 	}
 }

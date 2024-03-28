@@ -42,7 +42,7 @@ const NavbarLoggedIn = () => {
     };
 
     return (
-        <nav className="bg-background-purple p-4 text-secondary py-4 px-6 flex justify-between items-center shadow-md">
+        <nav className="bg-background-purple p-4 text-secondary py-4 px-6 flex justify-between items-center">
             <div className="flex items-center">
                 <Link to="/" className={`mx-4`}>
                     <img
