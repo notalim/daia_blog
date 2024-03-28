@@ -170,18 +170,18 @@ class ApiClient {
     }
 
     async editContact(userId, contactId, firstName, lastName, relationship) {
-        console.log(
-            "Editing contact, userId:",
-            userId,
-            "contactId:",
-            contactId,
-            "firstName:",
-            firstName,
-            "lastName:",
-            lastName,
-            "relationship:",
-            relationship
-        );
+        // console.log(
+        //     "Editing contact, userId:",
+        //     userId,
+        //     "contactId:",
+        //     contactId,
+        //     "firstName:",
+        //     firstName,
+        //     "lastName:",
+        //     lastName,
+        //     "relationship:",
+        //     relationship
+        // );
         return await this.request({
             endpoint: `users/${userId}/contacts/${contactId}`,
             method: "PATCH",
