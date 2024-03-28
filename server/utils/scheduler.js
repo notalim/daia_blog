@@ -30,7 +30,7 @@ export function startBloodSugarUpdateTask() {
     // This will run the function every 5 minutes
     cron.schedule("*/5 * * * *", updateBloodSugarLevelsForAllUsers, {
         scheduled: true,
-        timezone: "America/New_York", // Or your respective timezone
+        timezone: "America/New_York",
     });
 }
 

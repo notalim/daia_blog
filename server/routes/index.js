@@ -15,6 +15,9 @@ const setupRoutes = (app) => {
     app.use("/users", usersRouter);
     app.use("/users", contactsRouter);
 
+    app.use("*", (req, res) => {
+        res.status(404).json({ error: "Not found" });
+    });
 };
 
 export default setupRoutes;

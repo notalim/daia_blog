@@ -9,37 +9,53 @@ import moment from "moment";
 
 import UserInformation from "../components/UserInformation";
 
+import useProcessMessages from "../contexts/useProcessMessages";
+
 const UserDashboardPage = () => {
-	const { user, logoutUser, updateUser, updateDexcomSessionId, deleteUser } =
-		useAuth();
-	const [dataIsOld, setDataIsOld] = useState(false);
-	const [thresholdValue, setThresholdValue] = useState(180);
+    const { user, refreshUser, updateDexcomSessionId } = useAuth();
+    const [dataIsOld, setDataIsOld] = useState(false);
+    const [thresholdValue, setThresholdValue] = useState(180);
 
-	// ! set user.thresholdValue at backend later!
+	const { processError } = useProcessMessages();
 
-	useEffect(() => {
-		if (user.bloodSugarData.length === 0) {
-			console.log("No blood sugar data available.");
-			setDataIsOld(false);
+    // ! set user.thresholdValue at backend later!
+
+    useEffect(() => {
+        if (user.bloodSugarData.length === 0) {
+            console.log("No blood sugar data available.");
+            setDataIsOld(false);
+            return;
+        }
+
+        const latestDataTime = moment(
+            user.bloodSugarData[user.bloodSugarData.length - 1]?.WT
+        );
+        const thirtyMinutesAgo = moment().subtract(30, "minutes");
+
+        // console.log(`Latest Data Time: ${latestDataTime}`);
+        // console.log(`Thirty Minutes Ago: ${thirtyMinutesAgo}`);
+        // console.log(
+        //     `Is latest data time before thirty minutes ago? ${latestDataTime.isBefore(
+        //         thirtyMinutesAgo
+        //     )}`
+        // );
+
+        if (latestDataTime.isBefore(thirtyMinutesAgo)) {
+            setDataIsOld(true);
+        } else {
+            setDataIsOld(false);
+        }
+    }, [user.bloodSugarData]);
+
+    const handleRefreshData = async () => {
+        // set user's bloodsugardata to the new data
+
+        const { data, error } = await refreshUser(user.phoneNumber);
+		if (error) {
+			processError(error);
 			return;
 		}
-
-		const latestDataTime = moment(
-			user.bloodSugarData[user.bloodSugarData.length - 1]?.WT
-		);
-		const thirtyMinutesAgo = moment().subtract(30, "minutes");
-
-		if (latestDataTime.isBefore(thirtyMinutesAgo)) {
-			setDataIsOld(true);
-		} else {
-			setDataIsOld(false);
-		}
-	}, [user.bloodSugarData]);
-
-	const handleRefreshData = async () => {
-		await updateUser(user.phoneNumber);
-		setDataIsOld(false);
-	};
+    };
 
 	const handleDexcomSessionIdRefresh = async () => {
 		await updateDexcomSessionId(

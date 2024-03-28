@@ -1,7 +1,7 @@
-// apiClient.js
 import axios from "axios";
-
 import { errorTypes } from "./errorTypes";
+
+const API_URL = import.meta.env.VITE_API_URL;
 
 class ApiClient {
     constructor(remoteHostUrl) {
@@ -28,7 +28,7 @@ class ApiClient {
             return { data: res.data, error: null };
         } catch (error) {
             console.error({ errorResponse: error.response });
-           
+
             const serverError = error?.response?.data?.error;
 
             const errorMessage =
@@ -90,9 +90,9 @@ class ApiClient {
         // No need to make an API request since logout is handled by removing the token
     }
 
-    async updateUser(phoneNumber) {
+    async refreshUser(phoneNumber) {
         return await this.request({
-            endpoint: "users/update",
+            endpoint: "users/refresh-user",
             method: "POST",
             data: { phoneNumber },
         });
@@ -103,6 +103,14 @@ class ApiClient {
             endpoint: "users/update-dexcom",
             method: "POST",
             data: { phoneNumber, dexcomUser, dexcomPass },
+        });
+    }
+
+    async updateUser(phoneNumber) {
+        return await this.request({
+            endpoint: "users/update",
+            method: "POST",
+            data: { phoneNumber },
         });
     }
 
@@ -120,13 +128,7 @@ class ApiClient {
         });
     }
 
-    async addContact(
-        userId,
-        phoneNumber,
-        firstName,
-        lastName,
-        relationship
-    ) {
+    async addContact(userId, phoneNumber, firstName, lastName, relationship) {
         return await this.request({
             endpoint: `users/${userId}/contacts`,
             method: "POST",
@@ -159,10 +161,17 @@ class ApiClient {
             },
         });
     }
+
+    async toggleContactActiveStatus(userId, contactId) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts/${contactId}/toggle`,
+            method: "PUT",
+        });
+    }
 }
 
-const TEST_SERVER_URL = "https://daia-test-server.onrender.com";
-const LOCAL_HOST_URL = "localhost:3000";
+const API = new ApiClient(
+    API_URL ? API_URL : "http://localhost:3001"
+);
 
-const API = new ApiClient(TEST_SERVER_URL);
 export default API;
