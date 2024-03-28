@@ -9,6 +9,7 @@ import {
 import {
     getBloodSugarData,
     refreshDexcomSessionId,
+    refreshAllUserSessionIds,
 } from "../services/dexcomHelper.js";
 import { checkValues } from "../services/alerts.js";
 
@@ -47,7 +48,6 @@ const updateBloodSugarLevelsForAllUsers = async () => {
     }
 };
 
-// This will run the function every 5 minutes
 export function startBloodSugarUpdateTask() {
     // This will run the function every 5 minutes
     cron.schedule("*/5 * * * *", updateBloodSugarLevelsForAllUsers, {
@@ -56,24 +56,10 @@ export function startBloodSugarUpdateTask() {
     });
 }
 
-const updateDexcomSessionIdForAllUsers = async () => {
-    const users = await getAllUsers();
-    for (const user of users) {
-        try {
-            const newSessionId = await refreshDexcomSessionId(user);
-            await updateUserSessionId(user._id, newSessionId);
-        } catch (error) {
-            console.error(
-                `Error refreshing Dexcom session ID for user ${user._id}, ${user.dexcomUser}: ${error}`
-            );
-        }
-    }
-};
-
 export function startDexcomSessionUpdateTask() {
     // This will run the function every 24 hours
-    cron.schedule("0 0 * * *", updateDexcomSessionIdForAllUsers, {
+    cron.schedule("0 0 * * *", refreshAllUserSessionIds, {
         scheduled: true,
-        timezone: "America/New_York", // Or your respective timezone
+        timezone: "America/New_York", 
     });
 }
