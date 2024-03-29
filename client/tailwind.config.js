@@ -19,7 +19,7 @@ export default {
                 "full-purple": "#563890",
                 "hover-full-purple": "#352358",
 
-                "peach": "#F8AF91",
+                peach: "#F8AF91",
                 "input-background": "#EAF0F7",
                 "input-text": "#667085",
             },
@@ -38,6 +38,15 @@ export default {
                     '"Segoe UI Symbol"',
                     '"Noto Color Emoji"',
                 ],
+            },
+            keyframes: {
+                "caret-blink": {
+                    "0%,70%,100%": { opacity: "1" },
+                    "20%,50%": { opacity: "0" },
+                },
+            },
+            animation: {
+                "caret-blink": "caret-blink 1.25s ease-out infinite",
             },
         },
     },

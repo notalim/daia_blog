@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import useAuth from "../contexts/useAuth";
-import { useToast } from "@src/@/components/ui/use-toast";
 
 import PhoneNumberInput from "../components/PhoneNumberInput";
 
 import RegisterButton from "../components/RegisterButton";
 import GradientBackground from "../components/GradientBackground";
+import OTP from "../components/OTP";
 
 import validation from "../services/validation";
 import { errorTypes } from "../services/errorTypes";
@@ -27,10 +27,6 @@ function LoginPage() {
 
     const handleChangePhoneNumber = (event) => {
         setPhoneNumber(event.target.value);
-    };
-
-    const handleChangeVerificationCode = (event) => {
-        setVerificationCode(event.target.value);
     };
 
     const handleSubmitPhoneNumber = async (event) => {
@@ -114,7 +110,7 @@ function LoginPage() {
                     }
                     className="flex flex-col items-center space-y-4"
                 >
-                    <div className="mb-4 w-full max-w-md">
+                    <div className="w-full max-w-md">
                         <PhoneNumberInput
                             placeholder="Phone Number"
                             value={phoneNumber}
@@ -122,11 +118,9 @@ function LoginPage() {
                         />
                     </div>
                     {isVerificationCodeSent && (
-                        <Input
-                            type="tel"
-                            placeholder="Verification Code"
+                        <OTP
                             value={verificationCode}
-                            onChange={handleChangeVerificationCode}
+                            onChange={(value) => setVerificationCode(value)}
                         />
                     )}
                     <RegisterButton

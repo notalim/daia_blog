@@ -4,8 +4,8 @@ function RegisterButton({ children, onClick, disabled }) {
         <Button
             onClick={onClick}
             disabled={disabled}
-            // add gradient bg to 5A399A
             className="bg-full-purple text-white font-medium text-base py-2 rounded-md w-full hover:bg-hover-full-purple transition duration-300 ease-in-out"
+            variant="daia"
         >
             {children}
         </Button>

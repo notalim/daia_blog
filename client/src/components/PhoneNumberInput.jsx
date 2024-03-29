@@ -34,7 +34,7 @@ function PhoneNumberInput({ onChange, value, disabled }) {
             <span className="text-gray-500 mr-2">+1</span>
             <MaskedInput
                 mask={phoneMask}
-                className="flex h-10 w-full rounded-md border border-slate-200 px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-dim-purple-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-background-purple"
+                className="flex h-10 w-full rounded-md border border-mid-purple px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-dim-purple focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-lavender-purple"
                 placeholder="Phone Number"
                 guide={false}
                 value={value}
@@ -46,8 +46,7 @@ function PhoneNumberInput({ onChange, value, disabled }) {
                 <Button
                     type="button"
                     onClick={clearInput}
-                    className="clear-button text-gray-500 focus:outline-none transition duration-300 ease-in-out hover:text-red-500 absolute right-0 mx-2 p-1.5 h-6 w-6"
-                    variant="outline"
+                    className="clear-button text-gray-500 focus:outline-none transition duration-300 ease-in-out bg-full-purple hover:hover-full-purple absolute right-0 mx-2 p-1.5 h-6 w-6"
                     size="icon"
                 >
                     <Cross2Icon className="h-4 w-4" />
