@@ -17,29 +17,29 @@ const createUser = async (
     try {
         // ! Validate args here
 
-        const hashedDexcomPass = dexcomPass;
+        const encryptedDexcomPass = encrypt(dexcomPass);
 
         const newUser = {
-            phoneNumber,
-            name,
-            dexcomSessionId,
-            dexcomUser,
-            dexcomPass: hashedDexcomPass,
+          phoneNumber,
+          name,
+          dexcomSessionId,
+          dexcomUser,
+          dexcomPass: encryptedDexcomPass,
 
-            // Dexcom Blood Sugar Data
-            bloodSugarData: bloodSugarData,
-            // Our data
-            contacts: [],
-            lowAlarm: 70,
-            glucagonLocation: "",
-            glucagonType: "",
-            activeSession: false,
-            activeCrisis: false,
-            lastCrisis: null,
-            crisisTextEnabled: true,
-            crisisText: `${name} has low blood sugar and needs help! Please call ${name} at ${phoneNumber} to help!`,
-            emergencyInfo: null,
-            userRole: "user",
+          // Dexcom Blood Sugar Data
+          bloodSugarData: bloodSugarData,
+          // Our data
+          contacts: [],
+          lowAlarm: 70,
+          glucagonLocation: "",
+          glucagonType: "",
+          activeSession: false,
+          activeCrisis: false,
+          lastCrisis: null,
+          crisisTextEnabled: true,
+          crisisText: `${name} has low blood sugar and needs help! Please call ${name} at ${phoneNumber} to help!`,
+          emergencyInfo: null,
+          userRole: "user",
         };
 
         const userCollection = await users();
@@ -247,4 +247,5 @@ export {
     updateUser,
     updateCrisis,
     setLowAlarm,
+    decrypt
 };

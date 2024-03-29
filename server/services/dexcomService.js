@@ -1,6 +1,7 @@
 import axios from "axios";
 import { errorTypes } from "./errorTypes.js";
 import { getAllUsers, updateUserSessionId } from "../db/usersModule.js";
+import { decrypt } from "../db/usersModule.js";
 
 const dexcomApiConfig = {
     headers: {
@@ -53,9 +54,10 @@ export const getBloodSugarData = async (
 
 export async function refreshDexcomSessionId(user) {
     try {
+      let decryptedPass = decrypt(user.dexcomPass);
         const newSessionId = await getDexcomSessionId(
             user.dexcomUser,
-            user.dexcomPass
+            decryptedPass
         );
         await updateUserSessionId(user._id, newSessionId);
     } catch (error) {

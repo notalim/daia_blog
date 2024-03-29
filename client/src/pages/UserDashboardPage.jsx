@@ -1,21 +1,24 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/useAuth";
-
 import BloodSugarScatterPlot from "../components/BloodSugarScatterPlot";
 import ContactList from "../components/ContactList/ContactList";
+
 
 import moment from "moment";
 import useProcessMessages from "../contexts/useProcessMessages";
 
+
 const UserDashboardPage = () => {
     const { user, refreshUser, updateDexcomSessionId, updateThresholdValue } = useAuth();
     const [dataIsOld, setDataIsOld] = useState(false);
+
     const [thresholdValue, setThresholdValue] = useState(
         user.lowAlarm || 180
     );
 
     const { processError, processSuccess } = useProcessMessages();
 	
+
     useEffect(() => {
         if (!user.bloodSugarData || user.bloodSugarData.length === 0) {
             console.log("No blood sugar data available.");
@@ -23,10 +26,10 @@ const UserDashboardPage = () => {
             return;
         }
 
-        const latestDataTime = moment(
-            user.bloodSugarData[user.bloodSugarData.length - 1]?.WT
-        );
+        const latestDataTime = moment(user.bloodSugarData[user.bloodSugarData.length - 1]?.WT);
         const thirtyMinutesAgo = moment().subtract(30, "minutes");
+
+
         if (latestDataTime.isBefore(thirtyMinutesAgo)) {
             setDataIsOld(true);
         } else {
