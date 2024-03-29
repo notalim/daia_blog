@@ -2,15 +2,25 @@ import React, { useState, useEffect } from "react";
 import { useAuth } from "../contexts/useAuth";
 import BloodSugarScatterPlot from "../components/BloodSugarScatterPlot";
 import ContactList from "../components/ContactList/ContactList";
+
+
 import moment from "moment";
+import useProcessMessages from "../contexts/useProcessMessages";
+
 
 const UserDashboardPage = () => {
-    const { user, refreshUser, updateDexcomSessionId } = useAuth();
+    const { user, refreshUser, updateDexcomSessionId, updateThresholdValue } = useAuth();
     const [dataIsOld, setDataIsOld] = useState(false);
-    const [thresholdValue, setThresholdValue] = useState(180);
+
+    const [thresholdValue, setThresholdValue] = useState(
+        user.lowAlarm || 180
+    );
+
+    const { processError, processSuccess } = useProcessMessages();
+	
 
     useEffect(() => {
-        if (user.bloodSugarData.length === 0) {
+        if (!user.bloodSugarData || user.bloodSugarData.length === 0) {
             console.log("No blood sugar data available.");
             setDataIsOld(false);
             return;
@@ -18,6 +28,7 @@ const UserDashboardPage = () => {
 
         const latestDataTime = moment(user.bloodSugarData[user.bloodSugarData.length - 1]?.WT);
         const thirtyMinutesAgo = moment().subtract(30, "minutes");
+
 
         if (latestDataTime.isBefore(thirtyMinutesAgo)) {
             setDataIsOld(true);
@@ -27,27 +38,52 @@ const UserDashboardPage = () => {
     }, [user.bloodSugarData]);
 
     const handleRefreshData = async () => {
-        // Refresh logic here
+        const { data, error } = await refreshUser(user.phoneNumber);
+        if (error) {
+            processError(error);
+            return;
+        }
+    };
+
+    const handleDexcomSessionIdRefresh = async () => {
+        await updateDexcomSessionId(
+            user.phoneNumber,
+            user.dexcomUser,
+            user.dexcomPass
+        );
+    };
+
+    const handleThresholdChange = (event) => {
+        setThresholdValue(event.target.value);
+    };
+
+    const handleSaveThreshold = async () => {
+        const result = await updateThresholdValue(
+            user.phoneNumber,
+            parseInt(thresholdValue)
+        );
+        if (result) {
+            processSuccess("Threshold updated successfully.");
+        } else {
+            processError("Error updating threshold.");
+        }
     };
 
     const bloodSugarData = user.bloodSugarData;
-
     return (
-        <div className="container mx-auto px-4 lg:px-8 my-8 max-w-7xl">
-            <h1 className="text-2xl font-bold mb-8">Hello, {user.name}!</h1>
-            <div className="flex flex-col lg:flex-row gap-8">
-                <div className="w-full lg:w-3/5">
-                    <BloodSugarScatterPlot
-                        bloodSugarData={bloodSugarData}
-                        thresholdValue={thresholdValue}
-                        onRefresh={handleRefreshData}
-                        dataIsOld={dataIsOld}
-                    />
-                </div>
-                <div className="w-full lg:w-2/5 bg-lavender-purple p-4 border rounded-lg">
-                    <ContactList />
-                </div>
-            </div>
+        <div className="container mx-auto m-8">
+            <h1 className="text-2xl font-bold">Hello, {user.name}!</h1>
+
+            <BloodSugarScatterPlot
+                bloodSugarData={bloodSugarData}
+                thresholdValue={thresholdValue}
+                onRefresh={handleRefreshData}
+                dataIsOld={dataIsOld}
+                onDexcomSessionIdRefresh={handleDexcomSessionIdRefresh}
+                onThresholdChange={handleThresholdChange}
+                onSaveThreshold={handleSaveThreshold}
+            />
+            <ContactList />
         </div>
     );
 };

@@ -16,7 +16,7 @@ import { Plus } from "lucide-react";
 
 import validation from "../../services/validation";
 
-import { AuthContext } from "../../contexts/AuthContext";
+import { useAuth } from "../../contexts/useAuth";
 import useProcessMessages from "../../contexts/useProcessMessages";
 
 const AddContactButton = () => {
@@ -30,7 +30,7 @@ const AddContactButton = () => {
     });
 
     const [isVerifying, setIsVerifying] = useState(false);
-    const { user, addContact, verifyContact } = useContext(AuthContext);
+    const { user, addContact, verifyContact } = useAuth();
     const { processError } = useProcessMessages();
 
     const handleVerifyContact = async (e) => {
