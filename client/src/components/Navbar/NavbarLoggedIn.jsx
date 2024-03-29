@@ -85,14 +85,26 @@ const NavbarLoggedIn = () => {
 						}}
 					>
 						<div className="p-4 bg-white rounded shadow-lg">
-							{LinkItems.map((link) => (
+							{/* {LinkItems.map((link) => (
 								<NavItem
 									key={link.name}
 									name={link.name}
 									pathname={link.pathname}
 								/>
-							))}
+							))} */}
 							<div className="flex flex-col mt-4">
+							<Link
+									to="/about"
+									className="text-gray-800 font-medium text-base mb-2 hover:text-purple-600"
+								>
+									About Us
+								</Link>
+								<Link
+									to="/faq"
+									className="text-gray-800 font-medium text-base mb-2 hover:text-purple-600"
+								>
+									FAQ
+								</Link>
 								<Link
 									to="/dashboard"
 									className="text-gray-800 font-medium text-base mb-2 hover:text-purple-600"
@@ -107,7 +119,7 @@ const NavbarLoggedIn = () => {
 								</Link>
 								<button
 									onClick={handleLogout}
-									className="text-gray-800 font-medium text-base hover:text-purple-600 cursor-pointer"
+									className="text-gray-800 font-medium text-base hover:text-purple-600 cursor-pointer mr-3"
 								>
 									Log Out
 								</button>
@@ -117,14 +129,26 @@ const NavbarLoggedIn = () => {
 				</div>
 			) : (
 				<div className="flex">
-					{LinkItems.map((link) => (
+					{/* {LinkItems.map((link) => (
 						<NavItem
 							key={link.name}
 							name={link.name}
 							pathname={link.pathname}
 						/>
-					))}
+					))} */}
 					<div className="flex items-center">
+					<Link
+							to="/about"
+							className="text-black font-medium text-base mr-4"
+						>
+							About
+						</Link>
+						<Link
+							to="/faq"
+							className="text-black font-medium text-base mr-4"
+						>
+							FAQ
+						</Link>
 						<Link
 							to="/dashboard"
 							className="text-black font-medium text-base mr-4"

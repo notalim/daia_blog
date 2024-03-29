@@ -33,67 +33,6 @@ function Hero() {
 					</animated.div>
         </div>
       </WavyBackground>
-			{/* </div> */}
-			<div className="container mx-auto px-6 py-8">
-				<div className="md:flex justify-between items-start">
-					{/* Left side content */}
-					<div className="md:w-1/2 mb-6 md:mb-0">
-						<div className="text-center md:text-left">
-							{" "}
-							{/* Center text on mobile */}
-							<h2 className="text-gray-600 text-lg uppercase mb-6">
-								Features We Provide
-							</h2>
-							<div className="mb-6">
-								<div className="mb-6 md:mb-0">
-									<h3 className="text-2xl font-bold text-purple-600">
-										Diabetes made easier
-									</h3>
-									<p className="text-gray-600 mt-2">
-										We calculate your BMI index from data
-										like age, height, weight.
-									</p>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					{/* Right side badges */}
-					<div className="md:w-1/2 flex flex-col items-center md:flex-row md:justify-end">
-						<div className="text-center md:text-right">
-							{" "}
-							{/* Center text on mobile */}
-							{/* Each badge section */}
-							<div className="flex flex-col items-center text-center mb-4 md:mb-0 md:ml-4">
-								<h3 className="text-2xl font-bold text-purple-600">
-									Sugar Tracking
-								</h3>
-								<p className="text-gray-600 mt-2">
-									All of your necessary metrics in one app
-								</p>
-							</div>
-							<div className="flex flex-col items-center text-center mb-4 md:mb-0 md:ml-4">
-								<h3 className="text-2xl font-bold text-purple-600">
-									Helpful tips
-								</h3>
-								<p className="text-gray-600 mt-2">
-									We provide food recommendation according to
-									your calorie requirements.
-								</p>
-							</div>
-							<div className="flex flex-col items-center text-center md:ml-4">
-								<h3 className="text-2xl font-bold text-purple-600">
-									Interactive Chatbot
-								</h3>
-								<p className="text-gray-600 mt-2">
-									Solve your queries by interacting with our
-									bot.
-								</p>
-							</div>
-						</div>
-					</div>
-				</div>
-			</div>
 		</div>
 	);
 }

@@ -19,24 +19,27 @@ const Footer = () => {
 							Empowering Healthier Lives, One Glucose Level at a
 							Time
 						</span>
+						<span>
+							
+						</span>
 					</Link>
 					<div className="flex space-x-3 mb-4">
 						<a
-							href="https://www.instagram.com/your_instagram_account"
+							href="https://www.instagram.com/daia.diabetes"
 							target="_blank"
 							rel="noopener noreferrer"
 							className="text-light-purple text-dim-purple hover:text-purple-300"
 						>
 							<InstagramIcon fontSize="large" />
 						</a>
-						<a
+						{/* <a
 							href="https://www.instagram.com/your_instagram_account"
 							target="_blank"
 							rel="noopener noreferrer"
 							className="text-light-purple text-dim-purple hover:text-purple-300"
 						>
 							<FacebookIcon fontSize="large" />
-						</a>
+						</a> */}
 					</div>
 					<p className="text-sm">Copyright © 2024</p>
 				</div>
@@ -65,7 +68,7 @@ const Footer = () => {
 					<div className="text-sm">
 						<div className="mb-2">
 							<a
-								href="mailto:contact@company.com"
+								href="mailto:daia@gmail.com"
 								className="text-gray-600 hover:text-black"
 							>
 								daia@gmail.com
