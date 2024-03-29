@@ -34,7 +34,6 @@ const UserDashboardPage = () => {
         }
     }, [user.bloodSugarData]);
 
-
     const handleRefreshData = async () => {
         const { data, error } = await refreshUser(user.phoneNumber);
         if (error) {
@@ -60,7 +59,7 @@ const UserDashboardPage = () => {
             user.phoneNumber,
             parseInt(thresholdValue)
         );
-        if (result.success) {
+        if (result) {
             processSuccess("Threshold updated successfully.");
         } else {
             processError("Error updating threshold.");

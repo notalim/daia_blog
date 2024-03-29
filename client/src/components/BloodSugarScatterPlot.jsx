@@ -64,40 +64,39 @@ const BloodSugarScatterPlot = ({
             {/* refresh button with an icon */}
 
             <canvas ref={chartRef} className="my-4" />
-
-            <button
-                onClick={onRefresh}
-                className="bg-mid-purple hover:bg-full-purple text-white font-bold py-2 px-2 rounded mb-4 mx-2 transition duration-300 ease-in-out"
-            >
-                {/* need an icon! */}
-                Refresh Data
-            </button>
-
-            <div className="flex justify-center items-center gap-4 my-4">
-                <label
-                    htmlFor="thresholdInput"
-                    className="text-sm font-medium text-gray-900"
-                >
-                    Set your threshold:
-                </label>
-                <input
-                    id="thresholdInput"
-                    type="number"
-                    min="0"
-                    max="199"
-                    value={thresholdValue}
-                    onChange={onThresholdChange}
-                    className="bg-gray-50 border border-gray-300 text-gray-900 rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-24 p-2 text-center"
-                />
-                <button
-                    onClick={onSaveThreshold}
-                    className="bg-mid-purple hover:bg-full-purple text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
-                >
-                    Save Threshold
-                </button>
-                <div className="text-xs text-gray-500 mt-2">
+            <div className="flex flex-col items-center justify-center my-8">
+                <div className="flex items-center space-x-4 mb-4">
+                    <label
+                        htmlFor="thresholdInput"
+                        className="text-lg font-semibold text-gray-900"
+                    >
+                        Set your threshold:
+                    </label>
+                    <input
+                        id="thresholdInput"
+                        type="number"
+                        min="0"
+                        max="199"
+                        value={thresholdValue}
+                        onChange={onThresholdChange}
+                        className="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-24 p-2 text-center"
+                    />
+                    <button
+                        onClick={onSaveThreshold}
+                        className="bg-mid-purple hover:bg-full-purple text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+                    >
+                        Save Threshold
+                    </button>
+                </div>
+                <div className="text-xs text-gray-500">
                     Threshold can be set to any value between 0 and 200.
                 </div>
+                <button
+                    onClick={onRefresh}
+                    className="mt-4 bg-mid-purple hover:bg-full-purple text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+                >
+                    Refresh Data
+                </button>
             </div>
 
             <div className="text-sm p-4 border rounded-lg bg-lavender-purple">
