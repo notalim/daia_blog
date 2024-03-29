@@ -7,8 +7,7 @@ const LeftSidebar = ({ selectedTab, handleTabClick }) => {
 
 	// Define the list of sidebar links
 	const sidebarLinks = [
-		{ name: "Account", path: "/account" },
-		{ name: "Health", path: "/health" },
+		{ name: "Health", path: "/Health" },
 		{ name: "Notifications", path: "/notifications" },
 	];
 

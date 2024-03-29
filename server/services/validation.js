@@ -10,8 +10,26 @@ const passwordValidation = (password) => {
 };
 
 const nameValidation = (name) => {
-    const nameRegex = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
+    const nameRegex = /^([a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*){1,50}$/;
     return nameRegex.test(name);
+};
+
+const glucagonLocationValidation = (location) => {
+  const glucagonLocationRegex = /^[a-zA-Z0-9 ,\-]+$/;
+  return glucagonLocationRegex.test(location);
+};
+
+const glucagonTypeValidation = (type) => {
+  const glucagonTypeRegex = /^[a-zA-Z0-9]+([-. ][a-zA-Z0-9 ])?[a-zA-Z0-9]*$/;
+  return glucagonTypeRegex.test(type);
+};
+
+const crisisTextValidation = (text) => {
+  return text.length <= 96;
+};
+
+const emergencyInfoValidation = (info) => {
+  return info.length <= 96;
 };
 
 const phoneValidation = (phoneNumber) => {
@@ -47,4 +65,8 @@ export default {
     stringValidation,
     codeValidation,
     confirmPasswordValidation,
+    glucagonLocationValidation,
+    glucagonTypeValidation,
+    crisisTextValidation,
+    emergencyInfoValidation,
 };
