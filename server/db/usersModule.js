@@ -54,18 +54,22 @@ const createUser = async (
 };
 
 const updateUser = async (id, updatedUser) => {
-  // ! Validate args here
-  console.log(updatedUser);
-  console.log(id);
-  try {
-    const userCollection = await users();
-    const updateInfo = await userCollection.updateOne({ _id: id }, { $set: updatedUser });
-    if (updateInfo.modifiedCount === 0) throw new Error("Could not update user!");
+    // ! Validate args here
+    console.log(updatedUser);
+    console.log(id);
+    try {
+        const userCollection = await users();
+        const updateInfo = await userCollection.updateOne(
+            { _id: id },
+            { $set: updatedUser }
+        );
+        if (updateInfo.modifiedCount === 0)
+            throw new Error("Could not update user!");
 
-    return true;
-  } catch (error) {
-    throw new Error("Error updating user: " + error.message);
-  }
+        return true;
+    } catch (error) {
+        throw new Error("Error updating user: " + error.message);
+    }
 };
 
 const getUserByPhoneNumber = async (phoneNumber) => {
@@ -75,20 +79,26 @@ const getUserByPhoneNumber = async (phoneNumber) => {
 
         return foundUser;
     } catch (error) {
-        throw new Error("Error trying to get an existing user: " + error.message);
+        throw new Error(
+            "Error trying to get an existing user: " + error.message
+        );
     }
 };
 
 const getUserById = async (userId) => {
     try {
         const userCollection = await users();
-        let foundUser = await userCollection.findOne({ _id: new ObjectId(userId) });
+        let foundUser = await userCollection.findOne({
+            _id: new ObjectId(userId),
+        });
 
         return foundUser;
     } catch (error) {
-        throw new Error("Error trying to get an existing user: " + error.message);
+        throw new Error(
+            "Error trying to get an existing user: " + error.message
+        );
     }
-}
+};
 
 const checkPassword = async (phoneNumber, password) => {
     try {
@@ -108,8 +118,6 @@ const checkPassword = async (phoneNumber, password) => {
         throw new Error("Error checking password: " + error.message);
     }
 };
-
-
 
 const getAllUsers = async () => {
     try {
@@ -147,7 +155,7 @@ const updateBloodSugarData = async (userId, addedBloodSugarData) => {
             addedBloodSugarData = [addedBloodSugarData];
         }
 
-        const userCollection = await users(); 
+        const userCollection = await users();
         const updateInfo = await userCollection.updateOne(
             { _id: userId },
             {
@@ -172,17 +180,15 @@ const updateBloodSugarData = async (userId, addedBloodSugarData) => {
 const deleteUser = async (phoneNumber) => {
     try {
         const userCollection = await users();
-        const deleteInfo = await userCollection.deleteOne
-            ({ phoneNumber });
+        const deleteInfo = await userCollection.deleteOne({ phoneNumber });
         if (deleteInfo.deletedCount === 0)
             throw new Error("Could not delete user!");
 
         return true;
-    }
-    catch (error) {
+    } catch (error) {
         throw new Error("Error deleting user: " + error.message);
     }
-}
+};
 
 const updateCrisis = async (userId) => {
     try {
@@ -203,7 +209,7 @@ const updateCrisis = async (userId) => {
     } catch (error) {
         throw new Error("Error updating crisis status: " + error.message);
     }
-}
+};
 
 const setLowAlarm = async (userId, lowAlarm) => {
     // * Threshold in the frontend
@@ -221,11 +227,13 @@ const setLowAlarm = async (userId, lowAlarm) => {
         if (updateInfo.modifiedCount === 0)
             throw new Error("Could not update low alarm!");
 
-        return true;
+        const updatedUser = await userCollection.findOne({ _id: userId });
+
+        return updatedUser;
     } catch (error) {
         throw new Error("Error updating low alarm: " + error.message);
     }
-}
+};
 
 export {
     createUser,
@@ -238,5 +246,5 @@ export {
     deleteUser,
     updateUser,
     updateCrisis,
-    setLowAlarm
+    setLowAlarm,
 };

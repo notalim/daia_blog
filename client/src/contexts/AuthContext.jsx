@@ -317,7 +317,9 @@ export const AuthProvider = ({ children }) => {
                 return { data: null, error: response.error };
             }
             processSuccess("Threshold updated successfully.");
-            return { success: true };
+            setUser(response.data.user);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+            return { data: response.data, error: null };
         } catch (error) {
             processError(error.message);
             return { success: false };

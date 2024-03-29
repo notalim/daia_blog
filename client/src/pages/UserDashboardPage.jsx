@@ -11,13 +11,13 @@ const UserDashboardPage = () => {
     const { user, refreshUser, updateDexcomSessionId, updateThresholdValue } = useAuth();
     const [dataIsOld, setDataIsOld] = useState(false);
     const [thresholdValue, setThresholdValue] = useState(
-        user.thresholdValue || 180
+        user.lowAlarm || 180
     );
 
     const { processError, processSuccess } = useProcessMessages();
 	
     useEffect(() => {
-        if (user.bloodSugarData.length === 0) {
+        if (!user.bloodSugarData || user.bloodSugarData.length === 0) {
             console.log("No blood sugar data available.");
             setDataIsOld(false);
             return;
@@ -33,6 +33,7 @@ const UserDashboardPage = () => {
             setDataIsOld(false);
         }
     }, [user.bloodSugarData]);
+
 
     const handleRefreshData = async () => {
         const { data, error } = await refreshUser(user.phoneNumber);
@@ -50,10 +51,6 @@ const UserDashboardPage = () => {
         );
     };
 
-    const handleDeleteUser = () => {
-        deleteUser(user.phoneNumber);
-    };
-
     const handleThresholdChange = (event) => {
         setThresholdValue(event.target.value);
     };
@@ -61,7 +58,7 @@ const UserDashboardPage = () => {
     const handleSaveThreshold = async () => {
         const result = await updateThresholdValue(
             user.phoneNumber,
-            thresholdValue
+            parseInt(thresholdValue)
         );
         if (result.success) {
             processSuccess("Threshold updated successfully.");
