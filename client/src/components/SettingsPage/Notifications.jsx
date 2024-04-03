@@ -15,7 +15,6 @@ const AccountPage = ({ user }) => {
     glucagonLocation: user.glucagonLocation,
     glucagonType: user.glucagonType,
     crisisText: user.crisisText,
-    emergencyInfo: user.emergencyInfo,
   };
 
   // State to store user data
@@ -30,7 +29,7 @@ const AccountPage = ({ user }) => {
   // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { error } = await updateUser(userData.phoneNumber, userData.name, userData.glucagonLocation, userData.glucagonType, userData.crisisText, userData.emergencyInfo);
+    const { error } = await updateUser(userData.phoneNumber, userData.name, userData.glucagonLocation, userData.glucagonType, userData.crisisText);
     if (!error) {
       console.log("User data updated successfully");
     } else {
@@ -83,13 +82,19 @@ const AccountPage = ({ user }) => {
         </div> */}
         <div className="flex items-center">
           <label htmlFor="crisisText" className="mr-2">
-            Crisis Text
+            Crisis Message
           </label>
         </div>
         <div>
-          <textarea id="crisisText" name="crisisText" value={userData.crisisText} onChange={handleInputChange} className="border border-gray-300 p-2 w-full h-24 resize-none"></textarea>
+          <textarea
+            id="crisisText"
+            name="crisisText"
+            value={userData.crisisText}
+            onChange={handleInputChange}
+            className="h-48 w-full rounded-md border border-slate-300 px-3 py-2 text-sm placeholder:text-dim-purple-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-background-purple resize-none"
+          ></textarea>
         </div>
-        <div className="flex items-center">
+        {/* <div className="flex items-center">
           <label htmlFor="emergencyInfo" className="mr-2">
             Emergency Info
           </label>
@@ -103,7 +108,7 @@ const AccountPage = ({ user }) => {
             onChange={handleInputChange}
             className="border border-gray-300 p-2 w-full h-24 resize-none"
           ></textarea>
-        </div>
+        </div> */}
         <div className="col-span-2 flex justify-center">
           <Button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
             Save Changes

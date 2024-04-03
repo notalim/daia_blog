@@ -52,6 +52,8 @@ export const errorTypes = {
   REQUEST_TIMEOUT: "Request timed out",
   INVALID_GLUCAGON_LOCATION: "Invalid glucagon location",
   INVALID_GLUCAGON_TYPE: "Invalid glucagon type",
+  INVALID_ALLERGIES: "Invalid allergies",
+  INVALID_MEDICATIONS: "Invalid medications",
+  INVALID_DIAGNOSES: "Invalid diagnoses",
   INVALID_CRISIS_TEXT: "Invalid crisis text",
-  INVALID_EMERGENCY_INFO: "Invalid emergency info"
 };

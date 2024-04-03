@@ -14,8 +14,10 @@ const AccountPage = ({ user }) => {
     phoneNumber: user.phoneNumber,
     glucagonLocation: user.glucagonLocation,
     glucagonType: user.glucagonType,
+    allergies: user.allergies,
+    medications: user.medications,
+    diagnoses: user.diagnoses,
     crisisText: user.crisisText,
-    emergencyInfo: user.emergencyInfo,
   };
 
   // State to store user data
@@ -30,7 +32,7 @@ const AccountPage = ({ user }) => {
   // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { error } = await updateUser(userData.phoneNumber, userData.name, userData.glucagonLocation, userData.glucagonType, userData.crisisText, userData.emergencyInfo);
+    const { error } = await updateUser(userData.phoneNumber, userData.name, userData.glucagonLocation, userData.glucagonType, userData.allergies, userData.medications, userData.diagnoses, userData.crisisText);
     if (!error) {
       console.log("User data updated successfully");
     } else {
@@ -41,14 +43,14 @@ const AccountPage = ({ user }) => {
   return (
     <div className="container mx-auto">
       <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-8">
-        <div className="flex items-center">
+        {/* <div className="flex items-center">
           <label htmlFor="name" className="mr-2">
             Name
           </label>
         </div>
         <div>
           <Input type="text" id="name" name="name" value={userData.name} onChange={handleInputChange} className="border border-gray-300 p-2 w-full" />
-        </div>
+        </div> */}
         {/* <div className="flex items-center">
           <label htmlFor="dexcomUser" className="mr-2">
             Dexcom Username
@@ -79,8 +81,48 @@ const AccountPage = ({ user }) => {
           </label>
         </div>
         <div>
-          <Input type="text" id="glucagonType" name="glucagonType" value={userData.glucagonType} onChange={handleInputChange} className="border border-gray-300 p-2 w-full" />
+          <select
+            id="glucagonType"
+            name="glucagonType"
+            value={userData.glucagonType}
+            onChange={handleInputChange}
+            className="border border-gray-300 p-2 w-full rounded-md text-sm bg-background-purple focus:ring focus:ring-opacity-50"
+          >
+            <option value="N/A">Select an option</option>
+            <option value="Glucagon Kit">Glucagon Kit</option>
+            <option value="Baqsimi">Baqsimi</option>
+            <option value="Gvoke HypoPen">Gvoke HypoPen</option>
+            <option value="Gvoke Prefilled Syringe (PFS)">Gvoke Prefilled Syringe (PFS)</option>
+          </select>
         </div>
+
+        <div className="flex items-center">
+          <label htmlFor="allergies" className="mr-2">
+            Allergies
+          </label>
+        </div>
+        <div>
+          <Input type="text" id="allergies" name="allergies" value={userData.allergies} onChange={handleInputChange} className="border border-gray-300 p-2 w-full" />
+        </div>
+
+        <div className="flex items-center">
+          <label htmlFor="medications" className="mr-2">
+            Medications
+          </label>
+        </div>
+        <div>
+          <Input type="text" id="medications" name="medications" value={userData.medications} onChange={handleInputChange} className="border border-gray-300 p-2 w-full" />
+        </div>
+
+        <div className="flex items-center">
+          <label htmlFor="diagnoses" className="mr-2">
+            Diagnoses
+          </label>
+        </div>
+        <div>
+          <Input type="text" id="diagnoses" name="diagnoses" value={userData.diagnoses} onChange={handleInputChange} className="border border-gray-300 p-2 w-full" />
+        </div>
+
         {/* <div className="flex items-center">
           <label htmlFor="crisisText" className="mr-2">
             Crisis Text

@@ -28,10 +28,6 @@ const crisisTextValidation = (text) => {
   return text.length <= 96;
 };
 
-const emergencyInfoValidation = (info) => {
-  return info.length <= 96;
-};
-
 const phoneValidation = (phoneNumber) => {
     const phoneRegex = /^\+1\d{10}$/;
     return phoneRegex.test(phoneNumber);
@@ -68,5 +64,4 @@ export default {
     glucagonLocationValidation,
     glucagonTypeValidation,
     crisisTextValidation,
-    emergencyInfoValidation,
 };

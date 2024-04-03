@@ -139,15 +139,17 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const updateUser = async (phoneNumber, name, glucagonLocation, glucagonType, crisisText, emergencyInfo) => {
+  const updateUser = async (phoneNumber, name, glucagonLocation, glucagonType, allergies, medications, diagnoses, crisisText) => {
     try {
       const updatedData = {
         phoneNumber,
         ...(name && { name }),
         ...(glucagonLocation && { glucagonLocation }),
         ...(glucagonType && { glucagonType }),
+        ...(allergies && { allergies }),
+        ...(medications && { medications }),
+        ...(diagnoses && { diagnoses }),
         ...(crisisText && { crisisText }),
-        ...(emergencyInfo && { emergencyInfo }),
       };
 
       const { data, error } = await API.updateUser(updatedData);

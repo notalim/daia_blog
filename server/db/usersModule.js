@@ -58,12 +58,11 @@ const createUser = async (
           lowAlarm: 70,
           glucagonLocation: "",
           glucagonType: "",
-          activeSession: false,
-          activeCrisis: false,
+          allergies: "",
+          medications: "",
+          diagnoses: "",
           lastCrisis: null,
-          crisisTextEnabled: true,
           crisisText: `${name} has low blood sugar and needs help! Please call ${name} at ${phoneNumber} to help!`,
-          emergencyInfo: null,
           userRole: "user",
         };
 

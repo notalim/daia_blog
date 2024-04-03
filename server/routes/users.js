@@ -218,7 +218,7 @@ router.post("/refresh-user", async (req, res) => {
 });
 
 router.patch("/update", async (req, res) => {
-  const { phoneNumber, name, glucagonLocation, glucagonType, crisisText, emergencyInfo } = req.body;
+  const { phoneNumber, name, glucagonLocation, glucagonType, allergies, medications, diagnoses, crisisText } = req.body;
   try {
     const user = await getUserByPhoneNumber(phoneNumber);
     if (!user) {
@@ -240,20 +240,30 @@ router.patch("/update", async (req, res) => {
       return res.status(400).json({ message: "Invalid glucagon type", error: errorTypes.INVALID_GLUCAGON_TYPE });
     }
 
-    if (!validation.crisisTextValidation(crisisText)) {
-      return res.status(400).json({ message: "Invalid crisis text", error: errorTypes.INVALID_CRISIS_TEXT });
+    if (!validation.allergiesValidation(allergies)) {
+      return res.status(400).json({ message: "Invalid allergies", error: errorTypes.INVALID_ALLERGIES });
     }
 
-    if (!validation.emergencyInfoValidation(emergencyInfo)) {
-      return res.status(400).json({ message: "Invalid emergency info", error: errorTypes.INVALID_EMERGENCY_INFO });
+    if (!validation.medicationsValidation(medications)) {
+      return res.status(400).json({ message: "Invalid medications", error: errorTypes.INVALID_MEDICATIONS });
+    }
+
+    if (!validation.diagnosesValidation(diagnoses)) {
+      return res.status(400).json({ message: "Invalid diagnoses", error: errorTypes.INVALID_DIAGNOSES });
+    }
+
+    if (!validation.crisisTextValidation(crisisText)) {
+      return res.status(400).json({ message: "Invalid crisis text", error: errorTypes.INVALID_CRISIS_TEXT });
     }
 
     const updateData = {};
     if (name) updateData.name = name;
     if (glucagonLocation) updateData.glucagonLocation = glucagonLocation;
     if (glucagonType) updateData.glucagonType = glucagonType;
+    if (allergies) updateData.allergies = allergies;
+    if (medications) updateData.medications = medications;
+    if (diagnoses) updateData.diagnoses = diagnoses;
     if (crisisText) updateData.crisisText = crisisText;
-    if (emergencyInfo) updateData.emergencyInfo = emergencyInfo;
 
     const updated = await updateUser(user._id, updateData);
     if (!updated) {

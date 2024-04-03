@@ -15,21 +15,32 @@ const nameValidation = (name) => {
 };
 
 const glucagonLocationValidation = (location) => {
-  const glucagonLocationRegex = /^[a-zA-Z0-9 ,\-]+$/;
-  return glucagonLocationRegex.test(location);
+  if (location === undefined) return true;
+  return location.length <= 25;
 };
 
 const glucagonTypeValidation = (type) => {
-  const glucagonTypeRegex = /^[a-zA-Z0-9]+([-. ][a-zA-Z0-9 ])?[a-zA-Z0-9]*$/;
-  return glucagonTypeRegex.test(type);
+  if (type === undefined) return true;
+  return type.length <= 30;
+};
+
+const allergiesValidation = (allergies) => {
+  if (allergies === undefined) return true;
+  return allergies.length <= 50;
+}
+
+const medicationsValidation = (medications) => {
+  if (medications === undefined) return true;
+  return medications.length <= 50;
+};
+
+const diagnosesValidation = (diagnoses) => {
+  if (diagnoses === undefined) return true;
+  return diagnoses.length <= 50;
 };
 
 const crisisTextValidation = (text) => {
-  return text.length <= 96;
-};
-
-const emergencyInfoValidation = (info) => {
-  return info.length <= 96;
+  return text.length <= 100;
 };
 
 const phoneValidation = (phoneNumber) => {
@@ -68,5 +79,7 @@ export default {
     glucagonLocationValidation,
     glucagonTypeValidation,
     crisisTextValidation,
-    emergencyInfoValidation,
+    allergiesValidation,
+    medicationsValidation,
+    diagnosesValidation,
 };
