@@ -12,7 +12,9 @@ import RegisterButton from "../components/RegisterButton";
 import { Button } from "@src/@/components/ui/button";
 import { Input } from "@src/@/components/ui/input";
 import { Label } from "@src/@/components/ui/label";
+import { Checkbox } from "@src/@/components/ui/checkbox";
 import OTP from "../components/OTP";
+import { Check } from "lucide-react";
 
 const initialFormFields = ["Phone Number"];
 const additionalFormFields = [
@@ -62,8 +64,7 @@ function RegisterPage() {
     const [currentFormFields, setCurrentFormFields] =
         useState(initialFormFields);
     const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
-    const [verificationCode, setVerificationCode] = useState("");
-
+    const [termsAccepted, setTermsAccepted] = useState(false);
     const { registerUser, completeRegistration } = useAuth();
     const { processError } = useProcessMessages();
     const navigate = useNavigate();
@@ -122,6 +123,13 @@ function RegisterPage() {
             return;
         }
 
+        if (!termsAccepted) {
+            processError(
+                "You must accept the terms and conditions to register."
+            );
+            return;
+        }
+
         if (isVerificationCodeSent) {
             try {
                 let concatPhoneNumber =
@@ -173,29 +181,43 @@ function RegisterPage() {
                             : handlePhoneNumberSubmit
                     }
                 >
-                    <div className="mb-2 w-full max-w-md">
-                        <PhoneNumberInput
-                            placeholder="Phone Number"
-                            onChange={handleChange("Phone Number")}
-                            value={formData["Phone Number"]}
-                            disabled={isVerificationCodeSent}
-                        />
-                    </div>
+                    {!isVerificationCodeSent && (
+                        <div className="mb-2 w-full max-w-md">
+                            <PhoneNumberInput
+                                placeholder="Phone Number"
+                                onChange={handleChange("Phone Number")}
+                                value={formData["Phone Number"]}
+                                disabled={isVerificationCodeSent}
+                            />
+                        </div>
+                    )}
                     {currentFormFields.map((fieldName, index) => {
                         if (fieldName === "Verification Code") {
                             return (
                                 isVerificationCodeSent && (
-                                    <OTP
-                                        key={fieldName}
-                                        value={formData["Verification Code"]}
-                                        onChange={handleChangeVerificationCode}
-                                    />
+                                    <div className="">
+                                        <div className="text-xs text-gray-700 mb-2 flex justify-center">
+                                            Verification Code has been sent.
+                                        </div>
+                                        <OTP
+                                            key={index}
+                                            value={
+                                                formData["Verification Code"]
+                                            }
+                                            onChange={
+                                                handleChangeVerificationCode
+                                            }
+                                        />
+                                    </div>
                                 )
                             );
+                        }
+                        if (fieldName === "Phone Number") {
+                            return null;
                         } else {
                             return (
                                 <Input
-                                    key={fieldName}
+                                    key={index}
                                     type={getInputType(fieldName)}
                                     placeholder={fieldName}
                                     value={formData[fieldName]}
@@ -209,13 +231,28 @@ function RegisterPage() {
                             );
                         }
                     })}
+                    {isVerificationCodeSent && (
+                        <div className="flex justify-center mt-4">
+                            <Checkbox
+                                id="terms1"
+                                onChange={(e) =>
+                                    setTermsAccepted(e.target.checked)
+                                }
+                            />
+                            <div className="text-xs text-gray-700 mb-2 flex justify-center ml-2">
+                                Accept the terms and conditions
+                            </div>
+                        </div>
+                    )}
+
                     <div className="w-full max-w-md">
                         <RegisterButton
                             type="submit"
                             disabled={
                                 !formData["Phone Number"] ||
                                 (isVerificationCodeSent &&
-                                    !formData["Verification Code"])
+                                    (!formData["Verification Code"] ||
+                                        !termsAccepted))
                             }
                             className="w-full"
                         >

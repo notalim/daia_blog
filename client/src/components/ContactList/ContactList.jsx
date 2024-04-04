@@ -1,10 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
-import AvatarDemo from "./AvatarDemo";
-import { Switch } from "@src/@/components/ui/switch";
-
 import AddContactButton from "./AddContactButton";
 import ContactItem from "./ContactItem";
-
 import { AuthContext } from "../../contexts/AuthContext";
 
 const ContactList = () => {
@@ -18,12 +14,14 @@ const ContactList = () => {
                 try {
                     // console.log("Fetching contacts for user:", user._id);
                     const { data } = await getUserContacts(user._id);
+                    console.log(data);
                     const contacts = data.contacts;
                     // console.log("Contacts:", contacts);
 
                     setUserContacts(contacts);
                 } catch (error) {
                     console.error("Failed to fetch contacts:", error);
+                    setUserContacts([]);
                 }
             }
         };

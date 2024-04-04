@@ -31,8 +31,10 @@ class ApiClient {
 
             const serverError = error?.response?.data?.error;
 
+            console.log({ serverError })
+
             const errorMessage =
-                errorTypes[serverError] || "An unexpected error occurred";
+                serverError || errorTypes[serverError] || error.message;
 
             return {
                 data: null,

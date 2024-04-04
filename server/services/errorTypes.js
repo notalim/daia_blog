@@ -7,7 +7,7 @@ export const errorTypes = {
     INVALID_PHONE_NUMBER:
         "Invalid phone number format, must be of the form +1XXXXXXXXXX",
     PHONE_NUMBER_REQUIRED: "Phone number is missing",
-    USER_NOT_FOUND: "User not found",
+    USER_NOT_FOUND: "User not found. You should register first",
     CODE_NOT_APPROVED: "Code wasn't approved",
     USER_ALREADY_EXISTS: "User already exists.",
     SERVER_ERROR: "Unknown server error",
