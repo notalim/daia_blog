@@ -167,12 +167,20 @@ class ApiClient {
     });
   }
 
-  async deleteContact(userId, contactId) {
-    return await this.request({
-      endpoint: `users/${userId}/contacts/${contactId}`,
-      method: "DELETE",
-    });
-  }
+    async deleteContact(userId, contactId) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts/${contactId}`,
+            method: "DELETE",
+        });
+    }
+
+    async updateLowAlarm(phoneNumber, lowAlarm) {
+        return await this.request({
+            endpoint: "users/update-alarm",
+            method: "POST",
+            data: { phoneNumber, lowAlarm },
+        });
+    }
 }
 
 const API = new ApiClient(API_URL ? API_URL : "http://localhost:3001");

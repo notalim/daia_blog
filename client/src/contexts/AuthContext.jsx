@@ -240,20 +240,40 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const deleteContact = async (userId, contactId) => {
-    try {
-      const response = await API.deleteContact(userId, contactId);
-      if (response.error) {
-        processError(response.error);
-        return { data: null, error: response.error };
-      }
-      processSuccess("Contact deleted successfully.");
-      return { data: response.data, error: null };
-    } catch (error) {
-      processError(error);
-      return { data: null, error: error.message };
-    }
-  };
+    const deleteContact = async (userId, contactId) => {
+        try {
+            const response = await API.deleteContact(userId, contactId);
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
+            }
+            processSuccess("Contact deleted successfully.");
+            return { data: response.data, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error: error.message };
+        }
+    };
+
+    const updateThresholdValue = async (phoneNumber, lowAlarm) => {
+        try {
+            const response = await API.updateLowAlarm(
+                phoneNumber,
+                lowAlarm
+            );
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
+            }
+            processSuccess("Threshold updated successfully.");
+            setUser(response.data.user);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
+            return { data: response.data, error: null };
+        } catch (error) {
+            processError(error.message);
+            return { success: false };
+        }
+    };
 
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
@@ -262,32 +282,33 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  return (
-    <AuthContext.Provider
-      value={{
-        user,
-        //
-        loginUser,
-        completeLogin,
-        registerUser,
-        completeRegistration,
-        logoutUser,
-        //
-        updateDexcomSessionId,
-        refreshUser,
-        //
-        deleteUser,
-        updateUser,
-        //
-        getUserContacts,
-        addContact,
-        verifyContact,
-        toggleContactActiveStatus,
-        editContact,
-        deleteContact,
-      }}
-    >
-      {children}
-    </AuthContext.Provider>
-  );
+    return (
+        <AuthContext.Provider
+            value={{
+                user,
+                //
+                loginUser,
+                completeLogin,
+                registerUser,
+                completeRegistration,
+                logoutUser,
+                //
+                updateDexcomSessionId,
+                refreshUser,
+                updateThresholdValue,
+                //
+                deleteUser,
+                updateUser,
+                //
+                getUserContacts,
+                addContact,
+                verifyContact,
+                toggleContactActiveStatus,
+                editContact,
+                deleteContact,
+            }}
+        >
+            {children}
+        </AuthContext.Provider>
+    );
 };

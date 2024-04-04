@@ -147,6 +147,7 @@ function RegisterPage() {
                         Sign Up for Live Glucose <br />
                         Tracking and Instant Alerts
                     </h2>
+
                     <p className="text-lg">
                         If you already have an account, you can
                         <a
@@ -164,7 +165,6 @@ function RegisterPage() {
                             ? handleCompleteRegistration
                             : handlePhoneNumberSubmit
                     }
-                    // className="flex flex-col items-center bg-white bg-opacity-50 p-4 shadow rounded-lg"
                 >
                     <div className="mb-4 w-full max-w-md">
                         <PhoneNumberInput
@@ -183,7 +183,7 @@ function RegisterPage() {
                                 placeholder={fieldName}
                                 value={formData[fieldName]}
                                 onChange={handleChange(fieldName)}
-                                className="mb-4 w-full max-w-md"
+                                className="mb-2 w-full max-w-md"
                             />
                         ))}
                     <div className="w-full max-w-md">
@@ -201,6 +201,9 @@ function RegisterPage() {
                         </RegisterButton>
                     </div>
                 </form>
+            </div>
+            <div className="mt-2 w-full max-w-md text-xs text-gray-700 text-center">
+                Make sure to enable Dexcom Sharing
             </div>
         </div>
     );

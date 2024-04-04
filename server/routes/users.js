@@ -483,7 +483,9 @@ router.post("/update-dexcom", async (req, res) => {
 });
 
 router.post("/update-alarm", async (req, res) => {
-  const { phoneNumber, lowAlarm } = req.body;
+    const { phoneNumber, lowAlarm } = req.body;
+
+    // console.log(phoneNumber, lowAlarm);
 
   try {
     const user = await getUserByPhoneNumber(phoneNumber);

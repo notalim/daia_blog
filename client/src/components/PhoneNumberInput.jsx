@@ -1,7 +1,7 @@
 import React from "react";
 import MaskedInput from "react-text-mask";
 import { Button } from "@src/@/components/ui/button";
-import { Cross2Icon } from '@radix-ui/react-icons';
+import { Cross2Icon } from "@radix-ui/react-icons";
 
 function PhoneNumberInput({ onChange, value, disabled }) {
     const phoneMask = [
@@ -34,7 +34,7 @@ function PhoneNumberInput({ onChange, value, disabled }) {
             <span className="text-gray-500 mr-2">+1</span>
             <MaskedInput
                 mask={phoneMask}
-                className="inline-flex items-center justify-center whitespace-nowrap rounded-md text-md font-medium ring-offset-white transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 p-3 h-10"
+                className="flex h-10 w-full rounded-md border border-slate-200 px-3 py-2 text-sm ring-offset-white file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-dim-purple-500 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-slate-950 focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 bg-background-purple"
                 placeholder="Phone Number"
                 guide={false}
                 value={value}
@@ -47,10 +47,10 @@ function PhoneNumberInput({ onChange, value, disabled }) {
                     type="button"
                     onClick={clearInput}
                     className="clear-button text-gray-500 focus:outline-none transition duration-300 ease-in-out hover:text-red-500 absolute right-0 mx-2 p-1.5 h-6 w-6"
-                    variant="outline" 
+                    variant="outline"
                     size="icon"
                 >
-                    <Cross2Icon className="h-4 w-4"/>
+                    <Cross2Icon className="h-4 w-4" />
                 </Button>
             )}
         </div>
