@@ -9,6 +9,7 @@ import {
 } from "@src/@/components/ui/dialog";
 import { Button } from "@src/@/components/ui/button";
 import { Input } from "@src/@/components/ui/input";
+import OTP from "../OTP";
 import SelectContactType from "./SelectContactType";
 import { Avatar, AvatarFallback } from "@src/@/components/ui/avatar";
 
@@ -78,6 +79,10 @@ const AddContactButton = () => {
         }
     };
 
+    const handleChangeVerificationCode = (value) => {
+        setFormData({ ...formData, verificationCode: value });
+    };
+
     const handleVerificationCodeSubmit = async (e) => {
         e.preventDefault();
 
@@ -87,6 +92,7 @@ const AddContactButton = () => {
         }
 
         try {
+            console.log(formData);
             const { error } = await verifyContact(
                 user._id,
                 formData.phoneNumber,
@@ -189,16 +195,17 @@ const AddContactButton = () => {
                 ) : (
                     <form
                         onSubmit={handleVerificationCodeSubmit}
-                        className="space-y-4"
+                        className="space-y-2"
                     >
-                        <Input
-                            name="verificationCode"
-                            placeholder="Verification Code"
-                            className="w-full"
-                            value={formData.verificationCode}
-                            onChange={handleChange}
-                            maxLength={6}
-                        />
+                        <div className="flex justify-center text-gray-500 text-xs">
+                            Verification code
+                        </div>
+                        <div className="flex justify-center">
+                            <OTP
+                                value={formData["Verification Code"]}
+                                onChange={handleChangeVerificationCode}
+                            />
+                        </div>
                         <Button
                             type="submit"
                             className="w-full bg-background-purple text-input-text placeholder-input-text"

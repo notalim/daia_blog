@@ -167,33 +167,45 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
-  const getUserContacts = async (userId) => {
-    try {
-      const { data, error } = await API.getUserContacts(userId);
-      if (error) {
-        processError(error);
-        return { data: null, error };
-      }
-      return { data, error: null };
-    } catch (error) {
-      processError(error);
-      return { data: null, error };
-    }
-  };
-  const addContact = async (userId, contactPhoneNumber, contactFirstName, contactLastName, contactRelationship) => {
-    try {
-      const response = await API.addContact(userId, contactPhoneNumber, contactFirstName, contactLastName, contactRelationship);
-      if (response.error) {
-        processError(response.error);
-        return { data: null, error: response.error };
-      }
-      processSuccess("Contact added successfully.");
-      return { data: response.data, error: null }; // Assuming response.data contains the added contact information
-    } catch (error) {
-      processError(error);
-      return { data: null, error: error.message };
-    }
-  };
+    const getUserContacts = async (userId) => {
+        try {
+            const { data, error } = await API.getUserContacts(userId);
+            if (error) {
+                processError(error);
+                return { data: null, error };
+            }
+            return { data, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error };
+        }
+    };
+    const addContact = async (
+        userId,
+        contactPhoneNumber,
+        contactFirstName,
+        contactLastName,
+        contactRelationship
+    ) => {
+        try {
+            const response = await API.addContact(
+                userId,
+                contactPhoneNumber,
+                contactFirstName,
+                contactLastName,
+                contactRelationship
+            );
+            if (response.error) {
+                processError(response.error);
+                return { data: null, error: response.error };
+            }
+            processSuccess("Code sent.");
+            return { data: response.data, error: null }; // Assuming response.data contains the added contact information
+        } catch (error) {
+            processError(error);
+            return { data: null, error: error.message };
+        }
+    };
 
   const verifyContact = async (userId, contactPhoneNumber, verificationCode, contactFirstName, contactLastName, contactRelationship) => {
     try {
@@ -257,10 +269,7 @@ export const AuthProvider = ({ children }) => {
 
     const updateThresholdValue = async (phoneNumber, lowAlarm) => {
         try {
-            const response = await API.updateLowAlarm(
-                phoneNumber,
-                lowAlarm
-            );
+            const response = await API.updateLowAlarm(phoneNumber, lowAlarm);
             if (response.error) {
                 processError(response.error);
                 return { data: null, error: response.error };

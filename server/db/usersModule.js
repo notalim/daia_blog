@@ -5,6 +5,29 @@ import dotenv from "dotenv";
 import validation from "../services/validation.js";
 import { ObjectId } from "mongodb";
 dotenv.config();
+import crypto from "crypto";
+
+const algorithm = "aes-256-cbc";
+const secretKey = process.env.ENCRYPTION_SECRET_KEY;
+const key = crypto.createHash("sha256").update(String(secretKey)).digest("base64").substr(0, 32);
+
+const encrypt = (text) => {
+  const iv = crypto.randomBytes(16);
+  const cipher = crypto.createCipheriv(algorithm, key, iv);
+  const encrypted = Buffer.concat([cipher.update(text), cipher.final()]);
+
+  return {
+    iv: iv.toString("hex"),
+    content: encrypted.toString("hex"),
+  };
+};
+
+const decrypt = (hash) => {
+  const decipher = crypto.createDecipheriv(algorithm, key, Buffer.from(hash.iv, "hex"));
+  const decrypted = Buffer.concat([decipher.update(Buffer.from(hash.content, "hex")), decipher.final()]);
+
+  return decrypted.toString();
+};
 
 const createUser = async (
     phoneNumber,
