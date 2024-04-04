@@ -12,6 +12,7 @@ import RegisterButton from "../components/RegisterButton";
 import { Button } from "@src/@/components/ui/button";
 import { Input } from "@src/@/components/ui/input";
 import { Label } from "@src/@/components/ui/label";
+import OTP from "../components/OTP";
 
 const initialFormFields = ["Phone Number"];
 const additionalFormFields = [
@@ -61,12 +62,18 @@ function RegisterPage() {
     const [currentFormFields, setCurrentFormFields] =
         useState(initialFormFields);
     const [isVerificationCodeSent, setIsVerificationCodeSent] = useState(false);
+    const [verificationCode, setVerificationCode] = useState("");
+
     const { registerUser, completeRegistration } = useAuth();
     const { processError } = useProcessMessages();
     const navigate = useNavigate();
 
     const handleChange = (field) => (event) => {
         setFormData({ ...formData, [field]: event.target.value });
+    };
+
+    const handleChangeVerificationCode = (value) => {
+        setFormData({ ...formData, "Verification Code": value });
     };
 
     useEffect(() => {
@@ -166,32 +173,49 @@ function RegisterPage() {
                             : handlePhoneNumberSubmit
                     }
                 >
-                    <div className="mb-4 w-full max-w-md">
+                    <div className="mb-2 w-full max-w-md">
                         <PhoneNumberInput
                             placeholder="Phone Number"
                             onChange={handleChange("Phone Number")}
                             value={formData["Phone Number"]}
-                            disabled={currentFormFields.length > 1}
+                            disabled={isVerificationCodeSent}
                         />
                     </div>
-                    {currentFormFields
-                        .filter((fieldName) => fieldName !== "Phone Number")
-                        .map((fieldName, index) => (
-                            <Input
-                                key={index}
-                                type={getInputType(fieldName)}
-                                placeholder={fieldName}
-                                value={formData[fieldName]}
-                                onChange={handleChange(fieldName)}
-                                className="mb-2 w-full max-w-md"
-                            />
-                        ))}
+                    {currentFormFields.map((fieldName, index) => {
+                        if (fieldName === "Verification Code") {
+                            return (
+                                isVerificationCodeSent && (
+                                    <OTP
+                                        key={fieldName}
+                                        value={formData["Verification Code"]}
+                                        onChange={handleChangeVerificationCode}
+                                    />
+                                )
+                            );
+                        } else {
+                            return (
+                                <Input
+                                    key={fieldName}
+                                    type={getInputType(fieldName)}
+                                    placeholder={fieldName}
+                                    value={formData[fieldName]}
+                                    onChange={handleChange(fieldName)}
+                                    className="my-2 w-full max-w-md"
+                                    disabled={
+                                        !isVerificationCodeSent &&
+                                        fieldName !== "Phone Number"
+                                    }
+                                />
+                            );
+                        }
+                    })}
                     <div className="w-full max-w-md">
                         <RegisterButton
                             type="submit"
                             disabled={
-                                !formData["Phone Number"] &&
-                                !isVerificationCodeSent
+                                !formData["Phone Number"] ||
+                                (isVerificationCodeSent &&
+                                    !formData["Verification Code"])
                             }
                             className="w-full"
                         >

@@ -209,7 +209,7 @@ export const AuthProvider = ({ children }) => {
                 processError(response.error);
                 return { data: null, error: response.error };
             }
-            processSuccess("Contact added successfully.");
+            processSuccess("Code sent.");
             return { data: response.data, error: null }; // Assuming response.data contains the added contact information
         } catch (error) {
             processError(error);
@@ -308,10 +308,7 @@ export const AuthProvider = ({ children }) => {
 
     const updateThresholdValue = async (phoneNumber, lowAlarm) => {
         try {
-            const response = await API.updateLowAlarm(
-                phoneNumber,
-                lowAlarm
-            );
+            const response = await API.updateLowAlarm(phoneNumber, lowAlarm);
             if (response.error) {
                 processError(response.error);
                 return { data: null, error: response.error };
