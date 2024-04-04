@@ -16,15 +16,15 @@ const Settings = () => {
   };
 
   return (
-    <div className="container mx-auto">
-      <h1 className="text-3xl font-bold mb-4">Welcome {user.name}</h1>
-      <div className="flex h-full rounded-md p-6 mb-20">
-        <div className="bg-purple-200 rounded-tl-md rounded-bl w-1/3">
-          <h2 className="text-2xl font-bold p-4">Settings</h2>
+    <div className="container mx-auto px-4 lg:px-8 my-8 max-w-7xl">
+      <h1 className="text-3xl font-bold mb-8">Welcome, {user.name}!</h1>
+      <div className="flex flex-col lg:flex-row gap-8 h-full rounded-md p-6 mb-20">
+        <div className="bg-purple-200 lg:w-1/4 p-4 rounded-lg">
+          <h2 className="text-2xl font-bold mb-4">Settings</h2>
           <LeftSidebar selectedTab={selectedTab} handleTabClick={handleTabClick} />
         </div>
 
-        <div className="bg-white w-2/3 p-4 rounded-tr-md rounded-br-md h-full flex justify-center">
+        <div className="flex-1 bg-white p-4 h-full rounded-lg flex justify-center">
           <div className="flex flex-col justify-center items-center">
             {/* Content for the right side goes here */}
             {selectedTab === "Account" && (

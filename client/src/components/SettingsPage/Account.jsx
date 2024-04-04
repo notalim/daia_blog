@@ -14,6 +14,9 @@ const AccountPage = ({ user }) => {
     phoneNumber: user.phoneNumber,
     glucagonLocation: user.glucagonLocation,
     glucagonType: user.glucagonType,
+    allergies: user.allergies,
+    medications: user.medications,
+    diagnoses: user.diagnoses,
     crisisText: user.crisisText,
     emergencyInfo: user.emergencyInfo,
   };
@@ -30,7 +33,16 @@ const AccountPage = ({ user }) => {
   // Function to handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const { error } = await updateUser(userData.phoneNumber, userData.name, userData.glucagonLocation, userData.glucagonType, userData.crisisText, userData.emergencyInfo);
+    const { error } = await updateUser(
+      userData.phoneNumber,
+      userData.name,
+      userData.glucagonLocation,
+      userData.glucagonType,
+      userData.allergies,
+      userData.medications,
+      userData.diagnoses,
+      userData.crisisText
+    );
     if (!error) {
       console.log("User data updated successfully");
     } else {
