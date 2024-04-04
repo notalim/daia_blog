@@ -23,7 +23,7 @@ const updateBloodSugarLevelsForAllUsers = async () => {
                 5,
                 1
             );
-            await checkValues(user, bloodSugarData[0].Value);
+            await checkValues(user, bloodSugarData[0]);
             await updateBloodSugarData(user._id, bloodSugarData);
         } catch (error) {
             console.error(

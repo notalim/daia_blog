@@ -4,6 +4,7 @@
 // ! Make sure to add it both to the server and client errorTypes.js files.
 
 export const errorTypes = {
+
     INVALID_PHONE_NUMBER:
         "Invalid phone number format, must be of the form +1XXXXXXXXXX",
     PHONE_NUMBER_REQUIRED: "Phone number is missing",
