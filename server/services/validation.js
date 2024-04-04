@@ -10,8 +10,37 @@ const passwordValidation = (password) => {
 };
 
 const nameValidation = (name) => {
-    const nameRegex = /^[a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*$/;
+    const nameRegex = /^([a-zA-Z]+(([',. -][a-zA-Z ])?[a-zA-Z]*)*){1,50}$/;
     return nameRegex.test(name);
+};
+
+const glucagonLocationValidation = (location) => {
+  if (location === undefined) return true;
+  return location.length <= 25;
+};
+
+const glucagonTypeValidation = (type) => {
+  if (type === undefined) return true;
+  return type.length <= 30;
+};
+
+const allergiesValidation = (allergies) => {
+  if (allergies === undefined) return true;
+  return allergies.length <= 50;
+}
+
+const medicationsValidation = (medications) => {
+  if (medications === undefined) return true;
+  return medications.length <= 50;
+};
+
+const diagnosesValidation = (diagnoses) => {
+  if (diagnoses === undefined) return true;
+  return diagnoses.length <= 50;
+};
+
+const crisisTextValidation = (text) => {
+  return text.length <= 100;
 };
 
 const phoneValidation = (phoneNumber) => {
@@ -47,4 +76,10 @@ export default {
     stringValidation,
     codeValidation,
     confirmPasswordValidation,
+    glucagonLocationValidation,
+    glucagonTypeValidation,
+    crisisTextValidation,
+    allergiesValidation,
+    medicationsValidation,
+    diagnosesValidation,
 };
