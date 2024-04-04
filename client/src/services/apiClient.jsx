@@ -44,6 +44,7 @@ class ApiClient {
         }
     }
 
+
     async login(phoneNumber) {
         return await this.request({
             endpoint: "users/login",
@@ -74,9 +75,15 @@ class ApiClient {
         name,
         dexcomUser,
         dexcomPass,
-      },
-    });
-  }
+
+    ) {
+        return await this.request({
+            endpoint: "users/signup/complete",
+            method: "POST",
+            data: { phoneNumber, code, name, dexcomUser, dexcomPass },
+        });
+    }
+
 
   async logout() {
     this.setToken(null);
