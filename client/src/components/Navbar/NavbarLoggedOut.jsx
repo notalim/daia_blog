@@ -72,14 +72,26 @@ const NavbarLoggedIn = () => {
                         }}
                     >
                         <div className="p-4">
-                            {LinkItems.map((link) => (
+                            {/* {LinkItems.map((link) => (
                                 <NavItem
                                     key={link.name}
                                     name={link.name}
                                     pathname={link.pathname}
                                 />
-                            ))}
+                            ))} */}
                             <div className="flex items-center">
+                                <Link
+                                    to="/about"
+                                    className="text-black font-medium text-base mr-4"
+                                >
+                                    About
+                                </Link>
+                                <Link
+                                    to="/faq"
+                                    className="text-black font-medium text-base mr-4"
+                                >
+                                    FAQ
+                                </Link>
                                 <Link
                                     to="/login"
                                     className="text-black font-medium text-base mr-4"
@@ -98,14 +110,26 @@ const NavbarLoggedIn = () => {
                 </div>
             ) : (
                 <div className="flex">
-                    {LinkItems.map((link) => (
+                    {/* {LinkItems.map((link) => (
                         <NavItem
                             key={link.name}
                             name={link.name}
                             pathname={link.pathname}
                         />
-                    ))}
+                    ))} */}
                     <div className="flex items-center">
+                    <Link
+						to="/about"
+						className="text-black font-medium text-base mr-4"
+					>
+						About
+					</Link>
+					<Link
+						to="/faq"
+						className="text-black font-medium text-base mr-4"
+					>
+						FAQ
+					</Link>
 					<Link
 						to="/login"
 						className="text-black font-medium text-base mr-4"
