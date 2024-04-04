@@ -16,7 +16,7 @@ const nameValidation = (name) => {
 
 const glucagonLocationValidation = (location) => {
   if (location === undefined) return true;
-  return location.length <= 25;
+  return location.length <= 30;
 };
 
 const glucagonTypeValidation = (type) => {
@@ -40,7 +40,7 @@ const diagnosesValidation = (diagnoses) => {
 };
 
 const crisisTextValidation = (text) => {
-  return text.length <= 100;
+  return text.length <= 200;
 };
 
 const phoneValidation = (phoneNumber) => {
