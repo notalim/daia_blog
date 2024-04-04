@@ -14,20 +14,22 @@ export const AuthProvider = ({ children }) => {
 
   const { processError, processSuccess } = useProcessMessages();
 
-  const loginUser = async (phoneNumber) => {
-    try {
-      const { data, error } = await API.login(phoneNumber);
-      if (error) {
-        processError(error);
-        return { data: null, error };
-      }
-      processSuccess("Verification code sent.");
-      return { data, error: null };
-    } catch (error) {
-      processError(error);
-      return { data: null, error };
-    }
-  };
+    const loginUser = async (phoneNumber) => {
+        try {
+            const { data, error } = await API.login(phoneNumber);
+
+            if (error) {
+                processError(error);
+                return { data: null, error };
+            }
+            processSuccess("Verification code sent.");
+            return { data, error: null };
+        } catch (error) {
+            processError(error);
+            return { data: null, error };
+        }
+    };
+
 
   const completeLogin = async (phoneNumber, code) => {
     try {

@@ -4,79 +4,86 @@ import { errorTypes } from "./errorTypes";
 const API_URL = import.meta.env.VITE_API_URL;
 
 class ApiClient {
-  constructor(remoteHostUrl) {
-    this.remoteHostUrl = remoteHostUrl;
-    this.token = localStorage.getItem("token") || null;
-    this.tokenName = "token";
-  }
 
-  setToken(token) {
-    this.token = token;
-    localStorage.setItem(this.tokenName, token);
-  }
-
-  async request({ endpoint, method = "GET", data = {} }) {
-    const url = `${this.remoteHostUrl}/${endpoint}`;
-
-    const headers = {
-      "Content-Type": "application/json",
-      Authorization: this.token ? `Bearer ${this.token}` : "",
-    };
-
-    try {
-      const res = await axios({ url, method, data, headers });
-      return { data: res.data, error: null };
-    } catch (error) {
-      console.error({ errorResponse: error.response });
-
-      const serverError = error?.response?.data?.error;
-
-      const errorMessage = errorTypes[serverError] || "An unexpected error occurred";
-
-      return {
-        data: null,
-        error: errorMessage,
-      };
+    constructor(remoteHostUrl) {
+        this.remoteHostUrl = remoteHostUrl;
+        this.token = localStorage.getItem("token") || null;
+        this.tokenName = "token";
     }
-  }
 
-  async login(phoneNumber) {
-    return await this.request({
-      endpoint: "users/login",
-      method: "POST",
-      data: { phoneNumber },
-    });
-  }
+    setToken(token) {
+        this.token = token;
+        localStorage.setItem(this.tokenName, token);
+    }
 
-  async completeLogin(phoneNumber, code) {
-    return await this.request({
-      endpoint: "users/login/complete",
-      method: "POST",
-      data: { phoneNumber, code },
-    });
-  }
+    async request({ endpoint, method = "GET", data = {} }) {
+        const url = `${this.remoteHostUrl}/${endpoint}`;
 
-  async registerUser(phoneNumber) {
-    return await this.request({
-      endpoint: "users/signup",
-      method: "POST",
-      data: { phoneNumber },
-    });
-  }
+        const headers = {
+            "Content-Type": "application/json",
+            Authorization: this.token ? `Bearer ${this.token}` : "",
+        };
 
-  async completeRegistration(phoneNumber, code, name, dexcomUser, dexcomPass) {
-    return await this.request({
-      endpoint: "users/signup/complete",
-      method: "POST",
-      data: {
+        try {
+            const res = await axios({ url, method, data, headers });
+            return { data: res.data, error: null };
+        } catch (error) {
+            console.error({ errorResponse: error.response });
+
+            const serverError = error?.response?.data?.error;
+
+            console.log({ serverError })
+
+            const errorMessage =
+                serverError || errorTypes[serverError] || error.message;
+
+            return {
+                data: null,
+                error: errorMessage,
+            };
+        }
+    }
+
+
+    async login(phoneNumber) {
+        return await this.request({
+            endpoint: "users/login",
+            method: "POST",
+            data: { phoneNumber },
+        });
+    }
+
+    async completeLogin(phoneNumber, code) {
+        return await this.request({
+            endpoint: "users/login/complete",
+            method: "POST",
+            data: { phoneNumber, code },
+        });
+    }
+
+    async registerUser(phoneNumber) {
+        return await this.request({
+            endpoint: "users/signup",
+            method: "POST",
+            data: { phoneNumber },
+        });
+    }
+
+    async completeRegistration(
         phoneNumber,
         code,
         name,
         dexcomUser,
         dexcomPass,
-      },
-    });
-  }
+
+    ) {
+        return await this.request({
+            endpoint: "users/signup/complete",
+            method: "POST",
+            data: { phoneNumber, code, name, dexcomUser, dexcomPass },
+        });
+    }
+
 
   async logout() {
     this.setToken(null);

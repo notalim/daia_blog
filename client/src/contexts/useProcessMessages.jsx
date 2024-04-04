@@ -5,8 +5,9 @@ const useProcessMessages = () => {
     const { toast } = useToast();
 
     const processError = (error) => {
-        const errorMessage = error || "An error occurred."
-        console.error("Error:", errorMessage);
+        console.log("Error:", error);
+        const errorMessage = error|| "An error occurred."
+        // console.error("Error:", errorMessage);
         toast({
             title: "Error",
             description: errorMessage,

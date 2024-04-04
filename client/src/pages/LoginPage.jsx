@@ -45,19 +45,19 @@ function LoginPage() {
         }
 
         try {
-            const { error } = await loginUser(
+            const { data, error} = await loginUser(
                 "+1" + phoneNumber.replace(/\D/g, "")
             );
-
             if (error) {
                 processError(error);
             } else {
                 setIsVerificationCodeSent(true);
             }
         } catch (error) {
-            processError(error || "An error occurred.");
+            processError(error);
         }
     };
+
     const handleVerifyCode = async (event) => {
         event.preventDefault();
 
