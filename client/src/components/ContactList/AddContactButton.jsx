@@ -141,11 +141,16 @@ const AddContactButton = () => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Avatar className="w-16 h-16 rounded-full bg-lavender-purple cursor-pointer flex items-center justify-center">
-                    <AvatarFallback>
-                        <Plus className="w-6 h-6 text-mid-purple" />
-                    </AvatarFallback>
-                </Avatar>
+                <div className="">
+                    <Avatar className="w-16 h-16 rounded-full bg-lavender-purple cursor-pointer flex items-center justify-center">
+                        <AvatarFallback>
+                            <Plus className="w-6 h-6 text-mid-purple" />
+                        </AvatarFallback>
+                    </Avatar>
+                    <div className="flex justify-between items-center w-full h-6 align-center text-xs">
+                        Add new contact
+                    </div>
+                </div>
             </DialogTrigger>
             <DialogContent className="bg-background-purple p-6">
                 <DialogHeader className="border-b border-dim-purple pb-4">
