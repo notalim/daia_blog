@@ -235,9 +235,8 @@ function RegisterPage() {
                         <div className="flex justify-center mt-4">
                             <Checkbox
                                 id="terms1"
-                                onChange={(e) =>
-                                    setTermsAccepted(e.target.checked)
-                                }
+                                checked={termsAccepted}
+                                onCheckedChange={setTermsAccepted}
                             />
                             <div className="text-xs text-gray-700 mb-2 flex justify-center ml-2">
                                 Accept the terms and conditions
