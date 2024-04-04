@@ -12,6 +12,7 @@ import { Input } from "@src/@/components/ui/input";
 import OTP from "../OTP";
 import SelectContactType from "./SelectContactType";
 import { Avatar, AvatarFallback } from "@src/@/components/ui/avatar";
+import { Switch } from "@src/@/components/ui/switch";
 
 import { Plus } from "lucide-react";
 
@@ -141,13 +142,17 @@ const AddContactButton = () => {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <div className="">
+                <div className="flex flex-col items-center justify-center p-2">
+                    {" "}
+                    {/* Same structure and padding as ContactItem */}
                     <Avatar className="w-16 h-16 rounded-full bg-lavender-purple cursor-pointer flex items-center justify-center">
                         <AvatarFallback>
-                            <Plus className="w-6 h-6 text-mid-purple" />
+                            <Plus className="w-4 h-4 text-subtle-purple" />
                         </AvatarFallback>
                     </Avatar>
-                    <div className="flex justify-between items-center w-full h-6 align-center text-xs">
+                    <div className="text-xs text-center mt-2">
+                        {" "}
+                        {/* Make sure the margin-top is the same as the ContactItem's name */}
                         Add new contact
                     </div>
                 </div>

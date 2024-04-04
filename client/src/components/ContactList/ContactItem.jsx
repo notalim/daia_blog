@@ -89,26 +89,22 @@ const ContactItem = ({ contact, onToggleContact }) => {
     };
     return (
         <Dialog>
-            <div className="space-y-2 flex flex-col items-center justify-end">
-                <DialogTrigger asChild>
-                    <div>
-                        <AvatarDemo
-                            firstName={contact.contactFirstName}
-                            lastName={contact.contactLastName}
-                            size="large"
-                        />
-                    </div>
-                </DialogTrigger>
-                <div className="flex justify-center items-center w-full">
-                    <span className="text-xs text-center">
-                        {contact.contactFirstName}
-                    </span>
-                    <Switch
-                        checked={contact.active}
-                        onCheckedChange={() => onToggleContact(contact)}
-                        className="ml-2 transform scale-80"
-                    />
+            <div className="flex flex-col items-center justify-center p-2">
+                {" "}
+                {/* Removed justify-end */}
+                <AvatarDemo
+                    firstName={contact.contactFirstName}
+                    lastName={contact.contactLastName}
+                    size="large"
+                />
+                <div className="text-xs text-center mt-2">
+                    {contact.contactFirstName}
                 </div>
+                <Switch
+                    checked={contact.active}
+                    onCheckedChange={() => onToggleContact(contact)}
+                    className="transform scale-75 mt-1" // Ensure this is the same as in AddContactButton
+                />
             </div>
             <DialogContent className="bg-background-purple p-6">
                 <DialogHeader className="border-b border-dim-purple pb-4">

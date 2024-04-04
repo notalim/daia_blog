@@ -46,7 +46,7 @@ const ContactList = () => {
             <h2 className="text-l font-bold mb-2">
                 Your Emergency Contact List
             </h2>
-            <div className="grid grid-cols-3 gap-4 overflow-auto p-4 lg:grid-cols-6">
+            <div className="grid grid-cols-3 overflow-auto lg:grid-cols-6">
                 {userContacts.length > 0
                     ? userContacts.map((contact, index) => (
                           <ContactItem
@@ -56,7 +56,7 @@ const ContactList = () => {
                           />
                       ))
                     : null}
-                <div className="space-y-2 flex flex-col items-center justify-end">
+                <div className="flex flex-col">
                     <AddContactButton />
                 </div>
             </div>
