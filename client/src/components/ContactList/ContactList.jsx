@@ -44,27 +44,22 @@ const ContactList = () => {
         }
     };
     return (
-        <div>
+        <div className="text-sm p-4 border rounded-lg bg-lavender-purple mt-4">
             <h2 className="text-l font-bold mb-2">
                 Your Emergency Contact List
             </h2>
-            <div className="grid grid-cols-3 gap-4 overflow-auto p-4">
+            <div className="grid grid-cols-3 gap-4 overflow-auto p-4 lg:grid-cols-6">
                 {userContacts.length > 0
                     ? userContacts.map((contact, index) => (
-                            <ContactItem
-                                key={index}
-                                contact={contact}
-                                onToggleContact={handleToggleContact}
-                            />
+                          <ContactItem
+                              key={index}
+                              contact={contact}
+                              onToggleContact={handleToggleContact}
+                          />
                       ))
                     : null}
                 <div className="space-y-2 flex flex-col items-center justify-end">
                     <AddContactButton />
-                    <div className="flex justify-between items-center w-full h-6 align-center">
-                        <span className="text-xs text-center">
-                            Add new contact
-                        </span>
-                    </div>
                 </div>
             </div>
         </div>

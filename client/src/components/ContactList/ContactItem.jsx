@@ -33,7 +33,6 @@ const ContactItem = ({ contact, onToggleContact }) => {
 
     const handleEditContact = async (e) => {
         e.preventDefault();
-        // ! Your validation and edit logic here
         if (!validation.nameValidation(formData.firstName)) {
             processError("Invalid first name");
             return;
@@ -100,7 +99,7 @@ const ContactItem = ({ contact, onToggleContact }) => {
                         />
                     </div>
                 </DialogTrigger>
-                <div className="flex justify-between items-center w-full">
+                <div className="flex justify-center items-center w-full">
                     <span className="text-xs text-center">
                         {contact.contactFirstName}
                     </span>
