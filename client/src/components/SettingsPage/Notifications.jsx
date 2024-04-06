@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { useAuth } from "../../contexts/useAuth";
 import { Input } from "../../@/components/ui/input";
 import { Button } from "../../@/components/ui/button";
+import { Textarea } from "../../@/components/ui/textarea";
 
 const AccountPage = ({ user }) => {
     const { updateUser } = useAuth();
@@ -52,27 +53,28 @@ const AccountPage = ({ user }) => {
     return (
         <div className="w-full lg:w-3/4 px-4">
             <form onSubmit={handleSubmit} className="w-full">
-                <div className="flex flex-wrap -mx-3 mb-6">
-                    <div className="w-full md:w-1/4 px-3 mb-6 md:mb-0">
-                        <label
-                            htmlFor="crisisText"
-                            className="block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2"
-                        >
-                            Crisis Message
-                        </label>
-                    </div>
-                    <div className="w-full md:w-3/4 px-3">
-                        <textarea
-                            id="crisisText"
-                            name="crisisText"
-                            value={user.crisisText}
-                            onChange={handleInputChange}
-                            className="appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500"
-                            style={{ height: "100px" }} // Adjust the height as needed
-                        ></textarea>
+                <div className="mb-6"> {/* Flex container for label and textarea */}
+                    <div className="flex flex-row items-center">
+                        <div className="flex-none w-1/4"> {/* Fixed width for label */}
+                            <label
+                                htmlFor="crisisText"
+                                className="block uppercase tracking-wide text-gray-700 text-xs font-bold"
+                            >
+                                Crisis Message
+                            </label>
+                        </div>
+                        <div className="flex-auto pl-3"> {/* Remaining width for textarea */}
+                            <Textarea
+                                name="crisisText"
+                                value={userData.crisisText}
+                                onChange={handleInputChange}
+                                placeholder="Crisis Message"
+                                className="w-full" // Ensure full width is used
+                            />
+                        </div>
                     </div>
                 </div>
-                <div className="flex justify-center mt-4">
+                <div className="flex justify-center mt-4"> {/* Button centered */}
                     <Button type="submit" variant="daia">
                         Save Changes
                     </Button>

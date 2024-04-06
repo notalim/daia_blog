@@ -26,7 +26,6 @@ const Settings = () => {
                     />
                 </div>
                 <div className="flex-1 bg-backgrpund-purple p-4 h-full rounded-lg lg:col-span-2">
-                    <div className="flex flex-col justify-center items-center">
                         {selectedTab === "Account" && (
                             <div>
                                 <h1 className="text-3xl font-bold mb-8">
@@ -58,7 +57,6 @@ const Settings = () => {
                             </div>
                         )}
                     </div>
-                </div>
             </div>
         </div>
     );
