@@ -5,6 +5,11 @@ const trendDescriptions = {
     Flat: "Stable",
     FortyFiveUp: "Increasing",
     FortyFiveDown: "Decreasing",
+    SingleUp: "Slightly Increasing",
+    SingleDown: "Slightly Decreasing",
+    DoubleUp: "Rapidly Increasing",
+    DoubleDown: "Rapidly Decreasing",
+    None: "No Data",
 };
 
 const composeDetails = (user) => {
@@ -33,6 +38,10 @@ const composeMessage = (user, data, trend, details) => {
 };
 
 export const checkValues = async (user, data) => {
+    if (!data.Value) {
+        console.log(`A point with no value detected, a ghost point will be created for: ${user.name}`);
+        return;
+    }
     if (
         data.Value < user.lowAlarm &&
         user.lastCrisis < new Date(Date.now() - 900000)

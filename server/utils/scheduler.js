@@ -1,4 +1,3 @@
-// utils/scheduler.js
 import cron from "node-cron";
 import {
     getAllUsers,

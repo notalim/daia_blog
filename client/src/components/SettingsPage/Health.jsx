@@ -140,7 +140,7 @@ const AccountPage = ({ user }) => {
           <Input type="text" id="emergencyInfo" name="emergencyInfo" value={userData.emergencyInfo} onChange={handleInputChange} className="border border-gray-300 p-2 w-full" />
         </div> */}
         <div className="col-span-2 flex justify-center">
-          <Button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded">
+          <Button type="submit" variant="daia" className="w-full">
             Save Changes
           </Button>
         </div>
