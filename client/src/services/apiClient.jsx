@@ -4,7 +4,6 @@ import { errorTypes } from "./errorTypes";
 const API_URL = import.meta.env.VITE_API_URL;
 
 class ApiClient {
-
     constructor(remoteHostUrl) {
         this.remoteHostUrl = remoteHostUrl;
         this.token = localStorage.getItem("token") || null;
@@ -30,20 +29,14 @@ class ApiClient {
         } catch (error) {
             console.error({ errorResponse: error.response });
 
-            const serverError = error?.response?.data?.error;
-
-            console.log({ serverError })
-
-            const errorMessage =
-                serverError || errorTypes[serverError] || error.message;
+            const errorCode = error?.response?.data?.error;
 
             return {
                 data: null,
-                error: errorMessage,
+                error: errorCode,
             };
         }
     }
-
 
     async login(phoneNumber) {
         return await this.request({
@@ -74,8 +67,7 @@ class ApiClient {
         code,
         name,
         dexcomUser,
-        dexcomPass,
-
+        dexcomPass
     ) {
         return await this.request({
             endpoint: "users/signup/complete",
@@ -84,95 +76,101 @@ class ApiClient {
         });
     }
 
+    async logout() {
+        this.setToken(null);
+        // No need to make an API request since logout is handled by removing the token
+    }
 
-  async logout() {
-    this.setToken(null);
-    // No need to make an API request since logout is handled by removing the token
-  }
+    async refreshUser(phoneNumber) {
+        return await this.request({
+            endpoint: "users/refresh-user",
+            method: "POST",
+            data: { phoneNumber },
+        });
+    }
 
-  async refreshUser(phoneNumber) {
-    return await this.request({
-      endpoint: "users/refresh-user",
-      method: "POST",
-      data: { phoneNumber },
-    });
-  }
+    async updateDexcomSessionId(phoneNumber, dexcomUser, dexcomPass) {
+        return await this.request({
+            endpoint: "users/update-dexcom",
+            method: "POST",
+            data: { phoneNumber, dexcomUser, dexcomPass },
+        });
+    }
 
-  async updateDexcomSessionId(phoneNumber, dexcomUser, dexcomPass) {
-    return await this.request({
-      endpoint: "users/update-dexcom",
-      method: "POST",
-      data: { phoneNumber, dexcomUser, dexcomPass },
-    });
-  }
+    async updateUser(updatedData) {
+        return await this.request({
+            endpoint: "users/update",
+            method: "PATCH",
+            data: updatedData,
+        });
+    }
 
-  async updateUser(updatedData) {
-    return await this.request({
-      endpoint: "users/update",
-      method: "PATCH",
-      data: updatedData,
-    });
-  }
+    async deleteUser(phoneNumber) {
+        return await this.request({
+            endpoint: `users/delete/${phoneNumber}`,
+            method: "DELETE",
+        });
+    }
 
-  async deleteUser(phoneNumber) {
-    return await this.request({
-      endpoint: `users/delete/${phoneNumber}`,
-      method: "DELETE",
-    });
-  }
+    async getUserContacts(userId) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts`,
+            method: "GET",
+        });
+    }
 
-  async getUserContacts(userId) {
-    return await this.request({
-      endpoint: `users/${userId}/contacts`,
-      method: "GET",
-    });
-  }
+    async addContact(userId, phoneNumber, firstName, lastName, relationship) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts`,
+            method: "POST",
+            data: {
+                phoneNumber,
+                firstName,
+                lastName,
+                relationship,
+            },
+        });
+    }
 
-  async addContact(userId, phoneNumber, firstName, lastName, relationship) {
-    return await this.request({
-      endpoint: `users/${userId}/contacts`,
-      method: "POST",
-      data: {
-        phoneNumber,
-        firstName,
-        lastName,
-        relationship,
-      },
-    });
-  }
-
-  async verifyContact(userId, phoneNumber, code, firstName, lastName, relationship) {
-    return await this.request({
-      endpoint: `users/${userId}/contacts/complete`,
-      method: "POST",
-      data: {
+    async verifyContact(
+        userId,
         phoneNumber,
         code,
         firstName,
         lastName,
-        relationship,
-      },
-    });
-  }
+        relationship
+    ) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts/complete`,
+            method: "POST",
+            data: {
+                phoneNumber,
+                code,
+                firstName,
+                lastName,
+                relationship,
+            },
+        });
+    }
 
-  async toggleContactActiveStatus(userId, contactId) {
-    return await this.request({
-      endpoint: `users/${userId}/contacts/${contactId}/toggle`,
-      method: "PUT",
-    });
-  }
+    async toggleContactActiveStatus(userId, contactId) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts/${contactId}/toggle`,
+            method: "PUT",
+        });
+    }
 
-  async editContact(userId, contactId, firstName, lastName, relationship) {
-    return await this.request({
-      endpoint: `users/${userId}/contacts/${contactId}`,
-      method: "PATCH",
-      data: {
-        firstName: firstName,
-        lastName: lastName,
-        relationship: relationship,
-      },
-    });
-  }
+    async editContact(userId, contactId, firstName, lastName, relationship) {
+        return await this.request({
+            endpoint: `users/${userId}/contacts/${contactId}`,
+            method: "PATCH",
+            data: {
+                firstName: firstName,
+                lastName: lastName,
+                relationship: relationship,
+            },
+        });
+    }
 
     async deleteContact(userId, contactId) {
         return await this.request({

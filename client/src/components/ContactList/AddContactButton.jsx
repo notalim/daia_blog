@@ -197,7 +197,7 @@ const AddContactButton = () => {
                         />
                         <Button
                             type="submit"
-                            className="w-full bg-background-purple text-input-text placeholder-input-text"
+                            variant="daia"
                         >
                             Verify Contact
                         </Button>
@@ -218,7 +218,7 @@ const AddContactButton = () => {
                         </div>
                         <Button
                             type="submit"
-                            className="w-full bg-background-purple text-input-text placeholder-input-text"
+                            variant="daia"
                         >
                             Save Contact
                         </Button>
