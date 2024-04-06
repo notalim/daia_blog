@@ -4,6 +4,9 @@ import annotationPlugin from "chartjs-plugin-annotation";
 import { setupChart } from "../config/graphConfig";
 import { processData } from "../helpers/graphHelpers";
 
+import { Button } from "@src/@/components/ui/button";
+import { Input } from "@src/@/components/ui/input";
+
 const BloodSugarScatterPlot = ({
     bloodSugarData,
     onRefresh,
@@ -72,7 +75,8 @@ const BloodSugarScatterPlot = ({
                     >
                         Set your threshold:
                     </label>
-                    <input
+                    
+                    <Input
                         id="thresholdInput"
                         type="number"
                         min="0"
@@ -80,23 +84,30 @@ const BloodSugarScatterPlot = ({
                         value={thresholdValue}
                         onChange={onThresholdChange}
                         className="bg-gray-50 border border-gray-300 text-gray-900 text-lg rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-24 p-2 text-center"
-                    />
-                    <button
+                    ></Input>
+
+                    <Button
                         onClick={onSaveThreshold}
-                        className="bg-mid-purple hover:bg-full-purple text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+                        variant="daia"
+                        className="w-24"
                     >
-                        Save Threshold
-                    </button>
+                        Save
+                    </Button>
                 </div>
                 <div className="text-xs text-gray-500">
                     Threshold can be set to any value between 0 and 200.
                 </div>
-                <button
-                    onClick={onRefresh}
-                    className="mt-4 bg-mid-purple hover:bg-full-purple text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out"
+
+                <Button
+                    onClick={onDexcomSessionIdRefresh}
+                    variant="daia"
+                    className="mt-2"
                 >
-                    Refresh Data
-                </button>
+                    Refresh Points Data
+                </Button>
+                <div className="text-xs text-gray-500 mt-2">
+                    Fetch the latest data from Dexcom.
+                </div>
             </div>
 
             <div className="text-sm p-4 border rounded-lg bg-lavender-purple">
