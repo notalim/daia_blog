@@ -85,8 +85,9 @@ const updateUser = async (id, updatedUser) => {
             { _id: id },
             { $set: updatedUser }
         );
-        if (updateInfo.modifiedCount === 0)
-            throw new Error("Could not update user!");
+         if (updateInfo.modifiedCount === 0) {
+             return false; 
+         }
 
         return true;
     } catch (error) {

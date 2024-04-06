@@ -20,9 +20,9 @@ import { errorTypes } from "../services/errorTypes.js";
 
 const router = express.Router();
 
-const validateInput = (validationFunc, data, res, errorMessage, errorCode) => {
+const validateInput = (validationFunc, data, res, errorCode) => {
     if (!validationFunc(data)) {
-        res.status(400).json({ message: errorMessage, error: errorCode });
+        res.status(400).json({ error: errorCode });
         return false;
     }
     return true;
@@ -36,7 +36,6 @@ router.post("/login", async (req, res) => {
             validation.phoneValidation,
             phoneNumber,
             res,
-            "Invalid phone number format",
             errorTypes.INVALID_PHONE_NUMBER
         )
     ) {
@@ -47,7 +46,6 @@ router.post("/login", async (req, res) => {
         const user = await getUserByPhoneNumber(phoneNumber);
         if (!user) {
             return res.status(404).json({
-                message: "User not found",
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
@@ -57,20 +55,15 @@ router.post("/login", async (req, res) => {
         const verification = await sendVerificationCode(phoneNumber);
 
         if (verification.status === "pending") {
-            res.status(200).json({
-                message:
-                    "Verification code sent. Please verify your phone number.",
-            });
+            res.status(200).json({});
         } else {
             res.status(500).json({
-                message: "Failed to send verification code",
                 error: errorTypes.SERVER_ERROR,
             });
         }
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -84,7 +77,6 @@ router.post("/login/complete", async (req, res) => {
             validation.phoneValidation,
             phoneNumber,
             res,
-            "Invalid phone number format",
             errorTypes.INVALID_PHONE_NUMBER
         )
     ) {
@@ -96,7 +88,6 @@ router.post("/login/complete", async (req, res) => {
             validation.codeValidation,
             code,
             res,
-            "Invalid verification code",
             errorTypes.INVALID_CODE
         )
     ) {
@@ -110,26 +101,22 @@ router.post("/login/complete", async (req, res) => {
         );
         if (verificationCheck.status !== "approved") {
             return res.status(400).json({
-                message: "Invalid or expired code.",
                 error: errorTypes.INVALID_CODE,
             });
         }
         const user = await getUserByPhoneNumber(phoneNumber);
         if (!user) {
             return res.status(404).json({
-                message: "User not found",
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
         res.status(200).json({
             user: user,
             dexcomSessionId: user.dexcomSessionId,
-            message: "User logged in successfully",
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -143,7 +130,6 @@ router.post("/signup", async (req, res) => {
             validation.phoneValidation,
             phoneNumber,
             res,
-            "Invalid phone number format",
             errorTypes.INVALID_PHONE_NUMBER
         )
     ) {
@@ -154,7 +140,6 @@ router.post("/signup", async (req, res) => {
         const user = await getUserByPhoneNumber(phoneNumber);
         if (user) {
             return res.status(409).json({
-                message: "User already exists",
                 error: errorTypes.USER_ALREADY_EXISTS,
             });
         }
@@ -162,20 +147,15 @@ router.post("/signup", async (req, res) => {
         const verification = await sendVerificationCode(phoneNumber);
 
         if (verification.status === "pending") {
-            res.status(200).json({
-                message:
-                    "Verification code sent. Please verify your phone number.",
-            });
+            res.status(200).json({});
         } else {
             res.status(500).json({
-                message: "Failed to send verification code",
                 error: errorTypes.SERVER_ERROR,
             });
         }
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -189,7 +169,6 @@ router.post("/signup/complete", async (req, res) => {
             validation.phoneValidation,
             phoneNumber,
             res,
-            "Invalid phone number format",
             errorTypes.INVALID_PHONE_NUMBER
         )
     ) {
@@ -201,7 +180,6 @@ router.post("/signup/complete", async (req, res) => {
             validation.codeValidation,
             code,
             res,
-            "Invalid verification code",
             errorTypes.INVALID_CODE
         )
     ) {
@@ -213,7 +191,6 @@ router.post("/signup/complete", async (req, res) => {
             validation.nameValidation,
             name,
             res,
-            "Invalid name",
             errorTypes.INVALID_NAME
         )
     ) {
@@ -227,14 +204,12 @@ router.post("/signup/complete", async (req, res) => {
         );
         if (verificationCheck.status !== "approved") {
             return res.status(400).json({
-                message: "Invalid or expired code.",
                 error: errorTypes.INVALID_CODE,
             });
         }
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -243,7 +218,6 @@ router.post("/signup/complete", async (req, res) => {
         (await getDexcomSessionId(dexcomUser, dexcomPass)) || null;
     if (dexcomSessionId === "00000000-0000-0000-0000-000000000000") {
         return res.status(401).json({
-            message: "Invalid Dexcom credentials",
             error: errorTypes.INVALID_DEXCOM_CREDENTIALS,
         });
     }
@@ -251,7 +225,6 @@ router.post("/signup/complete", async (req, res) => {
     const bloodSugarData = (await getBloodSugarData(dexcomSessionId)) || null;
     if (bloodSugarData === "Invalid session") {
         return res.status(401).json({
-            message: "Problem with Dexcom session",
             error: errorTypes.DEXCOM_SESSION_PROBLEM,
         });
     }
@@ -268,14 +241,12 @@ router.post("/signup/complete", async (req, res) => {
 
         res.status(201).json({
             user: user,
-            message: "User created and logged in successfully",
             success: true,
             dexcomSessionId: dexcomSessionId,
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -289,7 +260,6 @@ router.post("/refresh-user", async (req, res) => {
             validation.phoneValidation,
             phoneNumber,
             res,
-            "Invalid phone number format",
             errorTypes.INVALID_PHONE_NUMBER
         )
     ) {
@@ -300,19 +270,16 @@ router.post("/refresh-user", async (req, res) => {
         const updatedUser = await getUserByPhoneNumber(phoneNumber);
         if (!updatedUser) {
             return res.status(404).json({
-                message: "User not found",
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
 
         return res.status(200).json({
-            message: "Blood sugar data refreshed",
             user: updatedUser,
         });
     } catch (error) {
         console.error(error);
         return res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -333,7 +300,6 @@ router.patch("/update", async (req, res) => {
         const user = await getUserByPhoneNumber(phoneNumber);
         if (!user) {
             return res.status(404).json({
-                message: "User not found",
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
@@ -342,49 +308,42 @@ router.patch("/update", async (req, res) => {
             {
                 func: validation.nameValidation,
                 data: name,
-                message: "Invalid name",
                 error: errorTypes.INVALID_NAME,
             },
             {
                 func: validation.glucagonLocationValidation,
                 data: glucagonLocation,
-                message: "Invalid glucagon location",
                 error: errorTypes.INVALID_GLUCAGON_LOCATION,
             },
             {
                 func: validation.glucagonTypeValidation,
                 data: glucagonType,
-                message: "Invalid glucagon type",
                 error: errorTypes.INVALID_GLUCAGON_TYPE,
             },
             {
                 func: validation.allergiesValidation,
                 data: allergies,
-                message: "Invalid allergies",
                 error: errorTypes.INVALID_ALLERGIES,
             },
             {
                 func: validation.medicationsValidation,
                 data: medications,
-                message: "Invalid medications",
                 error: errorTypes.INVALID_MEDICATIONS,
             },
             {
                 func: validation.diagnosesValidation,
                 data: diagnoses,
-                message: "Invalid diagnoses",
                 error: errorTypes.INVALID_DIAGNOSES,
             },
             {
                 func: validation.crisisTextValidation,
                 data: crisisText,
-                message: "Invalid crisis text",
                 error: errorTypes.INVALID_CRISIS_TEXT,
             },
         ];
 
-        for (let { func, data, message, error } of validations) {
-            if (!validateInput(func, data, res, message, error)) return;
+        for (let { func, data, error } of validations) {
+            if (!validateInput(func, data, res, error)) return;
         }
 
         const updateData = {
@@ -397,21 +356,18 @@ router.patch("/update", async (req, res) => {
             crisisText,
         };
         const updated = await updateUser(user._id, updateData);
-        if (!updated) {
+        if (updated === false) {
             return res.status(400).json({
-                message: "User update failed",
-                error: "UPDATE_FAILED",
+                error: errorTypes.NO_FIELDS_UPDATED,
             });
         }
 
         const updatedUser = await getUserByPhoneNumber(phoneNumber);
         res.status(200).json({
             user: updatedUser,
-            message: "User updated successfully",
         });
     } catch (error) {
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -425,7 +381,6 @@ router.post("/update-phone", async (req, res) => {
             validation.phoneValidation,
             phoneNumber,
             res,
-            "Invalid phone number format",
             errorTypes.INVALID_PHONE_NUMBER
         )
     ) {
@@ -437,7 +392,6 @@ router.post("/update-phone", async (req, res) => {
             validation.phoneValidation,
             newPhoneNumber,
             res,
-            "Invalid new phone number format",
             errorTypes.INVALID_PHONE_NUMBER
         )
     ) {
@@ -448,27 +402,22 @@ router.post("/update-phone", async (req, res) => {
         const user = await getUserByPhoneNumber(phoneNumber);
         if (!user) {
             return res.status(404).json({
-                message: "User not found",
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
         const updatedUser = await getUserByPhoneNumber(newPhoneNumber);
         if (updatedUser) {
             return res.status(409).json({
-                message: "User already exists",
                 error: errorTypes.USER_ALREADY_EXISTS,
             });
         }
 
         await sendVerificationCode(newPhoneNumber);
 
-        res.status(200).json({
-            message: "Verification code sent. Please verify your phone number.",
-        });
+        res.status(200).json({});
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -482,7 +431,6 @@ router.post("/update-phone/complete", async (req, res) => {
             validation.codeValidation,
             code,
             res,
-            "Invalid verification code",
             "INVALID_VERIFICATION_CODE"
         )
     ) {
@@ -496,14 +444,12 @@ router.post("/update-phone/complete", async (req, res) => {
         );
         if (verificationCheck.status !== "approved") {
             return res.status(400).json({
-                message: "Invalid or expired code.",
                 error: errorTypes.INVALID_CODE,
             });
         }
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -512,7 +458,6 @@ router.post("/update-phone/complete", async (req, res) => {
         const user = await getUserByPhoneNumber(phoneNumber);
         if (!user) {
             return res.status(404).json({
-                message: "User not found",
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
@@ -521,19 +466,16 @@ router.post("/update-phone/complete", async (req, res) => {
         const updated = await updateUser(user._id, updateData);
         if (!updated) {
             return res.status(400).json({
-                message: "User update failed",
                 error: "UPDATE_FAILED",
             });
         }
         const updatedUser = await getUserByPhoneNumber(phoneNumber);
         res.status(200).json({
             user: updatedUser,
-            message: "User updated successfully",
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -550,14 +492,12 @@ router.post("/update-phone/complete", async (req, res) => {
 
         res.status(201).json({
             user: user,
-            message: "User created and logged in successfully",
             success: true,
             dexcomSessionId: dexcomSessionId,
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -571,7 +511,6 @@ router.post("/update-dexcom", async (req, res) => {
             validation.phoneValidation,
             phoneNumber,
             res,
-            "Invalid phone number format",
             errorTypes.INVALID_PHONE_NUMBER
         )
     ) {
@@ -583,7 +522,6 @@ router.post("/update-dexcom", async (req, res) => {
 
     if (newDexcomSessionId === "00000000-0000-0000-0000-000000000000") {
         return res.status(401).json({
-            message: "Invalid Dexcom credentials",
             error: errorTypes.INVALID_DEXCOM_CREDENTIALS,
         });
     }
@@ -595,14 +533,12 @@ router.post("/update-dexcom", async (req, res) => {
         foundUserId = foundUser._id;
         if (!foundUser) {
             return res.status(404).json({
-                message: "User not found",
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -614,12 +550,10 @@ router.post("/update-dexcom", async (req, res) => {
         );
         res.status(200).json({
             user: updatedUser,
-            message: "Dexcom credentials updated successfully",
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
@@ -633,7 +567,6 @@ router.post("/update-alarm", async (req, res) => {
             validation.phoneValidation,
             phoneNumber,
             res,
-            "Invalid phone number format",
             errorTypes.INVALID_PHONE_NUMBER
         )
     ) {
@@ -642,7 +575,6 @@ router.post("/update-alarm", async (req, res) => {
 
     if (typeof lowAlarm !== "number" || lowAlarm < 0 || lowAlarm > 200) {
         return res.status(400).json({
-            message: "Invalid low alarm value",
             error: "INVALID_LOW_ALARM",
         });
     }
@@ -651,7 +583,6 @@ router.post("/update-alarm", async (req, res) => {
         const user = await getUserByPhoneNumber(phoneNumber);
         if (!user) {
             return res.status(404).json({
-                message: "User not found",
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
@@ -659,12 +590,10 @@ router.post("/update-alarm", async (req, res) => {
         const updatedUser = await setLowAlarm(user._id, lowAlarm);
         res.status(200).json({
             user: updatedUser,
-            message: "Low alarm updated successfully",
         });
     } catch (error) {
         console.error(error);
         res.status(500).json({
-            message: "Server error",
             error: errorTypes.SERVER_ERROR,
         });
     }
