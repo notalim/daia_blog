@@ -63,9 +63,9 @@ const UserDashboardPage = () => {
             parseInt(thresholdValue)
         );
         if (result) {
-            processSuccess("Threshold updated successfully.");
+            processSuccess("Low Alarm updated successfully.");
         } else {
-            processError("Error updating threshold.");
+            processError("Error updating low alarm.");
         }
     };
 

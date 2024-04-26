@@ -1,4 +1,4 @@
-# <img src="./client/src/assets/images/daia_dark_purple_logo.png" alt="Daia Logo" width="25"/> DAIA: Smarter Sugar Sharing 
+# <img src="./client/src/assets/images/daia_dark_purple_logo.png" alt="Daia Logo" width="25"/> Daia: Smarter Sugar Sharing 
 
 Daia is a mobile application that allows for short-term sharing of blood sugar levels, with a focus on ease of use, customizability, and universality. The app, intended for those with diabetes (Type I and II), allows individuals to easily share their glucose levels with others through sessions, which is important to ensure that emergency medication can be administered if a serious blood sugar dip were to occur.
 

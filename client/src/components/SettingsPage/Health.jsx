@@ -56,14 +56,7 @@ const AccountPage = ({ user }) => {
                   </label>
               </div>
               <div>
-                  <Input
-                      type="text"
-                      id="glucagonLocation"
-                      name="glucagonLocation"
-                      value={userData.glucagonLocation}
-                      onChange={handleInputChange}
-                      className="border border-gray-300 p-2 w-full"
-                  />
+                  <Input type="text" id="glucagonLocation" name="glucagonLocation" value={userData.glucagonLocation} onChange={handleInputChange} className="border border-gray-300 p-2 w-full" />
               </div>
               <div className="flex items-center">
                   <label htmlFor="glucagonType" className="mr-2">
@@ -82,9 +75,10 @@ const AccountPage = ({ user }) => {
                           <SelectValue placeholder="Type" />
                       </SelectTrigger>
                       <SelectContent>
-                          <SelectItem value="1">Type 1</SelectItem>
-                          <SelectItem value="2">Type 2</SelectItem>
-                          <SelectItem value="3">Type 3</SelectItem>
+                          <SelectItem value="Glucagon Kit">Glucagon Kit</SelectItem>
+                          <SelectItem value="Baqsimi">Baqsimi</SelectItem>
+                          <SelectItem value="Gvoke HypoPen">Gvoke HypoPen</SelectItem>
+                          <SelectItem value="Gvoke Prefilled Syringe (PFS)">Gvoke Prefilled Syringe (PFS)</SelectItem>
                       </SelectContent>
                   </Select>
               </div>
@@ -95,14 +89,7 @@ const AccountPage = ({ user }) => {
                   </label>
               </div>
               <div>
-                  <Input
-                      type="text"
-                      id="allergies"
-                      name="allergies"
-                      value={userData.allergies}
-                      onChange={handleInputChange}
-                      className="border border-gray-300 p-2 w-full"
-                  />
+                  <Input type="text" id="allergies" name="allergies" value={userData.allergies} onChange={handleInputChange} className="border border-gray-300 p-2 w-full" />
               </div>
 
               <div className="flex items-center">
@@ -111,30 +98,16 @@ const AccountPage = ({ user }) => {
                   </label>
               </div>
               <div>
-                  <Input
-                      type="text"
-                      id="medications"
-                      name="medications"
-                      value={userData.medications}
-                      onChange={handleInputChange}
-                      className="border border-gray-300 p-2 w-full"
-                  />
+                  <Input type="text" id="medications" name="medications" value={userData.medications} onChange={handleInputChange} className="border border-gray-300 p-2 w-full" />
               </div>
 
               <div className="flex items-center">
                   <label htmlFor="diagnoses" className="mr-2">
-                      Diagnoses
+                      Medical Conditions
                   </label>
               </div>
               <div>
-                  <Input
-                      type="text"
-                      id="diagnoses"
-                      name="diagnoses"
-                      value={userData.diagnoses}
-                      onChange={handleInputChange}
-                      className="border border-gray-300 p-2 w-full"
-                  />
+                  <Input type="text" id="diagnoses" name="diagnoses" value={userData.diagnoses} onChange={handleInputChange} className="border border-gray-300 p-2 w-full" />
               </div>
 
               <div className="col-span-2 flex justify-center">

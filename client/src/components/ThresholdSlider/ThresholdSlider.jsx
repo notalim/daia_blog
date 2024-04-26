@@ -35,7 +35,7 @@ const ThresholdSlider = ({ initialThreshold, onThresholdChange, onSave }) => {
             </button>
             {showToast && (
                 <Toast className="mt-4" variant="success">
-                    Threshold saved!
+                    Low Alarm saved!
                 </Toast>
             )}
         </div>
