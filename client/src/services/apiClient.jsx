@@ -15,6 +15,10 @@ class ApiClient {
         localStorage.setItem(this.tokenName, token);
     }
 
+    setOnTokenInvalid(handler) {
+        this.onTokenInvalid = handler;
+    }
+
     async request({ endpoint, method = "GET", data = {} }) {
         const url = `${this.remoteHostUrl}/${endpoint}`;
 
@@ -32,6 +36,12 @@ class ApiClient {
             console.error({ errorResponse: error.response });
 
             const errorCode = error?.response?.data?.error;
+
+            if (error.response.status === 403) {
+                if (this.onTokenInvalid) {
+                    this.onTokenInvalid();
+                }
+            }
 
             return {
                 data: null,
@@ -64,13 +74,7 @@ class ApiClient {
         });
     }
 
-    async completeRegistration(
-        phoneNumber,
-        code,
-        name,
-        dexcomUser,
-        dexcomPass
-    ) {
+    async completeRegistration(phoneNumber, code, name, dexcomUser, dexcomPass) {
         return await this.request({
             endpoint: "users/signup/complete",
             method: "POST",
@@ -134,14 +138,7 @@ class ApiClient {
         });
     }
 
-    async verifyContact(
-        userId,
-        phoneNumber,
-        code,
-        firstName,
-        lastName,
-        relationship
-    ) {
+    async verifyContact(userId, phoneNumber, code, firstName, lastName, relationship) {
         return await this.request({
             endpoint: `users/${userId}/contacts/complete`,
             method: "POST",
@@ -189,7 +186,7 @@ class ApiClient {
         });
     }
 
-    async getUser (userId) {
+    async getUser(userId) {
         return await this.request({
             endpoint: `users/${userId}`,
             method: "GET",

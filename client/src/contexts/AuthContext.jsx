@@ -291,6 +291,10 @@ export const AuthProvider = ({ children }) => {
         }
     }, []);
 
+    useEffect(() => {
+        API.onTokenInvalid = logoutUser;
+    }, [logoutUser]);
+
     return (
         <AuthContext.Provider
             value={{
