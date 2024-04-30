@@ -5,11 +5,13 @@ import useProcessMessages from "./useProcessMessages";
 
 const ProtectedRoute = ({ children }) => {
     const token = localStorage.getItem("token");
+    const user = JSON.parse(localStorage.getItem("user"));
     const navigate = useNavigate();
     const { processError } = useProcessMessages();
 
     useEffect(() => {
-        if (!token) {
+        if (!user || !token) {
+            console.error("User or token not found. Redirecting to login page.");
             navigate("/login");
         } else {
             try {

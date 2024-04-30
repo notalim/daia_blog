@@ -8,17 +8,17 @@ const AccountPage = ({ user }) => {
 
     // Initial user data
     const initialUserData = {
-        name: user.name,
-        dexcomUser: user.dexcomUser,
-        dexcomPass: "**********", // user.dexcomPass,
-        phoneNumber: user.phoneNumber,
-        glucagonLocation: user.glucagonLocation,
-        glucagonType: user.glucagonType,
-        allergies: user.allergies,
-        medications: user.medications,
-        diagnoses: user.diagnoses,
-        crisisText: user.crisisText,
-        emergencyInfo: user.emergencyInfo,
+        name: user?.name,
+        dexcomUser: user?.dexcomUser,
+        dexcomPass: "**********", // user?.dexcomPass,
+        phoneNumber: user?.phoneNumber,
+        glucagonLocation: user?.glucagonLocation,
+        glucagonType: user?.glucagonType,
+        allergies: user?.allergies,
+        medications: user?.medications,
+        diagnoses: user?.diagnoses,
+        crisisText: user?.crisisText,
+        emergencyInfo: user?.emergencyInfo,
     };
 
     // State to store user data
