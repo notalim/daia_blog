@@ -18,9 +18,11 @@ class ApiClient {
     async request({ endpoint, method = "GET", data = {} }) {
         const url = `${this.remoteHostUrl}/${endpoint}`;
 
+        this.token = localStorage.getItem(this.tokenName) || this.token;
+
         const headers = {
             "Content-Type": "application/json",
-            Authorization: this.token ? `Bearer ${this.token}` : "",
+            Authorization: `Bearer ${this.token}`,
         };
 
         try {
@@ -77,7 +79,7 @@ class ApiClient {
     }
 
     async logout() {
-        this.setToken(null);
+        localStorage.removeItem(this.tokenName);
         // No need to make an API request since logout is handled by removing the token
     }
 
@@ -186,8 +188,15 @@ class ApiClient {
             data: { phoneNumber, lowAlarm },
         });
     }
+
+    async getUser (userId) {
+        return await this.request({
+            endpoint: `users/${userId}`,
+            method: "GET",
+        });
+    }
 }
 
-const API = new ApiClient(API_URL ? API_URL : "http://localhost:3001");
+const API = new ApiClient("http://localhost:3001");
 
 export default API;

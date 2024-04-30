@@ -9,24 +9,24 @@ import useProcessMessages from "../contexts/useProcessMessages";
 
 
 const UserDashboardPage = () => {
-    const { user, refreshUser, updateDexcomSessionId, updateThresholdValue } = useAuth();
+    const { user, refreshUser, updateDexcomSessionId, updateThresholdValue, setUser } = useAuth();
     const [dataIsOld, setDataIsOld] = useState(false);
 
     const [thresholdValue, setThresholdValue] = useState(
-        user.lowAlarm || 180
+        user?.lowAlarm || 180
     );
 
     const { processError, processSuccess } = useProcessMessages();
 	
 
     useEffect(() => {
-        if (!user.bloodSugarData || user.bloodSugarData.length === 0) {
+        if (!user?.bloodSugarData || user?.bloodSugarData.length === 0) {
             console.log("No blood sugar data available.");
             setDataIsOld(false);
             return;
         }
 
-        const latestDataTime = moment(user.bloodSugarData[user.bloodSugarData.length - 1]?.WT);
+        const latestDataTime = moment(user?.bloodSugarData[user?.bloodSugarData.length - 1]?.WT);
         const thirtyMinutesAgo = moment().subtract(30, "minutes");
 
 
@@ -35,7 +35,7 @@ const UserDashboardPage = () => {
         } else {
             setDataIsOld(false);
         }
-    }, [user.bloodSugarData]);
+    }, [user?.bloodSugarData]);
 
     const handleRefreshData = async () => {
         const { data, error } = await refreshUser(user.phoneNumber);
@@ -69,10 +69,10 @@ const UserDashboardPage = () => {
         }
     };
 
-    const bloodSugarData = user.bloodSugarData;
+    const bloodSugarData = user?.bloodSugarData;
     return (
         <div className="container mx-auto m-8">
-            <h1 className="text-2xl font-bold">Hello, {user.name}!</h1>
+            <h1 className="text-2xl font-bold">Hello, {user?.name}!</h1>
 
             <BloodSugarScatterPlot
                 bloodSugarData={bloodSugarData}

@@ -93,7 +93,7 @@ const AddContactButton = () => {
         }
 
         try {
-            console.log(formData);
+            // console.log(formData);
             const { error } = await verifyContact(
                 user._id,
                 formData.phoneNumber,

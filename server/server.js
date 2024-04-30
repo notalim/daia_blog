@@ -22,7 +22,7 @@ process.on("unhandledRejection", handleRejection);
 
 // * This sets up all the routes for the server
 configRoutes(app);
-app.listen(3000, async () => {
+app.listen(3001, async () => {
     console.log("We now have a server! 🙏 ");
 
     // * This will start the task to update the blood sugar levels for all users

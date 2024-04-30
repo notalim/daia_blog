@@ -15,16 +15,16 @@ const AccountPage = ({ user }) => {
 
   // Initial user data
   const initialUserData = {
-    name: user.name,
-    // dexcomUser: user.dexcomUser,
-    // dexcomPass: user.dexcomPass,
-    phoneNumber: user.phoneNumber,
-    glucagonLocation: user.glucagonLocation,
-    glucagonType: user.glucagonType,
-    allergies: user.allergies,
-    medications: user.medications,
-    diagnoses: user.diagnoses,
-    crisisText: user.crisisText,
+    name: user?.name,
+    // dexcomUser: user?.dexcomUser,
+    // dexcomPass: user?.dexcomPass,
+    phoneNumber: user?.phoneNumber,
+    glucagonLocation: user?.glucagonLocation,
+    glucagonType: user?.glucagonType,
+    allergies: user?.allergies,
+    medications: user?.medications,
+    diagnoses: user?.diagnoses,
+    crisisText: user?.crisisText,
   };
 
   // State to store user data
@@ -41,7 +41,7 @@ const AccountPage = ({ user }) => {
     e.preventDefault();
     const { error } = await updateUser(userData.phoneNumber, userData.name, userData.glucagonLocation, userData.glucagonType, userData.allergies, userData.medications, userData.diagnoses, userData.crisisText);
     if (!error) {
-      console.log("User data updated successfully");
+    //   console.log("User data updated successfully");
     } else {
       console.error("Error updating user data:", error);
     }

@@ -18,7 +18,7 @@ function UserInformation({ user, handleDeleteUser, handleLogout }) {
 							Full name
 						</dt>
 						<dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-							{user.name}
+							{user?.name}
 						</dd>
 					</div>
 					<div className="bg-white px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -26,7 +26,7 @@ function UserInformation({ user, handleDeleteUser, handleLogout }) {
 							Contact number
 						</dt>
 						<dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-							{user.phoneNumber}
+							{user?.phoneNumber}
 						</dd>
 					</div>
 					<div className="bg-gray-50 px-4 py-5 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-6">
@@ -34,7 +34,7 @@ function UserInformation({ user, handleDeleteUser, handleLogout }) {
 							Dexcom username
 						</dt>
 						<dd className="mt-1 text-sm text-gray-900 sm:mt-0 sm:col-span-2">
-							{user.dexcomUser}
+							{user?.dexcomUser}
 						</dd>
 					</div>
 				</dl>

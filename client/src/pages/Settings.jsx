@@ -17,6 +17,8 @@ import {
 import AccountPage from "../components/SettingsPage/Account.jsx";
 import HealthPage from "../components/SettingsPage/Health.jsx";
 import NotificationsPage from "../components/SettingsPage/Notifications.jsx";
+import { jwtDecode } from "jwt-decode";
+import { useEffect } from "react";
 
 const Settings = () => {
     const { user } = useAuth();

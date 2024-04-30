@@ -20,6 +20,11 @@ const handleAxiosError = (error, customMessage) => {
 };
 
 export const getDexcomSessionId = async (dexcomUser, dexcomPass) => {
+    if (typeof dexcomPass === "object") {
+        dexcomPass = decrypt(dexcomPass);
+    } else {
+        dexcomPass = dexcomPass;
+    }
     const loginUrl =
         "https://share2.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName";
     const body = {

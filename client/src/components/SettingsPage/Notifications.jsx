@@ -3,22 +3,23 @@ import { useAuth } from "../../contexts/useAuth";
 import { Input } from "../../@/components/ui/input";
 import { Button } from "../../@/components/ui/button";
 import { Textarea } from "../../@/components/ui/textarea";
+import { jwtDecode } from "jwt-decode";
 
 const AccountPage = ({ user }) => {
     const { updateUser } = useAuth();
 
     // Initial user data
     const initialUserData = {
-        name: user.name,
-        // dexcomUser: user.dexcomUser,
-        // dexcomPass: user.dexcomPass,
-        phoneNumber: user.phoneNumber,
-        glucagonLocation: user.glucagonLocation,
-        glucagonType: user.glucagonType,
-        allergies: user.allergies,
-        medications: user.medications,
-        diagnoses: user.diagnoses,
-        crisisText: user.crisisText,
+        name: user?.name,
+        // dexcomUser: user?.dexcomUser,
+        // dexcomPass: user?.dexcomPass,
+        phoneNumber: user?.phoneNumber,
+        glucagonLocation: user?.glucagonLocation,
+        glucagonType: user?.glucagonType,
+        allergies: user?.allergies,
+        medications: user?.medications,
+        diagnoses: user?.diagnoses,
+        crisisText: user?.crisisText,
     };
 
     // State to store user data
@@ -44,7 +45,7 @@ const AccountPage = ({ user }) => {
             userData.crisisText
         );
         if (!error) {
-            console.log("User data updated successfully");
+            // console.log("User data updated successfully");
         } else {
             console.error("Error updating user data:", error);
         }
