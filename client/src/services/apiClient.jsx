@@ -197,6 +197,6 @@ class ApiClient {
     }
 }
 
-const API = new ApiClient("http://localhost:3001");
+const API = new ApiClient(API_URL ? API_URL : "http://localhost:3001");
 
 export default API;

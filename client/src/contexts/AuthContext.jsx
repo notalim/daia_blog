@@ -10,8 +10,7 @@ export const AuthContext = createContext();
 import useProcessMessages from "./useProcessMessages";
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
-    const [loading, setLoading] = useState(true);
+    const [user, setUser] = useState(JSON.parse(localStorage.getItem("user")));
     const navigate = useNavigate();
 
     const { processError, processSuccess } = useProcessMessages();
@@ -39,6 +38,7 @@ export const AuthProvider = ({ children }) => {
                 return { data: null, error };
             }
             setUser(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("token", data.token);
             processSuccess("Logged in successfully.");
             return { data, error: null };
@@ -71,6 +71,7 @@ export const AuthProvider = ({ children }) => {
                 return { data: null, error };
             }
             setUser(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("token", data.token);
             processSuccess("Registration completed.");
             return { data, error: null };
@@ -83,6 +84,7 @@ export const AuthProvider = ({ children }) => {
     const logoutUser = () => {
         navigate("/");
         localStorage.removeItem("token");
+        localStorage.removeItem("user");
         API.logout();
         processSuccess("Logged out successfully.");
         setUser(null);
@@ -97,6 +99,7 @@ export const AuthProvider = ({ children }) => {
             }
             const newUser = { ...data.user };
             setUser(newUser);
+            localStorage.setItem("user", JSON.stringify(newUser));
             localStorage.setItem("token", data.token);
             processSuccess("User data refreshed.");
             return { data, error: null };
@@ -115,6 +118,7 @@ export const AuthProvider = ({ children }) => {
                 return { data: null, error };
             }
             setUser(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("token", data.token);
             processSuccess("Data updated.");
             return { data, error: null };
@@ -132,6 +136,7 @@ export const AuthProvider = ({ children }) => {
                 return { data: null, error: response.message };
             }
             setUser(null);
+            localStorage.removeItem("user");
             localStorage.removeItem("token");
             navigate("/");
             processSuccess("User deleted.");
@@ -162,6 +167,7 @@ export const AuthProvider = ({ children }) => {
                 return { data: null, error };
             }
             setUser(data.user);
+            localStorage.setItem("user", JSON.stringify(data.user));
             localStorage.setItem("token", data.token);
             processSuccess("User updated.");
             return { data, error: null };
@@ -269,6 +275,7 @@ export const AuthProvider = ({ children }) => {
             }
             processSuccess("Low Alarm updated successfully.");
             setUser(response.data.user);
+            localStorage.setItem("user", JSON.stringify(response.data.user));
             localStorage.setItem("token", response.data.token);
             return { data: response.data, error: null };
         } catch (error) {
@@ -278,50 +285,11 @@ export const AuthProvider = ({ children }) => {
     };
 
     useEffect(() => {
-        const fetchUser = async () => {
-            const storedToken = localStorage.getItem("token");
-            if (storedToken) {
-                try {
-                    const decodedToken = jwtDecode(storedToken);
-                    console.log(decodedToken);
-                    const currentTime = Date.now() / 1000;
-                    if (decodedToken.exp > currentTime) {
-                        // Token is valid and not expired
-                        const { data, error } = await API.getUser(decodedToken.userId);
-                        if (error) {
-                            processError("Error fetching user.");
-                            console.error("Error fetching user:", error);
-                            localStorage.removeItem("token");
-                            setUser(null);
-                        } else {
-                            setUser(data.user);
-                        }
-                    } else {
-                        // Token has expired
-                        navigate("/");
-                        localStorage.removeItem("token");
-                        API.logout();
-                        processError("Session Expired. Please log in again.");
-                    }
-                } catch (error) {
-                    // Invalid token
-                    processError("Invalid token.");
-                    console.error("Error decoding token:", error);
-                    localStorage.removeItem("token");
-                    setUser(null);
-                }
-            } else {
-                setUser(null);
-            }
-            setLoading(false);
-        };
-
-        fetchUser();
+        const storedUser = localStorage.getItem("user");
+        if (storedUser) {
+            setUser(JSON.parse(storedUser));
+        }
     }, []);
-
-    if (loading) {
-        return <div></div>;
-    }
 
     return (
         <AuthContext.Provider
