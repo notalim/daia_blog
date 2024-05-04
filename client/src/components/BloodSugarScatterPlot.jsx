@@ -80,8 +80,8 @@ const BloodSugarScatterPlot = ({
                 </div>
                 <div className="text-xs text-gray-500">Low Alarm can be set to any value between 0 and 200.</div>
 
-                <Button onClick={onDexcomSessionIdRefresh} variant="daia" className="mt-2">
-                    Refresh Points Data
+                <Button onClick={onRefresh} variant="daia" className="mt-2">
+                    Refresh Data Points
                 </Button>
                 <div className="text-xs text-gray-500 mt-2">Fetch the latest data from Dexcom.</div>
             </div>

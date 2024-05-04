@@ -15,12 +15,18 @@ class ApiClient {
         localStorage.setItem(this.tokenName, token);
     }
 
+    setOnTokenInvalid(handler) {
+        this.onTokenInvalid = handler;
+    }
+
     async request({ endpoint, method = "GET", data = {} }) {
         const url = `${this.remoteHostUrl}/${endpoint}`;
 
+        this.token = localStorage.getItem(this.tokenName) || this.token;
+
         const headers = {
             "Content-Type": "application/json",
-            Authorization: this.token ? `Bearer ${this.token}` : "",
+            Authorization: `Bearer ${this.token}`,
         };
 
         try {
@@ -30,6 +36,12 @@ class ApiClient {
             console.error({ errorResponse: error.response });
 
             const errorCode = error?.response?.data?.error;
+
+            if (error.response.status === 403) {
+                if (this.onTokenInvalid) {
+                    this.onTokenInvalid();
+                }
+            }
 
             return {
                 data: null,
@@ -62,13 +74,7 @@ class ApiClient {
         });
     }
 
-    async completeRegistration(
-        phoneNumber,
-        code,
-        name,
-        dexcomUser,
-        dexcomPass
-    ) {
+    async completeRegistration(phoneNumber, code, name, dexcomUser, dexcomPass) {
         return await this.request({
             endpoint: "users/signup/complete",
             method: "POST",
@@ -77,7 +83,7 @@ class ApiClient {
     }
 
     async logout() {
-        this.setToken(null);
+        localStorage.removeItem(this.tokenName);
         // No need to make an API request since logout is handled by removing the token
     }
 
@@ -132,14 +138,7 @@ class ApiClient {
         });
     }
 
-    async verifyContact(
-        userId,
-        phoneNumber,
-        code,
-        firstName,
-        lastName,
-        relationship
-    ) {
+    async verifyContact(userId, phoneNumber, code, firstName, lastName, relationship) {
         return await this.request({
             endpoint: `users/${userId}/contacts/complete`,
             method: "POST",
@@ -184,6 +183,13 @@ class ApiClient {
             endpoint: "users/update-alarm",
             method: "POST",
             data: { phoneNumber, lowAlarm },
+        });
+    }
+
+    async getUser(userId) {
+        return await this.request({
+            endpoint: `users/${userId}`,
+            method: "GET",
         });
     }
 }

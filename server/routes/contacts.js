@@ -1,18 +1,10 @@
 import express from "express";
-import {
-    sendVerificationCode,
-    checkVerificationCode,
-} from "../services/twilioService.js";
-import {
-    addEmergencyContact,
-    editEmergencyContact,
-    getUserContacts,
-    toggleContactActiveStatus,
-    removeEmergencyContact,
-} from "../db/contactsModule.js";
+import { sendVerificationCode, checkVerificationCode } from "../services/twilioService.js";
+import { addEmergencyContact, editEmergencyContact, getUserContacts, toggleContactActiveStatus, removeEmergencyContact } from "../db/contactsModule.js";
 
 import validation from "../services/validation.js";
 import { errorTypes } from "../services/errorTypes.js";
+import verifyToken from "./middleware.js";
 
 const router = express.Router();
 
@@ -24,7 +16,7 @@ const validateInput = (validationFunc, data, res, errorCode) => {
     return true;
 };
 
-router.get("/:userId/contacts", async (req, res) => {
+router.get("/:userId/contacts", verifyToken, async (req, res) => {
     const userId = req.params.userId;
 
     try {
@@ -40,46 +32,19 @@ router.get("/:userId/contacts", async (req, res) => {
     }
 });
 
-router.post("/:userId/contacts", async (req, res) => {
+router.post("/:userId/contacts", verifyToken, async (req, res) => {
     const userId = req.params.userId;
     const { phoneNumber, firstName, lastName, relationship } = req.body;
 
-    if (
-        !validateInput(
-            validation.phoneValidation,
-            phoneNumber,
-            res,
-            errorTypes.INVALID_PHONE_NUMBER
-        )
-    ) {
+    if (!validateInput(validation.phoneValidation, phoneNumber, res, errorTypes.INVALID_PHONE_NUMBER)) {
         return;
     }
 
-    if (
-        !validateInput(
-            validation.nameValidation,
-            firstName,
-            res,
-            errorTypes.INVALID_NAME
-        ) ||
-        !validateInput(
-            validation.nameValidation,
-            lastName,
-            res,
-            errorTypes.INVALID_NAME
-        )
-    ) {
+    if (!validateInput(validation.nameValidation, firstName, res, errorTypes.INVALID_NAME) || !validateInput(validation.nameValidation, lastName, res, errorTypes.INVALID_NAME)) {
         return;
     }
 
-    if (
-        !validateInput(
-            validation.stringValidation,
-            relationship,
-            res,
-            errorTypes.INVALID_RELATIONSHIP
-        )
-    ) {
+    if (!validateInput(validation.stringValidation, relationship, res, errorTypes.INVALID_RELATIONSHIP)) {
         return;
     }
 
@@ -101,28 +66,19 @@ router.post("/:userId/contacts", async (req, res) => {
     }
 });
 
-router.post("/:userId/contacts/complete", async (req, res) => {
+router.post("/:userId/contacts/complete", verifyToken, async (req, res) => {
     const userId = req.params.userId;
     const { phoneNumber, code, firstName, lastName, relationship } = req.body;
 
     try {
-        const verificationCheck = await checkVerificationCode(
-            phoneNumber,
-            code
-        );
+        const verificationCheck = await checkVerificationCode(phoneNumber, code);
         if (verificationCheck.status !== "approved") {
             return res.status(400).json({
                 error: errorTypes.INVALID_CODE,
             });
         }
 
-        const contact = await addEmergencyContact(
-            userId,
-            phoneNumber,
-            firstName,
-            lastName,
-            relationship
-        );
+        const contact = await addEmergencyContact(userId, phoneNumber, firstName, lastName, relationship);
 
         res.status(200).json({
             contact: contact,
@@ -135,7 +91,7 @@ router.post("/:userId/contacts/complete", async (req, res) => {
     }
 });
 
-router.put("/:userId/contacts/:contactId/toggle", async (req, res) => {
+router.put("/:userId/contacts/:contactId/toggle", verifyToken, async (req, res) => {
     const userId = req.params.userId;
     const contactId = req.params.contactId;
 
@@ -150,7 +106,7 @@ router.put("/:userId/contacts/:contactId/toggle", async (req, res) => {
     }
 });
 
-router.delete("/:userId/contacts/:contactId", async (req, res) => {
+router.delete("/:userId/contacts/:contactId", verifyToken, async (req, res) => {
     const { userId, contactId } = req.params;
 
     try {
@@ -164,47 +120,21 @@ router.delete("/:userId/contacts/:contactId", async (req, res) => {
     }
 });
 
-router.patch("/:userId/contacts/:contactId", async (req, res) => {
+router.patch("/:userId/contacts/:contactId", verifyToken, async (req, res) => {
     const userId = req.params.userId;
     const contactId = req.params.contactId;
     const { firstName, lastName, relationship } = req.body;
 
-    if (
-        !validateInput(
-            validation.nameValidation,
-            firstName,
-            res,
-            errorTypes.INVALID_NAME
-        ) ||
-        !validateInput(
-            validation.nameValidation,
-            lastName,
-            res,
-            errorTypes.INVALID_NAME
-        )
-    ) {
+    if (!validateInput(validation.nameValidation, firstName, res, errorTypes.INVALID_NAME) || !validateInput(validation.nameValidation, lastName, res, errorTypes.INVALID_NAME)) {
         return;
     }
 
-    if (
-        !validateInput(
-            validation.stringValidation,
-            relationship,
-            res,
-            errorTypes.INVALID_CONTACT_RELATIONSHIP
-        )
-    ) {
+    if (!validateInput(validation.stringValidation, relationship, res, errorTypes.INVALID_CONTACT_RELATIONSHIP)) {
         return;
     }
 
     try {
-        const contact = await editEmergencyContact(
-            userId,
-            contactId,
-            firstName,
-            lastName,
-            relationship
-        );
+        const contact = await editEmergencyContact(userId, contactId, firstName, lastName, relationship);
 
         res.status(200).json({
             contact,

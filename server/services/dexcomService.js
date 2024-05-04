@@ -20,8 +20,12 @@ const handleAxiosError = (error, customMessage) => {
 };
 
 export const getDexcomSessionId = async (dexcomUser, dexcomPass) => {
-    const loginUrl =
-        "https://share2.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName";
+    if (typeof dexcomPass === "object") {
+        dexcomPass = decrypt(dexcomPass);
+    } else {
+        dexcomPass = dexcomPass;
+    }
+    const loginUrl = "https://share2.dexcom.com/ShareWebServices/Services/General/LoginPublisherAccountByName";
     const body = {
         accountName: dexcomUser,
         password: dexcomPass,
@@ -37,11 +41,7 @@ export const getDexcomSessionId = async (dexcomUser, dexcomPass) => {
     }
 };
 
-export const getBloodSugarData = async (
-    sessionId,
-    minutes = 60,
-    maxCount = 12
-) => {
+export const getBloodSugarData = async (sessionId, minutes = 60, maxCount = 12) => {
     const url = `https://share2.dexcom.com/ShareWebServices/Services/Publisher/ReadPublisherLatestGlucoseValues?sessionId=${sessionId}&minutes=${minutes}&maxCount=${maxCount}`;
 
     try {
@@ -54,17 +54,11 @@ export const getBloodSugarData = async (
 
 export async function refreshDexcomSessionId(user) {
     try {
-      let decryptedPass = decrypt(user.dexcomPass);
-        const newSessionId = await getDexcomSessionId(
-            user.dexcomUser,
-            decryptedPass
-        );
+        let decryptedPass = decrypt(user.dexcomPass);
+        const newSessionId = await getDexcomSessionId(user.dexcomUser, decryptedPass);
         await updateUserSessionId(user._id, newSessionId);
     } catch (error) {
-        console.error(
-            `Error refreshing session ID for user ${user._id}:`,
-            error
-        );
+        console.error(`Error refreshing session ID for user ${user._id}:`, error);
     }
 }
 

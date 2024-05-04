@@ -77,8 +77,8 @@ const createUser = async (
 
 const updateUser = async (id, updatedUser) => {
     // ! Validate args here
-    console.log(updatedUser);
-    console.log(id);
+    // console.log(updatedUser);
+    // console.log(id);
     try {
         const userCollection = await users();
         const updateInfo = await userCollection.updateOne(
@@ -99,7 +99,6 @@ const getUserByPhoneNumber = async (phoneNumber) => {
     try {
         const userCollection = await users();
         let foundUser = await userCollection.findOne({ phoneNumber });
-
         return foundUser;
     } catch (error) {
         throw new Error(
@@ -165,8 +164,8 @@ const updateUserSessionId = async (userId, dexcomSessionId) => {
         );
         if (updateInfo.modifiedCount === 0)
             throw new Error("Could not update user session ID!");
-
-        return true;
+        const user = getUserById(userId);
+        return user;
     } catch (error) {
         throw new Error("Error updating user session ID: " + error.message);
     }

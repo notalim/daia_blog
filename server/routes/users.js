@@ -1,22 +1,11 @@
 import express from "express";
-import {
-    sendVerificationCode,
-    checkVerificationCode,
-} from "../services/twilioService.js";
-import {
-    createUser,
-    getUserByPhoneNumber,
-    deleteUser,
-    updateUserSessionId,
-    updateUser,
-    setLowAlarm,
-} from "../db/usersModule.js";
-import {
-    getDexcomSessionId,
-    getBloodSugarData,
-} from "../services/dexcomService.js";
+import { sendVerificationCode, checkVerificationCode } from "../services/twilioService.js";
+import { createUser, getUserByPhoneNumber, deleteUser, updateUserSessionId, updateUser, setLowAlarm, getUserById } from "../db/usersModule.js";
+import { getDexcomSessionId, getBloodSugarData } from "../services/dexcomService.js";
 import validation from "../services/validation.js";
 import { errorTypes } from "../services/errorTypes.js";
+import jwt from "jsonwebtoken";
+import verifyToken from "./middleware.js";
 
 const router = express.Router();
 
@@ -28,17 +17,33 @@ const validateInput = (validationFunc, data, res, errorCode) => {
     return true;
 };
 
+// get user by id
+router.get("/:id", verifyToken, async (req, res) => {
+    try {
+        const user = await getUserById(req.params.id);
+        if (!user) {
+            return res.status(404).json({
+                error: errorTypes.USER_NOT_FOUND,
+            });
+        }
+        if (req.user.userId !== user._id.toString()) {
+            return res.status(403).json({
+                error: "Access Denied: User ID mismatch",
+            });
+        }
+        // console.log(user);
+        res.status(200).json({ user });
+    } catch (error) {
+        res.status(500).json({
+            error: errorTypes.SERVER_ERROR,
+        });
+    }
+});
+
 router.post("/login", async (req, res) => {
     const { phoneNumber } = req.body;
 
-    if (
-        !validateInput(
-            validation.phoneValidation,
-            phoneNumber,
-            res,
-            errorTypes.INVALID_PHONE_NUMBER
-        )
-    ) {
+    if (!validateInput(validation.phoneValidation, phoneNumber, res, errorTypes.INVALID_PHONE_NUMBER)) {
         return;
     }
 
@@ -50,7 +55,7 @@ router.post("/login", async (req, res) => {
             });
         }
 
-        console.log(phoneNumber);
+        // console.log(phoneNumber);
 
         const verification = await sendVerificationCode(phoneNumber);
 
@@ -72,33 +77,16 @@ router.post("/login", async (req, res) => {
 router.post("/login/complete", async (req, res) => {
     const { phoneNumber, code } = req.body;
 
-    if (
-        !validateInput(
-            validation.phoneValidation,
-            phoneNumber,
-            res,
-            errorTypes.INVALID_PHONE_NUMBER
-        )
-    ) {
+    if (!validateInput(validation.phoneValidation, phoneNumber, res, errorTypes.INVALID_PHONE_NUMBER)) {
         return;
     }
 
-    if (
-        !validateInput(
-            validation.codeValidation,
-            code,
-            res,
-            errorTypes.INVALID_CODE
-        )
-    ) {
+    if (!validateInput(validation.codeValidation, code, res, errorTypes.INVALID_CODE)) {
         return;
     }
 
     try {
-        const verificationCheck = await checkVerificationCode(
-            phoneNumber,
-            code
-        );
+        const verificationCheck = await checkVerificationCode(phoneNumber, code);
         if (verificationCheck.status !== "approved") {
             return res.status(400).json({
                 error: errorTypes.INVALID_CODE,
@@ -110,10 +98,12 @@ router.post("/login/complete", async (req, res) => {
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
-        res.status(200).json({
-            user: user,
-            dexcomSessionId: user.dexcomSessionId,
+        const userId = user._id;
+        const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+            expiresIn: "1h", // Set the token expiration time as needed
         });
+
+        res.status(200).json({ user, token });
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -125,14 +115,7 @@ router.post("/login/complete", async (req, res) => {
 router.post("/signup", async (req, res) => {
     const { phoneNumber } = req.body;
 
-    if (
-        !validateInput(
-            validation.phoneValidation,
-            phoneNumber,
-            res,
-            errorTypes.INVALID_PHONE_NUMBER
-        )
-    ) {
+    if (!validateInput(validation.phoneValidation, phoneNumber, res, errorTypes.INVALID_PHONE_NUMBER)) {
         return;
     }
 
@@ -164,44 +147,20 @@ router.post("/signup", async (req, res) => {
 router.post("/signup/complete", async (req, res) => {
     const { phoneNumber, code, name, dexcomUser, dexcomPass } = req.body;
 
-    if (
-        !validateInput(
-            validation.phoneValidation,
-            phoneNumber,
-            res,
-            errorTypes.INVALID_PHONE_NUMBER
-        )
-    ) {
+    if (!validateInput(validation.phoneValidation, phoneNumber, res, errorTypes.INVALID_PHONE_NUMBER)) {
         return;
     }
 
-    if (
-        !validateInput(
-            validation.codeValidation,
-            code,
-            res,
-            errorTypes.INVALID_CODE
-        )
-    ) {
+    if (!validateInput(validation.codeValidation, code, res, errorTypes.INVALID_CODE)) {
         return;
     }
 
-    if (
-        !validateInput(
-            validation.nameValidation,
-            name,
-            res,
-            errorTypes.INVALID_NAME
-        )
-    ) {
+    if (!validateInput(validation.nameValidation, name, res, errorTypes.INVALID_NAME)) {
         return;
     }
 
     try {
-        const verificationCheck = await checkVerificationCode(
-            phoneNumber,
-            code
-        );
+        const verificationCheck = await checkVerificationCode(phoneNumber, code);
         if (verificationCheck.status !== "approved") {
             return res.status(400).json({
                 error: errorTypes.INVALID_CODE,
@@ -214,8 +173,7 @@ router.post("/signup/complete", async (req, res) => {
         });
     }
 
-    const dexcomSessionId =
-        (await getDexcomSessionId(dexcomUser, dexcomPass)) || null;
+    const dexcomSessionId = (await getDexcomSessionId(dexcomUser, dexcomPass)) || null;
     if (dexcomSessionId === "00000000-0000-0000-0000-000000000000") {
         return res.status(401).json({
             error: errorTypes.INVALID_DEXCOM_CREDENTIALS,
@@ -230,20 +188,13 @@ router.post("/signup/complete", async (req, res) => {
     }
 
     try {
-        const user = await createUser(
-            phoneNumber,
-            name,
-            dexcomUser,
-            dexcomPass,
-            dexcomSessionId,
-            bloodSugarData
-        );
-
-        res.status(201).json({
-            user: user,
-            success: true,
-            dexcomSessionId: dexcomSessionId,
+        const user = await createUser(phoneNumber, name, dexcomUser, dexcomPass, dexcomSessionId, bloodSugarData);
+        const userId = user._id;
+        const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+            expiresIn: "1h", // Set the token expiration time as needed
         });
+
+        res.status(201).json({ user, token });
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -252,31 +203,33 @@ router.post("/signup/complete", async (req, res) => {
     }
 });
 
-router.post("/refresh-user", async (req, res) => {
+router.post("/refresh-user", verifyToken, async (req, res) => {
     const { phoneNumber } = req.body;
-
-    if (
-        !validateInput(
-            validation.phoneValidation,
-            phoneNumber,
-            res,
-            errorTypes.INVALID_PHONE_NUMBER
-        )
-    ) {
+    if (!validateInput(validation.phoneValidation, phoneNumber, res, errorTypes.INVALID_PHONE_NUMBER)) {
         return;
     }
 
     try {
-        const updatedUser = await getUserByPhoneNumber(phoneNumber);
-        if (!updatedUser) {
+        const user = await getUserByPhoneNumber(phoneNumber);
+        // console.log(user);
+        if (!user) {
             return res.status(404).json({
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
 
-        return res.status(200).json({
-            user: updatedUser,
+        if (req.user.userId !== user._id.toString()) {
+            return res.status(403).json({
+                error: "Access Denied: User ID mismatch",
+            });
+        }
+
+        const userId = user._id;
+        const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+            expiresIn: "1h", // Set the token expiration time as needed
         });
+
+        return res.status(200).json({ user, token });
     } catch (error) {
         console.error(error);
         return res.status(500).json({
@@ -285,22 +238,19 @@ router.post("/refresh-user", async (req, res) => {
     }
 });
 
-router.patch("/update", async (req, res) => {
-    const {
-        phoneNumber,
-        name,
-        glucagonLocation,
-        glucagonType,
-        allergies,
-        medications,
-        diagnoses,
-        crisisText,
-    } = req.body;
+router.patch("/update", verifyToken, async (req, res) => {
+    const { phoneNumber, name, glucagonLocation, glucagonType, allergies, medications, diagnoses, crisisText } = req.body;
     try {
-        const user = await getUserByPhoneNumber(phoneNumber);
+        let user = await getUserByPhoneNumber(phoneNumber);
         if (!user) {
             return res.status(404).json({
                 error: errorTypes.USER_NOT_FOUND,
+            });
+        }
+
+        if (req.user.userId !== user._id.toString()) {
+            return res.status(403).json({
+                error: "Access Denied: User ID mismatch",
             });
         }
 
@@ -362,10 +312,13 @@ router.patch("/update", async (req, res) => {
             });
         }
 
-        const updatedUser = await getUserByPhoneNumber(phoneNumber);
-        res.status(200).json({
-            user: updatedUser,
+        user = await getUserByPhoneNumber(phoneNumber);
+        const userId = user._id;
+        const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+            expiresIn: "1h", // Set the token expiration time as needed
         });
+
+        res.status(200).json({ user, token });
     } catch (error) {
         res.status(500).json({
             error: errorTypes.SERVER_ERROR,
@@ -373,157 +326,11 @@ router.patch("/update", async (req, res) => {
     }
 });
 
-router.post("/update-phone", async (req, res) => {
-    const { phoneNumber, newPhoneNumber } = req.body;
-
-    if (
-        !validateInput(
-            validation.phoneValidation,
-            phoneNumber,
-            res,
-            errorTypes.INVALID_PHONE_NUMBER
-        )
-    ) {
-        return;
-    }
-
-    if (
-        !validateInput(
-            validation.phoneValidation,
-            newPhoneNumber,
-            res,
-            errorTypes.INVALID_PHONE_NUMBER
-        )
-    ) {
-        return;
-    }
-
-    try {
-        const user = await getUserByPhoneNumber(phoneNumber);
-        if (!user) {
-            return res.status(404).json({
-                error: errorTypes.USER_NOT_FOUND,
-            });
-        }
-        const updatedUser = await getUserByPhoneNumber(newPhoneNumber);
-        if (updatedUser) {
-            return res.status(409).json({
-                error: errorTypes.USER_ALREADY_EXISTS,
-            });
-        }
-
-        await sendVerificationCode(newPhoneNumber);
-
-        res.status(200).json({});
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            error: errorTypes.SERVER_ERROR,
-        });
-    }
-});
-
-router.post("/update-phone/complete", async (req, res) => {
-    const { phoneNumber, newPhoneNumber, code } = req.body;
-
-    if (
-        !validateInput(
-            validation.codeValidation,
-            code,
-            res,
-            "INVALID_VERIFICATION_CODE"
-        )
-    ) {
-        return;
-    }
-
-    try {
-        const verificationCheck = await checkVerificationCode(
-            phoneNumber,
-            code
-        );
-        if (verificationCheck.status !== "approved") {
-            return res.status(400).json({
-                error: errorTypes.INVALID_CODE,
-            });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            error: errorTypes.SERVER_ERROR,
-        });
-    }
-
-    try {
-        const user = await getUserByPhoneNumber(phoneNumber);
-        if (!user) {
-            return res.status(404).json({
-                error: errorTypes.USER_NOT_FOUND,
-            });
-        }
-        const updateData = {};
-        if (newPhoneNumber) updateData.phoneNumber = newPhoneNumber;
-        const updated = await updateUser(user._id, updateData);
-        if (!updated) {
-            return res.status(400).json({
-                error: "UPDATE_FAILED",
-            });
-        }
-        const updatedUser = await getUserByPhoneNumber(phoneNumber);
-        res.status(200).json({
-            user: updatedUser,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            error: errorTypes.SERVER_ERROR,
-        });
-    }
-
-    try {
-        const user = await updateUser(
-            phoneNumber,
-            name,
-            dexcomUser,
-            dexcomPass,
-            dexcomSessionId,
-            bloodSugarData
-        );
-
-        res.status(201).json({
-            user: user,
-            success: true,
-            dexcomSessionId: dexcomSessionId,
-        });
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({
-            error: errorTypes.SERVER_ERROR,
-        });
-    }
-});
-
-router.post("/update-dexcom", async (req, res) => {
+router.post("/update-dexcom", verifyToken, async (req, res) => {
     const { phoneNumber, dexcomUser, dexcomPass } = req.body;
 
-    if (
-        !validateInput(
-            validation.phoneValidation,
-            phoneNumber,
-            res,
-            errorTypes.INVALID_PHONE_NUMBER
-        )
-    ) {
+    if (!validateInput(validation.phoneValidation, phoneNumber, res, errorTypes.INVALID_PHONE_NUMBER)) {
         return;
-    }
-
-    const newDexcomSessionId =
-        (await getDexcomSessionId(dexcomUser, dexcomPass)) || null;
-
-    if (newDexcomSessionId === "00000000-0000-0000-0000-000000000000") {
-        return res.status(401).json({
-            error: errorTypes.INVALID_DEXCOM_CREDENTIALS,
-        });
     }
 
     let foundUserId = null;
@@ -536,6 +343,13 @@ router.post("/update-dexcom", async (req, res) => {
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
+        console.log(foundUser._id);
+        console.log(req.user.userId);
+        if (req.user.userId !== foundUser._id.toString()) {
+            return res.status(403).json({
+                error: "Access Denied: User ID mismatch",
+            });
+        }
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -544,13 +358,22 @@ router.post("/update-dexcom", async (req, res) => {
     }
 
     try {
-        const updatedUser = await updateUserSessionId(
-            foundUserId,
-            newDexcomSessionId
-        );
-        res.status(200).json({
-            user: updatedUser,
+        const newDexcomSessionId = (await getDexcomSessionId(dexcomUser, dexcomPass)) || null;
+
+        if (newDexcomSessionId === "00000000-0000-0000-0000-000000000000") {
+            return res.status(401).json({
+                error: errorTypes.INVALID_DEXCOM_CREDENTIALS,
+            });
+        }
+
+        const user = await updateUserSessionId(foundUserId, newDexcomSessionId);
+
+        const userId = user._id;
+        const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+            expiresIn: "1h", // Set the token expiration time as needed
         });
+
+        res.status(200).json({ user, token });
     } catch (error) {
         console.error(error);
         res.status(500).json({
@@ -559,17 +382,10 @@ router.post("/update-dexcom", async (req, res) => {
     }
 });
 
-router.post("/update-alarm", async (req, res) => {
+router.post("/update-alarm", verifyToken, async (req, res) => {
     const { phoneNumber, lowAlarm } = req.body;
 
-    if (
-        !validateInput(
-            validation.phoneValidation,
-            phoneNumber,
-            res,
-            errorTypes.INVALID_PHONE_NUMBER
-        )
-    ) {
+    if (!validateInput(validation.phoneValidation, phoneNumber, res, errorTypes.INVALID_PHONE_NUMBER)) {
         return;
     }
 
@@ -580,17 +396,24 @@ router.post("/update-alarm", async (req, res) => {
     }
 
     try {
-        const user = await getUserByPhoneNumber(phoneNumber);
+        let user = await getUserByPhoneNumber(phoneNumber);
         if (!user) {
             return res.status(404).json({
                 error: errorTypes.USER_NOT_FOUND,
             });
         }
-
-        const updatedUser = await setLowAlarm(user._id, lowAlarm);
-        res.status(200).json({
-            user: updatedUser,
+        if (req.user.userId !== user._id.toString()) {
+            return res.status(403).json({
+                error: "Access Denied: User ID mismatch",
+            });
+        }
+        user = await setLowAlarm(user._id, lowAlarm);
+        const userId = user._id;
+        const token = jwt.sign({ userId }, process.env.JWT_SECRET, {
+            expiresIn: "1h", // Set the token expiration time as needed
         });
+
+        res.status(200).json({ user, token });
     } catch (error) {
         console.error(error);
         res.status(500).json({

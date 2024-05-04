@@ -45,13 +45,13 @@ const NavbarLoggedIn = () => {
 	const handlePopoverOpen = (event) => {
 		setAnchorEl(event.currentTarget);
 		setIsOpen(false);
-		console.log("OPEN", isOpen);
+		// console.log("OPEN", isOpen);
 	};
 
 	const handlePopoverClose = () => {
 		setAnchorEl(null);
 		setIsOpen(true);
-		console.log("Close", isOpen);
+		// console.log("Close", isOpen);
 	};
 
 	return (
